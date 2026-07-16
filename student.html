@@ -967,11 +967,11 @@
     <div class="settings-card">
       <button class="modal-close" id="streakRewardsClose" aria-label="Close">&times;</button>
       <h2 class="fun settings-title">🔥 Streak Rewards</h2>
-      <p class="settings-subtitle">For the teacher: Andy keeps his streak by playing at least 2 games with a good score each day (missing a single day is okay — 2 days in a row breaks it). Set up what he earns at different streaks below.</p>
+      <p class="settings-subtitle">For the teacher: Andy keeps his streak by finishing homework or getting game answers right — at least 2 a day (missing a single day is okay, 2 days in a row breaks it). Each reward below repeats every time his streak is a multiple of that number.</p>
       <p class="streak-progress" id="streakProgressText"></p>
       <div class="reward-rules" id="rewardRulesList"></div>
       <form class="add-row" id="form-reward-rule">
-        <input type="number" id="reward-threshold" min="1" value="7" required aria-label="Streak number" style="max-width: 80px;" />
+        <input type="number" id="reward-threshold" min="1" value="7" required aria-label="Repeat every how many streak days" style="max-width: 80px;" />
         <select id="reward-type" class="hw-type-select" aria-label="Reward type">
           <option value="video">🎥 Video</option>
         </select>
@@ -1245,19 +1245,21 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
 
-  // A day only counts toward the streak once Andy plays at least this many
-  // games with a good result (a full Word Match, or a correct Unscramble).
-  const GAMES_NEEDED_PER_DAY = 2;
+  // A day only counts toward the streak once Andy does at least this many
+  // qualifying things: finishing a homework item, matching a Word Match
+  // pair, or getting an Unscramble word right.
+  const ACTIVITIES_NEEDED_PER_DAY = 2;
 
   // Reward types available in the streak-rewards picker. Add more here later.
   const STREAK_REWARD_TYPES = {
     video: { label: '🎥 Video' },
   };
 
-  function streakRewardMessage(rule) {
+  // Each rule recurs every N streak-days (e.g. threshold 7 fires at 7, 14, 21...).
+  function streakRewardMessage(rule, streak) {
     const rewardLabel = (STREAK_REWARD_TYPES[rule.type] || STREAK_REWARD_TYPES.video).label;
     const noteText = rule.note ? ` — ${rule.note}` : '';
-    return `🔥 ${rule.threshold}-day streak! Andy earned a reward: ${rewardLabel}${noteText}. Ask your teacher!`;
+    return `🔥 ${streak}-day streak! Andy earned a reward: ${rewardLabel}${noteText}. Ask your teacher!`;
   }
 
   function ensureTodayGameCounter() {
@@ -1286,15 +1288,15 @@
     saveData();
     renderHud();
     if (bonus) addStars(bonus);
-    const earnedRewards = data.streakRewards.filter(r => r.threshold === data.streak);
-    earnedRewards.forEach(rule => setTimeout(() => showMilestone(streakRewardMessage(rule)), 700));
+    const earnedRewards = data.streakRewards.filter(r => r.threshold > 0 && data.streak % r.threshold === 0);
+    earnedRewards.forEach(rule => setTimeout(() => showMilestone(streakRewardMessage(rule, data.streak)), 700));
   }
 
-  function recordGamePlayed() {
+  function recordQualifyingActivity() {
     ensureTodayGameCounter();
     data.gamesQualifiedToday++;
     saveData();
-    if (data.gamesQualifiedToday === GAMES_NEEDED_PER_DAY) {
+    if (data.gamesQualifiedToday === ACTIVITIES_NEEDED_PER_DAY) {
       const today = todayStr();
       if (data.lastQualifiedDate !== today) creditStreakDay(today);
     }
@@ -1310,9 +1312,9 @@
     }
     list.innerHTML = data.streakRewards.map(rule => `
       <div class="reward-rule" data-id="${rule.id}">
-        <span>At streak</span>
-        <input type="number" class="reward-threshold-input" data-id="${rule.id}" min="1" value="${rule.threshold}" aria-label="Streak number for this reward" />
-        <span>→ ${(STREAK_REWARD_TYPES[rule.type] || STREAK_REWARD_TYPES.video).label}</span>
+        <span>Every</span>
+        <input type="number" class="reward-threshold-input" data-id="${rule.id}" min="1" value="${rule.threshold}" aria-label="Repeat every how many streak days" />
+        <span>days → ${(STREAK_REWARD_TYPES[rule.type] || STREAK_REWARD_TYPES.video).label}</span>
         ${rule.note ? `<span class="reward-note">(${escapeHtml(rule.note)})</span>` : ''}
         <button class="mini-delete" data-id="${rule.id}" aria-label="Delete reward">&times;</button>
       </div>
@@ -1322,10 +1324,10 @@
   function renderStreakProgress() {
     ensureTodayGameCounter();
     const played = data.gamesQualifiedToday;
-    const remaining = Math.max(0, GAMES_NEEDED_PER_DAY - played);
+    const remaining = Math.max(0, ACTIVITIES_NEEDED_PER_DAY - played);
     const text = remaining === 0
-      ? `🎮 ${played}/${GAMES_NEEDED_PER_DAY} games today — streak secured for today!`
-      : `🎮 ${played}/${GAMES_NEEDED_PER_DAY} games today — play ${remaining} more to keep the streak going.`;
+      ? `✅ ${played}/${ACTIVITIES_NEEDED_PER_DAY} done today — streak secured for today!`
+      : `✅ ${played}/${ACTIVITIES_NEEDED_PER_DAY} done today — finish ${remaining} more homework item or game answer to keep the streak going.`;
     document.getElementById('streakProgressText').textContent = text;
   }
 
@@ -1677,6 +1679,7 @@
     if (item.done && !item.starAwarded) {
       item.starAwarded = true;
       addStars(1);
+      recordQualifyingActivity();
     }
     saveData();
     renderHomework();
@@ -1781,12 +1784,12 @@
       matchState.firstIdx = null;
       matchState.matchedCount++;
       addStars(1);
+      recordQualifyingActivity();
       renderMatchBoard();
       if (matchState.matchedCount === matchState.totalPairs) {
         addStars(3);
         launchConfetti();
         showBanner('matchBanner', '🎉 You matched them all! +3 bonus stars!');
-        recordGamePlayed();
       }
     } else {
       matchState.lock = true;
@@ -1844,7 +1847,7 @@
       if (guess === scrambleState.current.word.trim().toLowerCase()) {
         addStars(1);
         showBanner('scrambleBanner', pickEncouragement());
-        recordGamePlayed();
+        recordQualifyingActivity();
         setTimeout(newScrambleRound, 900);
       } else {
         showBanner('scrambleBanner', 'Not quite — try again!');
