@@ -743,6 +743,192 @@
   .game-panel { display: none; }
   .game-panel.active { display: block; }
 
+  /* ---------- game: verb chef ---------- */
+
+  .chef-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    text-align: center;
+  }
+
+  .chef-pot {
+    font-size: 3.4rem;
+    line-height: 1;
+    animation: chef-wobble 2.6s ease-in-out infinite;
+  }
+
+  .chef-pot.big { font-size: 4.4rem; }
+
+  @keyframes chef-wobble {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+
+  .chef-pot.bump { animation: chef-bump 0.5s ease; }
+
+  @keyframes chef-bump {
+    0% { transform: scale(1) rotate(-3deg); }
+    35% { transform: scale(1.25) rotate(-6deg); }
+    100% { transform: scale(1) rotate(-3deg); }
+  }
+
+  .chef-slots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    max-width: 340px;
+  }
+
+  .chef-slot {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 10px;
+    background: var(--sky);
+    border: 2px dashed var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .chef-slot.filled {
+    background: var(--card);
+    border: 2px solid var(--happy);
+    animation: chef-pop 0.35s ease;
+  }
+
+  @keyframes chef-pop {
+    0% { transform: scale(0.4); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .chef-target {
+    background: var(--sky);
+    border-radius: 16px;
+    padding: 1.1rem 1.6rem;
+  }
+
+  .chef-target-emoji { font-size: 3rem; line-height: 1; }
+
+  .chef-target-zh {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    margin-top: 0.3rem;
+  }
+
+  .chef-choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+
+  .chef-choice { text-transform: lowercase; }
+
+  .chef-choice.correct-flash {
+    background: var(--happy);
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black);
+  }
+
+  .chef-choice:disabled { cursor: default; opacity: 0.7; }
+
+  .chef-complete .chef-dish-name {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .chef-dish-sub {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin: 0 0 0.3rem;
+  }
+
+  .chef-shop-row { align-self: center; }
+
+  .chef-difficulty {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .chef-diff-btn {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: var(--sky);
+    color: var(--ink-soft);
+    border: none;
+    border-radius: 12px;
+    padding: 0.45rem 0.8rem;
+    cursor: pointer;
+  }
+
+  .chef-diff-btn.active { background: var(--sky-accent); color: var(--sky-accent-ink); }
+  .chef-diff-btn:focus-visible { outline: 2px solid var(--sky-accent); outline-offset: 2px; }
+
+  .chef-diff-star { font-size: 0.72rem; opacity: 0.8; }
+
+  .chef-coming-soon {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    background: var(--sky);
+    border-radius: 14px;
+    padding: 1.4rem;
+    max-width: 320px;
+  }
+
+  .chef-shop {
+    background: var(--sky);
+    border-radius: 14px;
+    padding: 0.9rem;
+    width: 100%;
+    max-width: 380px;
+    box-sizing: border-box;
+  }
+
+  .chef-shop-hint {
+    margin: 0 0 0.7rem;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  .chef-shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .chef-skin-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 0.6rem 0.4rem;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+  }
+
+  .chef-skin-btn .chef-skin-emoji { font-size: 1.6rem; }
+  .chef-skin-btn .chef-skin-label { font-size: 0.72rem; font-weight: 600; text-align: center; }
+  .chef-skin-btn .chef-skin-lock { font-size: 0.68rem; color: var(--ink-faint); }
+
+  .chef-skin-btn.active { border-color: var(--happy); box-shadow: 0 0 0 2px var(--happy); }
+  .chef-skin-btn.locked { opacity: 0.6; cursor: default; }
+  .chef-skin-btn:disabled { cursor: default; }
+
   .game-empty {
     color: var(--ink-soft);
     font-size: 0.95rem;
@@ -814,6 +1000,8 @@
     opacity: 0;
     transition: opacity 0.2s ease;
   }
+
+  .banner.neutral { color: var(--ink-soft); }
 
   .banner.show { opacity: 1; }
 
@@ -1031,6 +1219,7 @@
       <nav class="game-tabs" id="gameTabs">
         <button class="game-tab-btn active" data-game="match">🧩 Word Match</button>
         <button class="game-tab-btn" data-game="scramble">🔤 Unscramble</button>
+        <button class="game-tab-btn" data-game="chef">🍲 Verb Chef</button>
       </nav>
 
       <div class="game-panel active" id="game-match">
@@ -1043,6 +1232,10 @@
 
       <div class="game-panel" id="game-scramble">
         <div id="scrambleArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-chef">
+        <div id="chefArea"></div>
       </div>
     </section>
 
@@ -1110,6 +1303,8 @@
         parsed.streakRewards = Array.isArray(parsed.streakRewards) ? parsed.streakRewards : [
           { id: 'default-video', threshold: 7, type: 'video', note: '' },
         ];
+        parsed.dishesCooked = typeof parsed.dishesCooked === 'number' ? parsed.dishesCooked : 0;
+        parsed.potSkin = typeof parsed.potSkin === 'string' ? parsed.potSkin : 'classic';
         return parsed;
       }
     } catch (e) {}
@@ -1120,6 +1315,8 @@
       gamesTrackedDate: null,
       gamesQualifiedToday: 0,
       streakRewards: [{ id: 'default-video', threshold: 7, type: 'video', note: '' }],
+      dishesCooked: 0,
+      potSkin: 'classic',
       homework: [],
       words: [],
     };
@@ -1858,6 +2055,237 @@
     document.getElementById('scrambleSkip').addEventListener('click', newScrambleRound);
   }
 
+  /* ---------- game: verb chef ---------- */
+  // Andy cooks a silly dish: each correct verb tosses an ingredient into
+  // the pot. Wrong guesses just shake and let him try again — no lives,
+  // no timer, no losing progress. Round-based so sessions stay short.
+
+  const VERBS = [
+    { en: 'eat', zh: '吃', emoji: '🍽️' },
+    { en: 'drink', zh: '喝', emoji: '🥤' },
+    { en: 'run', zh: '跑', emoji: '🏃' },
+    { en: 'walk', zh: '走', emoji: '🚶' },
+    { en: 'jump', zh: '跳', emoji: '🤸' },
+    { en: 'sleep', zh: '睡覺', emoji: '😴' },
+    { en: 'read', zh: '讀', emoji: '📖' },
+    { en: 'write', zh: '寫', emoji: '✍️' },
+    { en: 'draw', zh: '畫', emoji: '🎨' },
+    { en: 'play', zh: '玩', emoji: '🧸' },
+    { en: 'sing', zh: '唱歌', emoji: '🎤' },
+    { en: 'dance', zh: '跳舞', emoji: '💃' },
+    { en: 'open', zh: '打開', emoji: '📂' },
+    { en: 'close', zh: '關上', emoji: '📁' },
+    { en: 'look', zh: '看', emoji: '👀' },
+    { en: 'listen', zh: '聽', emoji: '👂' },
+    { en: 'sit', zh: '坐', emoji: '🪑' },
+    { en: 'stand', zh: '站', emoji: '🧍' },
+    { en: 'wash', zh: '洗', emoji: '🧼' },
+    { en: 'help', zh: '幫忙', emoji: '🤝' },
+  ];
+
+  const DISH_ADJECTIVES = ['Sparkly', 'Wobbly', 'Giant', 'Mysterious', 'Fizzy', 'Turbo', 'Rainbow', 'Sneaky', 'Silly', 'Bouncy'];
+  const DISH_NOUNS = ['Noodle Surprise', 'Dragon Soup', 'Star Stew', 'Volcano Munch', 'Cloud Casserole', 'Thunder Snack', 'Moon Pie', 'Jellybean Jumble'];
+
+  function randomDishName() {
+    const a = DISH_ADJECTIVES[Math.floor(Math.random() * DISH_ADJECTIVES.length)];
+    const n = DISH_NOUNS[Math.floor(Math.random() * DISH_NOUNS.length)];
+    return `${a} ${n}`;
+  }
+
+  // Pot Shop: stars are a lifetime total (they never go down), so
+  // unlocking a skin is just crossing a star threshold — nothing is
+  // ever spent or lost, there's no way to make a "bad" purchase.
+  const POT_SKINS = [
+    { id: 'classic', emoji: '🍲', label: 'Classic Pot', threshold: 0 },
+    { id: 'wok', emoji: '🥘', label: 'Sizzling Wok', threshold: 15 },
+    { id: 'noodle', emoji: '🍜', label: 'Noodle Bowl', threshold: 30 },
+    { id: 'cupcake', emoji: '🧁', label: 'Cupcake Cauldron', threshold: 50 },
+    { id: 'dragon', emoji: '🐉', label: 'Dragon Cauldron', threshold: 80 },
+    { id: 'rocket', emoji: '🚀', label: 'Rocket Pot', threshold: 120 },
+  ];
+
+  function potSkinById(id) {
+    return POT_SKINS.find(s => s.id === id) || POT_SKINS[0];
+  }
+
+  function currentPotEmoji() {
+    return potSkinById(data.potSkin).emoji;
+  }
+
+  function renderPotShop() {
+    return POT_SKINS.map(s => {
+      const unlocked = data.stars >= s.threshold;
+      const active = data.potSkin === s.id;
+      return `
+        <button class="chef-skin-btn${active ? ' active' : ''}${unlocked ? '' : ' locked'}" data-id="${s.id}" ${unlocked ? '' : 'disabled'}>
+          <span class="chef-skin-emoji">${s.emoji}</span>
+          <span class="chef-skin-label">${escapeHtml(s.label)}</span>
+          ${unlocked ? '' : `<span class="chef-skin-lock">🔒 ${s.threshold}⭐</span>`}
+        </button>
+      `;
+    }).join('');
+  }
+
+  const CHEF_ROUND_SIZE = 8;
+  const chefState = { roundVerbs: [], index: 0, choices: [], done: false, firstTryCount: 0, missedCurrent: false, shopOpen: false, difficulty: 'easy' };
+
+  // Only "easy" has real gameplay right now — medium/hard show a
+  // placeholder until more verb games are built for them. Stars per
+  // correct answer scale with difficulty so harder games are worth more
+  // once they exist.
+  const CHEF_DIFFICULTIES = {
+    easy: { label: '🟢 Easy', stars: 1, ready: true },
+    medium: { label: '🟡 Medium', stars: 2, ready: false },
+    hard: { label: '🔴 Hard', stars: 3, ready: false },
+  };
+
+  function renderChefDifficultyPicker() {
+    return Object.keys(CHEF_DIFFICULTIES).map(key => {
+      const d = CHEF_DIFFICULTIES[key];
+      const active = chefState.difficulty === key;
+      return `<button class="chef-diff-btn${active ? ' active' : ''}" data-diff="${key}">${d.label} <span class="chef-diff-star">+${d.stars}⭐</span></button>`;
+    }).join('');
+  }
+
+  function buildChefChoices(correctVerb) {
+    const others = shuffleArray(VERBS.filter(v => v.en !== correctVerb.en)).slice(0, 2);
+    return shuffleArray([correctVerb, ...others]);
+  }
+
+  function startChefRound() {
+    if (!CHEF_DIFFICULTIES[chefState.difficulty].ready) {
+      renderChefComingSoon();
+      return;
+    }
+    chefState.roundVerbs = shuffleArray(VERBS).slice(0, CHEF_ROUND_SIZE);
+    chefState.index = 0;
+    chefState.done = false;
+    chefState.firstTryCount = 0;
+    chefState.missedCurrent = false;
+    chefState.shopOpen = false;
+    renderChefRound();
+  }
+
+  function renderChefComingSoon() {
+    const area = document.getElementById('chefArea');
+    const d = CHEF_DIFFICULTIES[chefState.difficulty];
+    area.innerHTML = `
+      <div class="chef-wrap">
+        <div class="chef-difficulty">${renderChefDifficultyPicker()}</div>
+        <div class="chef-coming-soon">${d.label} is being cooked up — check back soon! Each correct answer here will be worth <strong>+${d.stars}⭐</strong>.</div>
+      </div>
+    `;
+  }
+
+  function renderChefRound() {
+    const area = document.getElementById('chefArea');
+    const filled = chefState.index;
+    const current = chefState.roundVerbs[chefState.index];
+    chefState.choices = buildChefChoices(current);
+
+    const slots = chefState.roundVerbs.map((v, i) => `
+      <span class="chef-slot${i < filled ? ' filled' : ''}">${i < filled ? v.emoji : ''}</span>
+    `).join('');
+
+    area.innerHTML = `
+      <div class="chef-wrap">
+        <div class="chef-difficulty">${renderChefDifficultyPicker()}</div>
+        <div class="chef-shop-row">
+          <button class="link-btn" id="chefShopToggle">🎨 Pot Shop</button>
+        </div>
+        <div class="chef-shop" id="chefShop" ${chefState.shopOpen ? '' : 'hidden'}>
+          <p class="chef-shop-hint">Earn stars to unlock new pots! Tap one you've unlocked to use it.</p>
+          <div class="chef-shop-grid">${renderPotShop()}</div>
+        </div>
+        <div class="chef-pot" id="chefPot">${currentPotEmoji()}</div>
+        <div class="chef-slots">${slots}</div>
+        <div class="chef-target">
+          <div class="chef-target-emoji">${current.emoji}</div>
+          <div class="chef-target-zh">${escapeHtml(current.zh)}</div>
+        </div>
+        <div class="chef-choices">
+          ${chefState.choices.map(c => `<button class="btn-fun chef-choice" data-en="${escapeHtml(c.en)}">${escapeHtml(c.en)}</button>`).join('')}
+        </div>
+        <div class="banner neutral" id="chefBanner"></div>
+      </div>
+    `;
+  }
+
+  function renderChefComplete() {
+    const area = document.getElementById('chefArea');
+    const dishName = randomDishName();
+    const perAnswer = CHEF_DIFFICULTIES[chefState.difficulty].stars;
+    const bonus = Math.max(1, chefState.firstTryCount) * perAnswer;
+    const total = chefState.roundVerbs.length;
+    data.dishesCooked = (data.dishesCooked || 0) + 1;
+    saveData();
+    area.innerHTML = `
+      <div class="chef-wrap chef-complete">
+        <div class="chef-pot big">${currentPotEmoji()}</div>
+        <p class="chef-dish-name">${escapeHtml(dishName)} is ready!</p>
+        <p class="chef-dish-sub">${chefState.firstTryCount} out of ${total} got it right first try — +${bonus} bonus star${bonus === 1 ? '' : 's'}!</p>
+        <p class="chef-dish-sub">Dishes cooked so far: ${data.dishesCooked}</p>
+        <button class="btn-fun" id="chefAgainBtn">Cook Another Dish 🍳</button>
+      </div>
+    `;
+    document.getElementById('chefAgainBtn').addEventListener('click', startChefRound);
+    addStars(bonus);
+    launchConfetti();
+  }
+
+  document.getElementById('chefArea').addEventListener('click', (e) => {
+    const diffBtn = e.target.closest('.chef-diff-btn');
+    if (diffBtn) {
+      chefState.difficulty = diffBtn.dataset.diff;
+      startChefRound();
+      return;
+    }
+    const shopToggle = e.target.closest('#chefShopToggle');
+    if (shopToggle) {
+      chefState.shopOpen = !chefState.shopOpen;
+      const shopEl = document.getElementById('chefShop');
+      if (shopEl) shopEl.hidden = !chefState.shopOpen;
+      return;
+    }
+    const skinBtn = e.target.closest('.chef-skin-btn');
+    if (skinBtn) {
+      if (skinBtn.disabled) return;
+      data.potSkin = skinBtn.dataset.id;
+      saveData();
+      const pot = document.getElementById('chefPot');
+      if (pot) pot.textContent = currentPotEmoji();
+      document.querySelectorAll('.chef-skin-btn').forEach(b => b.classList.toggle('active', b.dataset.id === data.potSkin));
+      return;
+    }
+    const choiceBtn = e.target.closest('.chef-choice');
+    if (!choiceBtn || chefState.done) return;
+    const current = chefState.roundVerbs[chefState.index];
+    if (choiceBtn.dataset.en === current.en) {
+      document.querySelectorAll('.chef-choice').forEach(b => { b.disabled = true; });
+      choiceBtn.classList.add('correct-flash');
+      const pot = document.getElementById('chefPot');
+      if (pot) pot.classList.add('bump');
+      if (!chefState.missedCurrent) chefState.firstTryCount++;
+      addStars(CHEF_DIFFICULTIES[chefState.difficulty].stars);
+      recordQualifyingActivity();
+      showBanner('chefBanner', pickEncouragement());
+      chefState.index++;
+      chefState.missedCurrent = false;
+      setTimeout(() => {
+        if (chefState.index >= chefState.roundVerbs.length) {
+          chefState.done = true;
+          renderChefComplete();
+        } else {
+          renderChefRound();
+        }
+      }, 500);
+    } else {
+      chefState.missedCurrent = true;
+      choiceBtn.classList.add('shake');
+      setTimeout(() => choiceBtn.classList.remove('shake'), 400);
+    }
+  });
+
   document.getElementById('gameTabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.game-tab-btn');
     if (!btn) return;
@@ -1865,7 +2293,8 @@
     const target = btn.dataset.game;
     document.querySelectorAll('.game-panel').forEach(p => p.classList.toggle('active', p.id === 'game-' + target));
     if (target === 'match') startMatchGame();
-    else newScrambleRound();
+    else if (target === 'scramble') newScrambleRound();
+    else startChefRound();
   });
 
   /* ---------- init ---------- */
@@ -1875,5 +2304,6 @@
   renderWords();
   startMatchGame();
   newScrambleRound();
+  startChefRound();
   ensureTodayGameCounter();
 </script>
