@@ -940,7 +940,10 @@
 
   .game-toolbar {
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
     margin-bottom: 0.8rem;
   }
 
@@ -1059,7 +1062,7 @@
 
   .add-form-word {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 0.6rem;
     margin-bottom: 0.5rem;
     padding-bottom: 1rem;
@@ -1112,6 +1115,16 @@
   }
 
   .word-meaning { color: var(--ink-soft); font-size: 0.92rem; }
+
+  .word-category-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--sky-accent-ink);
+    background: var(--sky-accent);
+    border-radius: 8px;
+    padding: 0.1rem 0.5rem;
+    white-space: nowrap;
+  }
 
   .word-example {
     margin-top: 0.2rem;
@@ -1224,6 +1237,17 @@
 
       <div class="game-panel active" id="game-match">
         <div class="game-toolbar">
+          <select id="matchCategory" class="hw-type-select" aria-label="Category to practice">
+            <option value="All">All Words</option>
+            <option value="General">General</option>
+            <option value="Verbs">Verbs</option>
+            <option value="Question Words">Question Words</option>
+            <option value="Prepositions">Prepositions</option>
+            <option value="Daily Routine">Daily Routine</option>
+            <option value="Weather">Weather</option>
+            <option value="Phonics">Phonics</option>
+            <option value="Conversation">Conversation</option>
+          </select>
           <button class="btn-fun blue small" id="matchNewBtn">🔄 New Game</button>
         </div>
         <div id="matchArea"></div>
@@ -1231,6 +1255,19 @@
       </div>
 
       <div class="game-panel" id="game-scramble">
+        <div class="game-toolbar">
+          <select id="scrambleCategory" class="hw-type-select" aria-label="Category to practice">
+            <option value="All">All Words</option>
+            <option value="General">General</option>
+            <option value="Verbs">Verbs</option>
+            <option value="Question Words">Question Words</option>
+            <option value="Prepositions">Prepositions</option>
+            <option value="Daily Routine">Daily Routine</option>
+            <option value="Weather">Weather</option>
+            <option value="Phonics">Phonics</option>
+            <option value="Conversation">Conversation</option>
+          </select>
+        </div>
         <div id="scrambleArea"></div>
       </div>
 
@@ -1248,6 +1285,19 @@
         <div>
           <label for="word-meaning">What it means</label>
           <input type="text" id="word-meaning" placeholder="e.g. feeling good" required />
+        </div>
+        <div>
+          <label for="word-category">Category</label>
+          <select id="word-category" class="hw-type-select" style="width: 100%;">
+            <option value="General">General</option>
+            <option value="Verbs">Verbs</option>
+            <option value="Question Words">Question Words</option>
+            <option value="Prepositions">Prepositions</option>
+            <option value="Daily Routine">Daily Routine</option>
+            <option value="Weather">Weather</option>
+            <option value="Phonics">Phonics</option>
+            <option value="Conversation">Conversation</option>
+          </select>
         </div>
         <div class="full">
           <label for="word-example">Example sentence (optional)</label>
@@ -1295,6 +1345,7 @@
         delete parsed.homeworkTeacher;
         delete parsed.homeworkMine;
         parsed.words = Array.isArray(parsed.words) ? parsed.words : [];
+        parsed.words.forEach(w => { if (!w.category) w.category = 'General'; });
         parsed.stars = typeof parsed.stars === 'number' ? parsed.stars : 0;
         parsed.streak = typeof parsed.streak === 'number' ? parsed.streak : 0;
         parsed.lastQualifiedDate = parsed.lastQualifiedDate || null;
@@ -1895,6 +1946,7 @@
         <div class="word-main">
           <span class="word-term">${escapeHtml(w.word)}</span>
           <span class="word-meaning">${escapeHtml(w.meaning)}</span>
+          <span class="word-category-badge">${escapeHtml(w.category || 'General')}</span>
         </div>
         ${w.example ? `<div class="word-example">"${escapeHtml(w.example)}"</div>` : ''}
         <button class="mini-delete" data-id="${w.id}" aria-label="Delete word">&times;</button>
@@ -1906,9 +1958,10 @@
     e.preventDefault();
     const word = document.getElementById('word-term').value.trim();
     const meaning = document.getElementById('word-meaning').value.trim();
+    const category = document.getElementById('word-category').value;
     const example = document.getElementById('word-example').value.trim();
     if (!word || !meaning) return;
-    data.words.unshift({ id: uid(), word, meaning, example, added: new Date().toISOString() });
+    data.words.unshift({ id: uid(), word, meaning, category, example, added: new Date().toISOString() });
     saveData();
     e.target.reset();
     renderWords();
@@ -1924,13 +1977,18 @@
 
   /* ---------- game: word match ---------- */
 
+  function wordsInCategory(category) {
+    if (category === 'All') return data.words;
+    return data.words.filter(w => (w.category || 'General') === category);
+  }
+
   const matchState = { cards: [], firstIdx: null, lock: false, matchedCount: 0, totalPairs: 0 };
 
-  function buildMatchDeck() {
-    const poolSize = Math.min(6, data.words.length);
-    const pool = shuffleArray(data.words).slice(0, poolSize);
+  function buildMatchDeck(pool) {
+    const size = Math.min(6, pool.length);
+    const picked = shuffleArray(pool).slice(0, size);
     const cards = [];
-    pool.forEach(w => {
+    picked.forEach(w => {
       cards.push({ pairId: w.id, type: 'word', text: w.word, revealed: false, matched: false });
       cards.push({ pairId: w.id, type: 'meaning', text: w.meaning, revealed: false, matched: false });
     });
@@ -1948,19 +2006,24 @@
 
   function startMatchGame() {
     const area = document.getElementById('matchArea');
-    if (data.words.length < 3) {
-      area.innerHTML = `<div class="game-empty">Add at least 3 words in <strong>My Words</strong> first, then come back to play! 📖</div>`;
+    const category = document.getElementById('matchCategory').value;
+    const pool = wordsInCategory(category);
+    if (pool.length < 3) {
+      const where = category === 'All' ? '' : ` in <strong>${escapeHtml(category)}</strong>`;
+      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to play! 📖</div>`;
       document.getElementById('matchNewBtn').style.visibility = 'hidden';
       return;
     }
     document.getElementById('matchNewBtn').style.visibility = 'visible';
-    matchState.cards = buildMatchDeck();
+    matchState.cards = buildMatchDeck(pool);
     matchState.firstIdx = null;
     matchState.lock = false;
     matchState.matchedCount = 0;
     matchState.totalPairs = matchState.cards.length / 2;
     renderMatchBoard();
   }
+
+  document.getElementById('matchCategory').addEventListener('change', startMatchGame);
 
   document.getElementById('matchArea').addEventListener('click', (e) => {
     const btn = e.target.closest('.match-card');
@@ -2020,11 +2083,14 @@
 
   function newScrambleRound() {
     const area = document.getElementById('scrambleArea');
-    if (data.words.length < 3) {
-      area.innerHTML = `<div class="game-empty">Add at least 3 words in <strong>My Words</strong> first, then come back to play! 📖</div>`;
+    const category = document.getElementById('scrambleCategory').value;
+    const pool = wordsInCategory(category);
+    if (pool.length < 3) {
+      const where = category === 'All' ? '' : ` in <strong>${escapeHtml(category)}</strong>`;
+      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to play! 📖</div>`;
       return;
     }
-    const w = data.words[Math.floor(Math.random() * data.words.length)];
+    const w = pool[Math.floor(Math.random() * pool.length)];
     scrambleState.current = w;
     const scrambled = scrambleWord(w.word);
     area.innerHTML = `
@@ -2054,6 +2120,8 @@
     });
     document.getElementById('scrambleSkip').addEventListener('click', newScrambleRound);
   }
+
+  document.getElementById('scrambleCategory').addEventListener('change', newScrambleRound);
 
   /* ---------- game: verb chef ---------- */
   // Andy cooks a silly dish: each correct verb tosses an ingredient into
