@@ -743,6 +743,28 @@
   .game-panel { display: none; }
   .game-panel.active { display: block; }
 
+  nav.topic-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .topic-btn {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    background: var(--sky);
+    color: var(--ink-soft);
+    border: none;
+    border-radius: 10px;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+  }
+
+  .topic-btn.active { background: var(--happy); color: var(--happy-ink); }
+  .topic-btn:focus-visible { outline: 2px solid var(--sky-accent); outline-offset: 2px; }
+
   /* ---------- game: verb chef ---------- */
 
   .chef-wrap {
@@ -1236,18 +1258,8 @@
       </nav>
 
       <div class="game-panel active" id="game-match">
+        <nav class="topic-tabs" id="matchTopics"></nav>
         <div class="game-toolbar">
-          <select id="matchCategory" class="hw-type-select" aria-label="Category to practice">
-            <option value="All">All Words</option>
-            <option value="General">General</option>
-            <option value="Verbs">Verbs</option>
-            <option value="Question Words">Question Words</option>
-            <option value="Prepositions">Prepositions</option>
-            <option value="Daily Routine">Daily Routine</option>
-            <option value="Weather">Weather</option>
-            <option value="Phonics">Phonics</option>
-            <option value="Conversation">Conversation</option>
-          </select>
           <button class="btn-fun blue small" id="matchNewBtn">🔄 New Game</button>
         </div>
         <div id="matchArea"></div>
@@ -1255,19 +1267,7 @@
       </div>
 
       <div class="game-panel" id="game-scramble">
-        <div class="game-toolbar">
-          <select id="scrambleCategory" class="hw-type-select" aria-label="Category to practice">
-            <option value="All">All Words</option>
-            <option value="General">General</option>
-            <option value="Verbs">Verbs</option>
-            <option value="Question Words">Question Words</option>
-            <option value="Prepositions">Prepositions</option>
-            <option value="Daily Routine">Daily Routine</option>
-            <option value="Weather">Weather</option>
-            <option value="Phonics">Phonics</option>
-            <option value="Conversation">Conversation</option>
-          </select>
-        </div>
+        <nav class="topic-tabs" id="scrambleTopics"></nav>
         <div id="scrambleArea"></div>
       </div>
 
@@ -1288,16 +1288,7 @@
         </div>
         <div>
           <label for="word-category">Category</label>
-          <select id="word-category" class="hw-type-select" style="width: 100%;">
-            <option value="General">General</option>
-            <option value="Verbs">Verbs</option>
-            <option value="Question Words">Question Words</option>
-            <option value="Prepositions">Prepositions</option>
-            <option value="Daily Routine">Daily Routine</option>
-            <option value="Weather">Weather</option>
-            <option value="Phonics">Phonics</option>
-            <option value="Conversation">Conversation</option>
-          </select>
+          <select id="word-category" class="hw-type-select" style="width: 100%;"></select>
         </div>
         <div class="full">
           <label for="word-example">Example sentence (optional)</label>
@@ -1316,6 +1307,31 @@
   const STORAGE_KEY = 'andy-student-zone-v1';
   const MILESTONES = [10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000];
   const ENCOURAGEMENTS = ['Awesome!', 'You got it!', 'Nice job!', 'Super!', "You're a star!", 'Great work!', 'Brilliant!'];
+
+  // Topics match the lessons Andy actually covers (see the teacher log),
+  // not a generic placeholder list.
+  const GAME_TOPICS = [
+    'Weather',
+    'Prepositions & Places',
+    'Play with me Convo',
+    'Daily Routine',
+    'Question Words',
+    'Past Tense Verbs',
+    'Verbs & Practice Use',
+    'ABCs, Digraphs & Sounding',
+    'First Class (ABC)',
+    'General',
+  ];
+  const OLD_CATEGORY_MIGRATION = {
+    'Verbs': 'Verbs & Practice Use',
+    'Question Words': 'Question Words',
+    'Prepositions': 'Prepositions & Places',
+    'Daily Routine': 'Daily Routine',
+    'Weather': 'Weather',
+    'Phonics': 'ABCs, Digraphs & Sounding',
+    'Conversation': 'Play with me Convo',
+    'General': 'General',
+  };
 
   function loadData() {
     try {
@@ -1345,7 +1361,10 @@
         delete parsed.homeworkTeacher;
         delete parsed.homeworkMine;
         parsed.words = Array.isArray(parsed.words) ? parsed.words : [];
-        parsed.words.forEach(w => { if (!w.category) w.category = 'General'; });
+        parsed.words.forEach(w => {
+          if (!w.category) w.category = 'General';
+          w.category = OLD_CATEGORY_MIGRATION[w.category] || w.category;
+        });
         parsed.stars = typeof parsed.stars === 'number' ? parsed.stars : 0;
         parsed.streak = typeof parsed.streak === 'number' ? parsed.streak : 0;
         parsed.lastQualifiedDate = parsed.lastQualifiedDate || null;
@@ -1982,7 +2001,18 @@
     return data.words.filter(w => (w.category || 'General') === category);
   }
 
-  const matchState = { cards: [], firstIdx: null, lock: false, matchedCount: 0, totalPairs: 0 };
+  function renderTopicButtons(containerId, selected, onSelect) {
+    const nav = document.getElementById(containerId);
+    const topics = ['All', ...GAME_TOPICS];
+    nav.innerHTML = topics.map(topic =>
+      `<button type="button" class="topic-btn ${topic === selected ? 'active' : ''}" data-topic="${escapeHtml(topic)}">${escapeHtml(topic === 'All' ? 'All Words' : topic)}</button>`
+    ).join('');
+    nav.querySelectorAll('.topic-btn').forEach(btn => {
+      btn.addEventListener('click', () => onSelect(btn.dataset.topic));
+    });
+  }
+
+  const matchState = { cards: [], firstIdx: null, lock: false, matchedCount: 0, totalPairs: 0, category: 'All' };
 
   function buildMatchDeck(pool) {
     const size = Math.min(6, pool.length);
@@ -2006,7 +2036,7 @@
 
   function startMatchGame() {
     const area = document.getElementById('matchArea');
-    const category = document.getElementById('matchCategory').value;
+    const category = matchState.category;
     const pool = wordsInCategory(category);
     if (pool.length < 3) {
       const where = category === 'All' ? '' : ` in <strong>${escapeHtml(category)}</strong>`;
@@ -2023,7 +2053,11 @@
     renderMatchBoard();
   }
 
-  document.getElementById('matchCategory').addEventListener('change', startMatchGame);
+  function selectMatchTopic(topic) {
+    matchState.category = topic;
+    renderTopicButtons('matchTopics', matchState.category, selectMatchTopic);
+    startMatchGame();
+  }
 
   document.getElementById('matchArea').addEventListener('click', (e) => {
     const btn = e.target.closest('.match-card');
@@ -2067,7 +2101,7 @@
 
   /* ---------- game: unscramble ---------- */
 
-  const scrambleState = { current: null };
+  const scrambleState = { current: null, category: 'All' };
 
   function scrambleWord(w) {
     const letters = w.split('');
@@ -2083,7 +2117,7 @@
 
   function newScrambleRound() {
     const area = document.getElementById('scrambleArea');
-    const category = document.getElementById('scrambleCategory').value;
+    const category = scrambleState.category;
     const pool = wordsInCategory(category);
     if (pool.length < 3) {
       const where = category === 'All' ? '' : ` in <strong>${escapeHtml(category)}</strong>`;
@@ -2121,7 +2155,11 @@
     document.getElementById('scrambleSkip').addEventListener('click', newScrambleRound);
   }
 
-  document.getElementById('scrambleCategory').addEventListener('change', newScrambleRound);
+  function selectScrambleTopic(topic) {
+    scrambleState.category = topic;
+    renderTopicButtons('scrambleTopics', scrambleState.category, selectScrambleTopic);
+    newScrambleRound();
+  }
 
   /* ---------- game: verb chef ---------- */
   // Andy cooks a silly dish: each correct verb tosses an ingredient into
@@ -2367,9 +2405,15 @@
 
   /* ---------- init ---------- */
 
+  document.getElementById('word-category').innerHTML = GAME_TOPICS.map(t =>
+    `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`
+  ).join('');
+
   renderHud();
   renderHomework();
   renderWords();
+  renderTopicButtons('matchTopics', matchState.category, selectMatchTopic);
+  renderTopicButtons('scrambleTopics', scrambleState.category, selectScrambleTopic);
   startMatchGame();
   newScrambleRound();
   startChefRound();
