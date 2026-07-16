@@ -1251,14 +1251,10 @@
     </section>
 
     <section class="panel" id="panel-games">
-      <nav class="game-tabs" id="gameTabs">
-        <button class="game-tab-btn active" data-game="match">🧩 Word Match</button>
-        <button class="game-tab-btn" data-game="scramble">🔤 Unscramble</button>
-        <button class="game-tab-btn" data-game="chef">🍲 Verb Chef</button>
-      </nav>
+      <nav class="game-tabs" id="gameTabs"></nav>
+      <nav class="game-tabs" id="gameSubTabs"></nav>
 
       <div class="game-panel active" id="game-match">
-        <nav class="topic-tabs" id="matchTopics"></nav>
         <div class="game-toolbar">
           <button class="btn-fun blue small" id="matchNewBtn">🔄 New Game</button>
         </div>
@@ -1267,7 +1263,6 @@
       </div>
 
       <div class="game-panel" id="game-scramble">
-        <nav class="topic-tabs" id="scrambleTopics"></nav>
         <div id="scrambleArea"></div>
       </div>
 
@@ -2001,15 +1996,76 @@
     return data.words.filter(w => (w.category || 'General') === category);
   }
 
-  function renderTopicButtons(containerId, selected, onSelect) {
+  const TOPIC_ITEMS = [
+    { value: 'All', label: '🌈 All Words' },
+    { value: 'Weather', label: '☁️ Weather' },
+    { value: 'Prepositions & Places', label: '📍 Prepositions & Places' },
+    { value: 'Play with me Convo', label: '💬 Play with me Convo' },
+    { value: 'Daily Routine', label: '⏰ Daily Routine' },
+    { value: 'Question Words', label: '❓ Question Words' },
+    { value: 'Past Tense Verbs', label: '⏪ Past Tense Verbs' },
+    { value: 'Verbs & Practice Use', label: '🏃 Verbs & Practice Use' },
+    { value: 'ABCs, Digraphs & Sounding', label: '🔤 ABCs, Digraphs & Sounding' },
+    { value: 'First Class (ABC)', label: '🎈 First Class (ABC)' },
+    { value: 'General', label: '⭐ General' },
+  ];
+  const GAME_ITEMS = {
+    match: { value: 'match', label: '🧩 Word Match' },
+    scramble: { value: 'scramble', label: '🔤 Unscramble' },
+    chef: { value: 'chef', label: '🍲 Verb Chef' },
+  };
+  // Verb Chef only makes sense where the topic is actually about verbs.
+  const VERB_TOPICS = new Set(['All', 'Past Tense Verbs', 'Verbs & Practice Use']);
+
+  function gamesForTopic(topic) {
+    const games = ['match', 'scramble'];
+    if (VERB_TOPICS.has(topic)) games.push('chef');
+    return games;
+  }
+
+  function renderButtonRow(containerId, items, selected, onSelect) {
     const nav = document.getElementById(containerId);
-    const topics = ['All', ...GAME_TOPICS];
-    nav.innerHTML = topics.map(topic =>
-      `<button type="button" class="topic-btn ${topic === selected ? 'active' : ''}" data-topic="${escapeHtml(topic)}">${escapeHtml(topic === 'All' ? 'All Words' : topic)}</button>`
+    nav.innerHTML = items.map(item =>
+      `<button type="button" class="game-tab-btn ${item.value === selected ? 'active' : ''}" data-value="${escapeHtml(item.value)}">${item.label}</button>`
     ).join('');
-    nav.querySelectorAll('.topic-btn').forEach(btn => {
-      btn.addEventListener('click', () => onSelect(btn.dataset.topic));
+    nav.querySelectorAll('.game-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => onSelect(btn.dataset.value));
     });
+  }
+
+  let currentTopic = 'All';
+  let currentGame = 'match';
+
+  function renderGameTopTabs() {
+    renderButtonRow('gameTabs', TOPIC_ITEMS, currentTopic, selectTopic);
+  }
+
+  function renderGameSubTabs() {
+    renderButtonRow('gameSubTabs', gamesForTopic(currentTopic).map(g => GAME_ITEMS[g]), currentGame, selectGame);
+  }
+
+  function showGamePanel(game) {
+    document.querySelectorAll('.game-panel').forEach(p => p.classList.toggle('active', p.id === 'game-' + game));
+    if (game === 'match') startMatchGame();
+    else if (game === 'scramble') newScrambleRound();
+    else if (game === 'chef') startChefRound();
+  }
+
+  function selectTopic(topic) {
+    currentTopic = topic;
+    matchState.category = topic;
+    scrambleState.category = topic;
+    const games = gamesForTopic(topic);
+    if (!games.includes(currentGame)) currentGame = games[0];
+    renderGameTopTabs();
+    renderGameSubTabs();
+    showGamePanel(currentGame);
+  }
+
+  function selectGame(game) {
+    currentGame = game;
+    renderGameSubTabs();
+    showGamePanel(game);
   }
 
   const matchState = { cards: [], firstIdx: null, lock: false, matchedCount: 0, totalPairs: 0, category: 'All' };
@@ -2051,12 +2107,6 @@
     matchState.matchedCount = 0;
     matchState.totalPairs = matchState.cards.length / 2;
     renderMatchBoard();
-  }
-
-  function selectMatchTopic(topic) {
-    matchState.category = topic;
-    renderTopicButtons('matchTopics', matchState.category, selectMatchTopic);
-    startMatchGame();
   }
 
   document.getElementById('matchArea').addEventListener('click', (e) => {
@@ -2153,12 +2203,6 @@
       }
     });
     document.getElementById('scrambleSkip').addEventListener('click', newScrambleRound);
-  }
-
-  function selectScrambleTopic(topic) {
-    scrambleState.category = topic;
-    renderTopicButtons('scrambleTopics', scrambleState.category, selectScrambleTopic);
-    newScrambleRound();
   }
 
   /* ---------- game: verb chef ---------- */
@@ -2392,17 +2436,6 @@
     }
   });
 
-  document.getElementById('gameTabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('.game-tab-btn');
-    if (!btn) return;
-    document.querySelectorAll('.game-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
-    const target = btn.dataset.game;
-    document.querySelectorAll('.game-panel').forEach(p => p.classList.toggle('active', p.id === 'game-' + target));
-    if (target === 'match') startMatchGame();
-    else if (target === 'scramble') newScrambleRound();
-    else startChefRound();
-  });
-
   /* ---------- init ---------- */
 
   document.getElementById('word-category').innerHTML = GAME_TOPICS.map(t =>
@@ -2412,10 +2445,9 @@
   renderHud();
   renderHomework();
   renderWords();
-  renderTopicButtons('matchTopics', matchState.category, selectMatchTopic);
-  renderTopicButtons('scrambleTopics', scrambleState.category, selectScrambleTopic);
-  startMatchGame();
-  newScrambleRound();
+  renderGameTopTabs();
+  renderGameSubTabs();
+  showGamePanel(currentGame);
   startChefRound();
   ensureTodayGameCounter();
 </script>
