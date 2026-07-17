@@ -882,39 +882,6 @@
 
   .chef-shop-row { align-self: center; }
 
-  .chef-difficulty {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.4rem;
-  }
-
-  .chef-diff-btn {
-    font-family: 'Baloo 2', ui-rounded, sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    background: var(--sky);
-    color: var(--ink-soft);
-    border: none;
-    border-radius: 12px;
-    padding: 0.45rem 0.8rem;
-    cursor: pointer;
-  }
-
-  .chef-diff-btn.active { background: var(--sky-accent); color: var(--sky-accent-ink); }
-  .chef-diff-btn:focus-visible { outline: 2px solid var(--sky-accent); outline-offset: 2px; }
-
-  .chef-diff-star { font-size: 0.72rem; opacity: 0.8; }
-
-  .chef-coming-soon {
-    color: var(--ink-soft);
-    font-size: 0.95rem;
-    background: var(--sky);
-    border-radius: 14px;
-    padding: 1.4rem;
-    max-width: 320px;
-  }
-
   .chef-shop {
     background: var(--sky);
     border-radius: 14px;
@@ -1620,6 +1587,10 @@
 
       <div class="game-panel" id="game-chef">
         <div id="chefArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-runner">
+        <div id="runnerArea"></div>
       </div>
     </section>
 
@@ -2365,13 +2336,15 @@
     match: { value: 'match', label: '🧩 Word Match' },
     scramble: { value: 'scramble', label: '🔤 Unscramble' },
     chef: { value: 'chef', label: '🍲 Verb Chef' },
+    runner: { value: 'runner', label: '🏃 Routine Runner' },
   };
-  // Verb Chef only makes sense where the topic is actually about verbs.
+  // Verb Chef and Routine Runner only make sense where the topic is
+  // actually about verbs.
   const VERB_TOPICS = new Set(['Verbs & Practice Use']);
 
   function gamesForTopic(topic) {
     const games = ['match', 'scramble'];
-    if (VERB_TOPICS.has(topic)) games.push('chef');
+    if (VERB_TOPICS.has(topic)) games.push('chef', 'runner');
     return games;
   }
 
@@ -2401,6 +2374,7 @@
     if (game === 'match') startMatchGame();
     else if (game === 'scramble') newScrambleRound();
     else if (game === 'chef') startChefRound();
+    else if (game === 'runner') startRunnerRound();
   }
 
   function selectTopic(topic) {
@@ -2629,24 +2603,8 @@
   }
 
   const CHEF_ROUND_SIZE = 8;
-  const chefState = { roundVerbs: [], index: 0, choices: [], done: false, firstTryCount: 0, missedCurrent: false, shopOpen: false, difficulty: 'easy' };
-
-  // "easy" is Verb Chef, "medium" is Routine Runner. "hard" shows a
-  // placeholder until another verb game is built for it. Stars per
-  // correct answer scale with difficulty so harder games are worth more.
-  const CHEF_DIFFICULTIES = {
-    easy: { label: '🟢 Easy', stars: 1, ready: true },
-    medium: { label: '🟡 Medium', stars: 2, ready: true },
-    hard: { label: '🔴 Hard', stars: 3, ready: false },
-  };
-
-  function renderChefDifficultyPicker() {
-    return Object.keys(CHEF_DIFFICULTIES).map(key => {
-      const d = CHEF_DIFFICULTIES[key];
-      const active = chefState.difficulty === key;
-      return `<button class="chef-diff-btn${active ? ' active' : ''}" data-diff="${key}">${d.label} <span class="chef-diff-star">+${d.stars}⭐</span></button>`;
-    }).join('');
-  }
+  const CHEF_STARS_PER_ANSWER = 1;
+  const chefState = { roundVerbs: [], index: 0, choices: [], done: false, firstTryCount: 0, missedCurrent: false, shopOpen: false };
 
   function buildChefChoices(correctVerb) {
     const others = shuffleArray(VERBS.filter(v => v.en !== correctVerb.en)).slice(0, 2);
@@ -2654,14 +2612,6 @@
   }
 
   function startChefRound() {
-    if (chefState.difficulty === 'medium') {
-      startRunnerRound();
-      return;
-    }
-    if (!CHEF_DIFFICULTIES[chefState.difficulty].ready) {
-      renderChefComingSoon();
-      return;
-    }
     chefState.roundVerbs = shuffleArray(VERBS).slice(0, CHEF_ROUND_SIZE);
     chefState.index = 0;
     chefState.done = false;
@@ -2669,17 +2619,6 @@
     chefState.missedCurrent = false;
     chefState.shopOpen = false;
     renderChefRound();
-  }
-
-  function renderChefComingSoon() {
-    const area = document.getElementById('chefArea');
-    const d = CHEF_DIFFICULTIES[chefState.difficulty];
-    area.innerHTML = `
-      <div class="chef-wrap">
-        <div class="chef-difficulty">${renderChefDifficultyPicker()}</div>
-        <div class="chef-coming-soon">${d.label} is being cooked up — check back soon! Each correct answer here will be worth <strong>+${d.stars}⭐</strong>.</div>
-      </div>
-    `;
   }
 
   function renderChefRound() {
@@ -2694,7 +2633,6 @@
 
     area.innerHTML = `
       <div class="chef-wrap">
-        <div class="chef-difficulty">${renderChefDifficultyPicker()}</div>
         <div class="chef-shop-row">
           <button class="link-btn" id="chefShopToggle">🎨 Pot Shop</button>
         </div>
@@ -2719,8 +2657,7 @@
   function renderChefComplete() {
     const area = document.getElementById('chefArea');
     const dishName = randomDishName();
-    const perAnswer = CHEF_DIFFICULTIES[chefState.difficulty].stars;
-    const bonus = Math.max(1, chefState.firstTryCount) * perAnswer;
+    const bonus = Math.max(1, chefState.firstTryCount) * CHEF_STARS_PER_ANSWER;
     const total = chefState.roundVerbs.length;
     data.dishesCooked = (data.dishesCooked || 0) + 1;
     saveData();
@@ -2759,6 +2696,7 @@
   const RUNNER_OBSTACLE_MS = 9000;
   const RUNNER_CHOICE_HUES = ['hue-happy', 'hue-pop', 'hue-sky', 'hue-violet'];
   const RUNNER_WIN_TARGET = RUNNER_WORDS.length;
+  const RUNNER_STARS_PER_ANSWER = 2;
 
   const runnerState = { cleared: 0, bag: [], resolved: false, obstacleAnim: null, runToken: 0 };
   let runnerTrackEl, runnerCharEl, runnerWordEl, runnerScoreEl, runnerChoicesEl, runnerPromptEl;
@@ -2798,36 +2736,33 @@
 
   function renderRunnerMarkup() {
     return `
-      <div class="chef-wrap">
-        <div class="chef-difficulty">${renderChefDifficultyPicker()}</div>
-        <div class="runner-prompt" id="runnerPrompt">
-          <span class="runner-prompt-word" id="runnerWord">—</span>
-        </div>
-        <p class="runner-score" id="runnerScore"></p>
-        <div class="runner-track" id="runnerTrack">
-          <div class="sky-cloud cloud-1"></div>
-          <div class="sky-cloud cloud-2"></div>
-          <div class="runner-ground-path"></div>
-          <div class="runner-ground"></div>
-          <div class="runner-char on-ground running" id="runnerChar">
-            <div class="mascot-leg mascot-leg-back"></div>
-            <div class="mascot-leg mascot-leg-front"></div>
-            <div class="mascot-arm"></div>
-            <div class="mascot-body">
-              <span class="mascot-eye mascot-eye-l"></span>
-              <span class="mascot-eye mascot-eye-r"></span>
-              <span class="mascot-mouth"></span>
-            </div>
+      <div class="runner-prompt" id="runnerPrompt">
+        <span class="runner-prompt-word" id="runnerWord">—</span>
+      </div>
+      <p class="runner-score" id="runnerScore"></p>
+      <div class="runner-track" id="runnerTrack">
+        <div class="sky-cloud cloud-1"></div>
+        <div class="sky-cloud cloud-2"></div>
+        <div class="runner-ground-path"></div>
+        <div class="runner-ground"></div>
+        <div class="runner-char on-ground running" id="runnerChar">
+          <div class="mascot-leg mascot-leg-back"></div>
+          <div class="mascot-leg mascot-leg-front"></div>
+          <div class="mascot-arm"></div>
+          <div class="mascot-body">
+            <span class="mascot-eye mascot-eye-l"></span>
+            <span class="mascot-eye mascot-eye-r"></span>
+            <span class="mascot-mouth"></span>
           </div>
         </div>
-        <div class="runner-choices" id="runnerChoices"></div>
-        <div class="banner neutral" id="runnerBanner"></div>
       </div>
+      <div class="runner-choices" id="runnerChoices"></div>
+      <div class="banner neutral" id="runnerBanner"></div>
     `;
   }
 
   function startRunnerRound() {
-    const area = document.getElementById('chefArea');
+    const area = document.getElementById('runnerArea');
     area.innerHTML = renderRunnerMarkup();
     runnerTrackEl = document.getElementById('runnerTrack');
     runnerCharEl = document.getElementById('runnerChar');
@@ -2929,7 +2864,7 @@
     }, { once: true });
 
     runnerState.cleared++;
-    addStars(CHEF_DIFFICULTIES.medium.stars);
+    addStars(RUNNER_STARS_PER_ANSWER);
     recordQualifyingActivity();
     runnerUpdateScore();
 
@@ -2965,26 +2900,21 @@
     launchConfetti();
   }
 
-  document.getElementById('chefArea').addEventListener('click', (e) => {
+  document.getElementById('runnerArea').addEventListener('click', (e) => {
     const runnerChoiceBtn = e.target.closest('.runner-choice');
-    if (runnerChoiceBtn) {
-      const token = Number(runnerChoiceBtn.dataset.token);
-      if (token !== runnerState.runToken || runnerState.resolved) return;
-      if (runnerChoiceBtn.dataset.correct === '1') {
-        runnerWinObstacle(token);
-      } else {
-        runnerChoiceBtn.classList.remove('wrong-flash');
-        void runnerChoiceBtn.offsetWidth;
-        runnerChoiceBtn.classList.add('wrong-flash');
-      }
-      return;
+    if (!runnerChoiceBtn) return;
+    const token = Number(runnerChoiceBtn.dataset.token);
+    if (token !== runnerState.runToken || runnerState.resolved) return;
+    if (runnerChoiceBtn.dataset.correct === '1') {
+      runnerWinObstacle(token);
+    } else {
+      runnerChoiceBtn.classList.remove('wrong-flash');
+      void runnerChoiceBtn.offsetWidth;
+      runnerChoiceBtn.classList.add('wrong-flash');
     }
-    const diffBtn = e.target.closest('.chef-diff-btn');
-    if (diffBtn) {
-      chefState.difficulty = diffBtn.dataset.diff;
-      startChefRound();
-      return;
-    }
+  });
+
+  document.getElementById('chefArea').addEventListener('click', (e) => {
     const shopToggle = e.target.closest('#chefShopToggle');
     if (shopToggle) {
       chefState.shopOpen = !chefState.shopOpen;
@@ -3011,7 +2941,7 @@
       const pot = document.getElementById('chefPot');
       if (pot) pot.classList.add('bump');
       if (!chefState.missedCurrent) chefState.firstTryCount++;
-      addStars(CHEF_DIFFICULTIES[chefState.difficulty].stars);
+      addStars(CHEF_STARS_PER_ANSWER);
       recordQualifyingActivity();
       showBanner('chefBanner', pickEncouragement());
       chefState.index++;
