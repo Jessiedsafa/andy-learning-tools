@@ -1572,8 +1572,9 @@
     <section class="panel" id="panel-games">
       <nav class="game-tabs" id="gameTabs"></nav>
       <nav class="game-tabs" id="gameSubTabs"></nav>
+      <p class="game-empty" id="gamePickerHint">👆 Pick a game above to start playing!</p>
 
-      <div class="game-panel active" id="game-match">
+      <div class="game-panel" id="game-match">
         <div class="game-toolbar">
           <button class="btn-fun blue small" id="matchNewBtn">🔄 New Game</button>
         </div>
@@ -2358,7 +2359,7 @@
   }
 
   let currentTopic = 'All';
-  let currentGame = 'match';
+  let currentGame = null;
 
   function renderGameTopTabs() {
     renderButtonRow('gameTabs', TOPIC_ITEMS, currentTopic, selectTopic);
@@ -2370,18 +2371,21 @@
 
   function showGamePanel(game) {
     document.querySelectorAll('.game-panel').forEach(p => p.classList.toggle('active', p.id === 'game-' + game));
+    document.getElementById('gamePickerHint').style.display = game ? 'none' : '';
     if (game === 'match') startMatchGame();
     else if (game === 'scramble') newScrambleRound();
     else if (game === 'chef') startChefRound();
     else if (game === 'runner') startRunnerRound();
   }
 
+  // Picking a topic only reveals which games fit it — it never jumps
+  // straight into a game. Andy taps the topic, sees his options, then
+  // taps the one he wants.
   function selectTopic(topic) {
     currentTopic = topic;
     matchState.category = topic;
     scrambleState.category = topic;
-    const games = gamesForTopic(topic);
-    if (!games.includes(currentGame)) currentGame = games[0];
+    currentGame = null;
     renderGameTopTabs();
     renderGameSubTabs();
     showGamePanel(currentGame);
