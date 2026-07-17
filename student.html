@@ -2338,14 +2338,13 @@
     chef: { value: 'chef', label: '🍲 Verb Chef' },
     runner: { value: 'runner', label: '🏃 Routine Runner' },
   };
-  // Verb Chef and Routine Runner only make sense where the topic is
-  // actually about verbs.
+  // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
+  // Runner) instead of the generic Word Match / Unscramble.
   const VERB_TOPICS = new Set(['Verbs & Practice Use']);
 
   function gamesForTopic(topic) {
-    const games = ['match', 'scramble'];
-    if (VERB_TOPICS.has(topic)) games.push('chef', 'runner');
-    return games;
+    if (VERB_TOPICS.has(topic)) return ['chef', 'runner'];
+    return ['match', 'scramble'];
   }
 
   function renderButtonRow(containerId, items, selected, onSelect) {
