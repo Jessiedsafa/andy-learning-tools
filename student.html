@@ -382,6 +382,8 @@
     pointer-events: none;
   }
 
+  .float-plus.minus { color: var(--danger); }
+
   /* ---------- tabs ---------- */
 
   nav.tabs {
@@ -928,17 +930,93 @@
 
   /* ---------- game: verb chef, medium difficulty (routine runner) ---------- */
 
+  .runner-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    flex: none;
+  }
+
+  .lives-row { display: flex; align-items: center; gap: 0.22rem; }
+  .icon-heart {
+    position: relative;
+    display: block;
+    width: 0.8rem;
+    height: 0.8rem;
+    flex: none;
+    transform: rotate(-45deg);
+    background: var(--danger);
+    margin-top: 0.15rem;
+    transition: background 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  }
+  .icon-heart::before, .icon-heart::after {
+    content: "";
+    position: absolute;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: inherit;
+  }
+  .icon-heart::before { top: -0.4rem; left: 0; }
+  .icon-heart::after { top: 0; left: 0.4rem; }
+  .icon-heart.spent { background: var(--line); opacity: 0.8; transform: rotate(-45deg) scale(0.85); }
+
+  .icon-runner {
+    position: relative;
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    vertical-align: -0.2rem;
+  }
+  .icon-runner::before {
+    content: "";
+    position: absolute;
+    top: 0.05rem; left: 0.25rem;
+    width: 0.8rem; height: 0.8rem;
+    border-radius: 50%;
+    background: var(--sky-accent-ink);
+  }
+  .icon-runner::after {
+    content: "";
+    position: absolute;
+    bottom: 0.08rem; left: -0.05rem;
+    width: 0.62rem; height: 0.26rem;
+    border-radius: 999px;
+    background: var(--sky-accent-ink);
+    transform: rotate(-20deg);
+  }
+
+  .icon-star {
+    display: inline-block;
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+    background: var(--star);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .icon-star-inline { width: 0.8rem; height: 0.8rem; vertical-align: -0.05rem; }
+
+  #game-runner.active {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
   .runner-prompt {
     background: var(--card);
     border-radius: 18px;
     padding: 0.9rem 1.1rem;
     text-align: center;
     box-shadow: 0 4px 0 var(--shadow);
-    margin: 0.75rem 0;
+    margin-bottom: 0.75rem;
     min-height: 6.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: none;
   }
   .runner-prompt-word {
     font-family: 'Baloo 2', ui-rounded, sans-serif;
@@ -960,11 +1038,13 @@
     color: var(--ink-soft);
     margin-bottom: 0.5rem;
     font-variant-numeric: tabular-nums;
+    flex: none;
   }
 
   .runner-track {
     position: relative;
-    min-height: 180px;
+    flex: 1;
+    min-height: 200px;
     border-radius: 22px;
     background: linear-gradient(180deg, color-mix(in srgb, var(--sky-accent) 14%, transparent), transparent 55%);
     overflow: hidden;
@@ -1106,6 +1186,10 @@
     45%  { transform: translateY(-68px) rotate(-12deg); }
     100% { transform: translateY(0) rotate(0deg); }
   }
+  .runner-char.fallen { animation: runner-fall 0.5s ease-in forwards; }
+  @keyframes runner-fall {
+    to { transform: translateY(4px) rotate(88deg); opacity: 0.75; }
+  }
 
   .runner-obstacle {
     position: absolute;
@@ -1192,7 +1276,7 @@
     background: color-mix(in srgb, var(--sky) 92%, transparent);
   }
 
-  .runner-complete {
+  .runner-gameover {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1204,6 +1288,14 @@
     padding: 2rem 1.5rem;
     box-shadow: 0 6px 0 var(--shadow);
     width: 100%;
+  }
+
+  .impact-burst {
+    width: 3.4rem;
+    height: 3.4rem;
+    margin: 0 auto;
+    background: var(--danger);
+    clip-path: polygon(50% 0%, 61% 30%, 90% 15%, 74% 42%, 100% 50%, 74% 58%, 90% 85%, 61% 70%, 50% 100%, 39% 70%, 10% 85%, 26% 58%, 0% 50%, 26% 42%, 10% 15%, 39% 30%);
   }
 
   .medal { position: relative; width: 4.2rem; height: 4.2rem; margin: 0 auto; }
@@ -1233,18 +1325,51 @@
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   }
 
-  .runner-complete-title {
+  .runner-gameover-title {
     font-family: 'Baloo 2', ui-rounded, sans-serif;
     font-weight: 700;
     font-size: 1.4rem;
-    color: var(--happy);
+    color: var(--danger);
   }
-  .runner-complete-score {
+  .runner-gameover-title.win { color: var(--happy); }
+  .runner-gameover-score {
     font-family: 'Baloo 2', ui-rounded, sans-serif;
     font-weight: 700;
     font-size: 1.15rem;
   }
-  .runner-complete-note { color: var(--ink-soft); font-size: 0.95rem; margin: 0; }
+  .runner-gameover-note { color: var(--ink-soft); font-size: 0.95rem; margin: 0; }
+
+  .run-stars-row { display: flex; gap: 1rem; align-items: center; justify-content: center; }
+  .run-star-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+  }
+  .run-star-stat.gain { color: var(--happy); }
+  .run-star-stat.loss { color: var(--danger); }
+  .run-star-stat .icon-star { width: 1.05rem; height: 1.05rem; }
+  .run-star-stat.loss .icon-star { background: var(--danger); }
+
+  .runner-gameover.tutorial { align-items: stretch; }
+  .tutorial-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-align: left;
+    color: var(--ink);
+    font-size: 0.98rem;
+  }
+  .tutorial-row .icon-runner,
+  .tutorial-row .icon-star { flex: none; width: 1.4rem; height: 1.4rem; }
+  .tutorial-row .icon-runner::before { width: 0.85rem; height: 0.85rem; }
+  .tutorial-row .icon-heart {
+    flex: none;
+    transform: rotate(-45deg) scale(1.7);
+    margin: 0.35rem 0.3rem 0 0.25rem;
+  }
 
   .runner-track.shake { animation: track-shake 0.4s ease; }
   @keyframes track-shake {
@@ -1257,7 +1382,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .runner-ground, .sky-cloud { animation: none; }
-    .runner-char.running, .runner-char.jump,
+    .runner-char.running, .runner-char.jump, .runner-char.fallen,
     .runner-char.running .mascot-leg-back, .runner-char.running .mascot-leg-front { animation: none; }
     .runner-choice.wrong-flash { animation: none; }
     .runner-track.shake { animation: none; }
@@ -1346,6 +1471,7 @@
   }
 
   .banner.neutral { color: var(--ink-soft); }
+  .banner.wrong { color: var(--danger); }
 
   .banner.show { opacity: 1; }
 
@@ -1796,11 +1922,11 @@
   }
 
   function floatPlusOne(n) {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || n === 0) return;
     const badge = document.getElementById('starStat');
     const span = document.createElement('span');
-    span.className = 'float-plus';
-    span.textContent = '+' + n;
+    span.className = 'float-plus' + (n < 0 ? ' minus' : '');
+    span.textContent = (n > 0 ? '+' : '') + n;
     badge.appendChild(span);
     span.addEventListener('animationend', () => span.remove());
   }
@@ -1817,10 +1943,12 @@
 
   function addStars(n) {
     const prev = data.stars;
-    data.stars += n;
+    // Clamp at 0 — losing shouldn't be able to push the star count negative.
+    data.stars = Math.max(0, data.stars + n);
+    const actualDelta = data.stars - prev;
     saveData();
     renderHud();
-    floatPlusOne(n);
+    floatPlusOne(actualDelta);
     const crossed = MILESTONES.filter(m => prev < m && data.stars >= m).pop();
     if (crossed) showMilestone(`🌟 ${crossed} stars! You're doing amazing, Andy!`);
   }
@@ -1961,9 +2089,10 @@
     return ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)] + ' ⭐';
   }
 
-  function showBanner(id, msg) {
+  function showBanner(id, msg, isWrong) {
     const el = document.getElementById(id);
     el.textContent = msg;
+    el.classList.toggle('wrong', !!isWrong);
     el.classList.add('show');
     clearTimeout(el._timer);
     el._timer = setTimeout(() => el.classList.remove('show'), 2600);
@@ -2677,8 +2806,8 @@
   /* ---------- game: verb chef, medium difficulty (routine runner) ---------- */
   // An endless-runner quiz: an obstacle drifts toward Andy on a generous
   // timer while 3 answer choices show. Tap the right one and he hops over
-  // it. A wrong tap just shakes — same as every other game here, mistakes
-  // never lose stars or end the round; only correct taps move things along.
+  // it. A wrong tap (or letting the obstacle arrive untapped) costs a life
+  // and a star; run out of lives and it's game over — Try Again to restart.
 
   const RUNNER_WORDS = [
     { word: 'wake up', meaning: '起床' },
@@ -2694,11 +2823,26 @@
   ];
   const RUNNER_OBSTACLE_MS = 9000;
   const RUNNER_CHOICE_HUES = ['hue-happy', 'hue-pop', 'hue-sky', 'hue-violet'];
-  const RUNNER_WIN_TARGET = RUNNER_WORDS.length;
-  const RUNNER_STARS_PER_ANSWER = 2;
+  const RUNNER_WIN_TARGET = 20;
+  const RUNNER_WIN_BONUS_STARS = 5;
+  const RUNNER_MAX_LIVES = 5;
+  const RUNNER_JUMP_MS = 550;
+  const RUNNER_JUMP_PEAK_MS = Math.round(RUNNER_JUMP_MS * 0.45);
 
-  const runnerState = { cleared: 0, bag: [], resolved: false, obstacleAnim: null, runToken: 0 };
-  let runnerTrackEl, runnerCharEl, runnerWordEl, runnerScoreEl, runnerChoicesEl, runnerPromptEl;
+  const runnerState = {
+    cleared: 0,
+    bag: [],
+    resolved: false,
+    obstacleAnim: null,
+    runToken: 0,
+    livesRemaining: RUNNER_MAX_LIVES,
+    starsEarnedThisRun: 0,
+    starsLostThisRun: 0,
+  };
+  let runnerTutorialShown = false;
+  let runnerTrackEl, runnerCharEl, runnerWordEl, runnerScoreEl, runnerChoicesEl, runnerPromptEl, runnerLivesRowEl;
+
+  /* ---------- tiny synthesized sound effects (no audio files) ---------- */
 
   let audioCtx = null;
   function getAudioCtx() {
@@ -2727,6 +2871,7 @@
     } catch (e) {}
   }
   function playJumpSound() { playTone(440, 900, 0.16, 'triangle', 0.16); }
+  function playFallSound() { playTone(220, 70, 0.35, 'sawtooth', 0.18); }
   function playWinSound() {
     [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
       setTimeout(() => playTone(f, f, 0.2, 'triangle', 0.18), i * 110);
@@ -2735,6 +2880,10 @@
 
   function renderRunnerMarkup() {
     return `
+      <div class="runner-toolbar">
+        <div class="lives-row" id="livesRow"></div>
+        <button class="btn-fun blue small" id="runnerRestartBtn">Restart</button>
+      </div>
       <div class="runner-prompt" id="runnerPrompt">
         <span class="runner-prompt-word" id="runnerWord">—</span>
       </div>
@@ -2756,7 +2905,7 @@
         </div>
       </div>
       <div class="runner-choices" id="runnerChoices"></div>
-      <div class="banner neutral" id="runnerBanner"></div>
+      <p class="banner" id="runnerBanner"></p>
     `;
   }
 
@@ -2769,10 +2918,18 @@
     runnerScoreEl = document.getElementById('runnerScore');
     runnerChoicesEl = document.getElementById('runnerChoices');
     runnerPromptEl = document.getElementById('runnerPrompt');
-    runnerState.cleared = 0;
-    runnerState.bag = [];
-    runnerState.resolved = false;
-    runnerNextObstacle();
+    runnerLivesRowEl = document.getElementById('livesRow');
+    runnerState.livesRemaining = RUNNER_MAX_LIVES;
+    runnerUpdateLives();
+    document.getElementById('runnerRestartBtn').addEventListener('click', runnerBeginRun);
+    // Tutorial only on this game's first visit per page session; switching
+    // back to this tab later goes straight into a run, like every other game.
+    if (!runnerTutorialShown) {
+      runnerTutorialShown = true;
+      runnerShowTutorial();
+    } else {
+      runnerBeginRun();
+    }
   }
 
   function runnerDrawFromBag() {
@@ -2786,7 +2943,7 @@
   }
 
   function runnerUpdateScore() {
-    runnerScoreEl.textContent = `Cleared: ${runnerState.cleared} of ${RUNNER_WIN_TARGET}`;
+    runnerScoreEl.textContent = `${runnerState.cleared} of ${RUNNER_WIN_TARGET}`;
   }
 
   function runnerClearObstacle() {
@@ -2795,6 +2952,23 @@
       runnerState.obstacleAnim = null;
     }
     const existing = runnerTrackEl.querySelector('.runner-obstacle');
+    if (existing) existing.remove();
+  }
+
+  // Ground + runner stay in the DOM permanently; overlays (empty-state,
+  // game-over, tutorial) are appended on top rather than ever replacing
+  // trackEl's contents, so runnerCharEl never goes stale.
+  function runnerShowOverlay(innerHtml) {
+    runnerRemoveOverlay();
+    const overlay = document.createElement('div');
+    overlay.className = 'runner-overlay';
+    overlay.id = 'runnerOverlay';
+    overlay.innerHTML = innerHtml;
+    runnerTrackEl.appendChild(overlay);
+    return overlay;
+  }
+  function runnerRemoveOverlay() {
+    const existing = document.getElementById('runnerOverlay');
     if (existing) existing.remove();
   }
 
@@ -2815,13 +2989,19 @@
     runnerState.obstacleAnim = anim;
     anim.onfinish = () => {
       if (token !== runnerState.runToken || runnerState.resolved) return;
-      // Ran out of time with nothing tapped — no penalty, just a gentle nudge onward.
-      showBanner('runnerBanner', "Let's try this one!");
-      runnerNextObstacle();
+      runnerLoseRun('timeout', token);
     };
   }
 
   function runnerNextObstacle() {
+    if (RUNNER_WORDS.length < 3) {
+      runnerChoicesEl.innerHTML = '';
+      runnerShowOverlay('<div class="game-empty">Add at least 3 routine phrases first, then come back to run!</div>');
+      runnerPromptEl.style.visibility = 'hidden';
+      return;
+    }
+    runnerRemoveOverlay();
+    runnerPromptEl.style.visibility = 'visible';
     runnerClearObstacle();
     runnerState.resolved = false;
     runnerState.runToken++;
@@ -2840,18 +3020,66 @@
       btn.type = 'button';
       btn.className = 'runner-choice ' + hues[i % hues.length];
       btn.innerHTML = '<span class="runner-choice-label" lang="zh-Hant">' + escapeHtml(entry.meaning) + '</span>';
-      btn.dataset.correct = entry.word === target.word ? '1' : '0';
-      btn.dataset.token = token;
+      const isCorrect = entry.word === target.word;
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        runnerHandleChoiceTap(btn, isCorrect, token);
+      }, { passive: false });
       runnerChoicesEl.appendChild(btn);
     });
 
     runnerSpawnObstacle(token);
   }
 
+  function runnerHandleChoiceTap(btn, isCorrect, token) {
+    if (token !== runnerState.runToken || runnerState.resolved) return;
+    if (isCorrect) {
+      runnerWinObstacle(token);
+    } else {
+      btn.classList.remove('wrong-flash');
+      void btn.offsetWidth;
+      btn.classList.add('wrong-flash');
+      runnerLoseRun('wrong', token);
+    }
+  }
+
   function runnerWinObstacle(token) {
     if (runnerState.resolved) return;
     runnerState.resolved = true;
-    runnerClearObstacle();
+
+    // Rush the obstacle the rest of the way to the runner's position (instead
+    // of just fading out wherever it happened to be) so the jump animation
+    // actually looks like it's clearing the hurdle, timed to land together.
+    const obstacleEl = runnerTrackEl.querySelector('.runner-obstacle');
+    if (obstacleEl && runnerState.obstacleAnim) {
+      const prevAnim = runnerState.obstacleAnim;
+      const elapsed = prevAnim.currentTime || 0;
+      const trackWidth = runnerTrackEl.clientWidth;
+      const runnerLeftPx = runnerCharEl.offsetLeft;
+      const collisionTargetX = runnerLeftPx - trackWidth;
+      const currentX = Math.min(1, elapsed / RUNNER_OBSTACLE_MS) * collisionTargetX;
+      const CLEAR_GAP_PX = 20;
+      const rushTargetX = collisionTargetX + CLEAR_GAP_PX;
+      try { prevAnim.cancel(); } catch (e) {}
+
+      if (prefersReducedMotion()) {
+        obstacleEl.remove();
+      } else {
+        const rush = obstacleEl.animate(
+          [{ transform: `translateX(${currentX}px)` }, { transform: `translateX(${rushTargetX}px)` }],
+          { duration: Math.max(120, RUNNER_JUMP_PEAK_MS), easing: 'linear', fill: 'forwards' }
+        );
+        runnerState.obstacleAnim = rush;
+        rush.onfinish = () => {
+          const hurdleEl = obstacleEl.querySelector('.hurdle');
+          const poof = hurdleEl.animate(
+            [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.2)', opacity: 0 }],
+            { duration: 130, easing: 'ease-out' }
+          );
+          poof.onfinish = () => obstacleEl.remove();
+        };
+      }
+    }
 
     playJumpSound();
     runnerCharEl.classList.remove('running');
@@ -2863,55 +3091,139 @@
     }, { once: true });
 
     runnerState.cleared++;
-    addStars(RUNNER_STARS_PER_ANSWER);
+    addStars(1);
+    runnerState.starsEarnedThisRun += 1;
     recordQualifyingActivity();
     runnerUpdateScore();
 
     if (runnerState.cleared >= RUNNER_WIN_TARGET) {
-      setTimeout(runnerShowComplete, 700);
+      addStars(RUNNER_WIN_BONUS_STARS);
+      runnerState.starsEarnedThisRun += RUNNER_WIN_BONUS_STARS;
+      showBanner('runnerBanner', 'Gold medal!');
+      setTimeout(runnerShowWin, 700);
       return;
     }
+
     showBanner('runnerBanner', pickEncouragement());
     setTimeout(() => { if (token === runnerState.runToken) runnerNextObstacle(); }, 700);
   }
 
-  function runnerShowComplete() {
+  function runnerUpdateLives() {
+    const remaining = Math.max(0, runnerState.livesRemaining);
+    runnerLivesRowEl.innerHTML = '';
+    runnerLivesRowEl.setAttribute('aria-label', `${remaining} of ${RUNNER_MAX_LIVES} lives remaining`);
+    for (let i = 0; i < RUNNER_MAX_LIVES; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'icon-heart' + (i < remaining ? '' : ' spent');
+      runnerLivesRowEl.appendChild(heart);
+    }
+  }
+
+  function runnerLoseRun(reason, token) {
+    runnerState.resolved = true;
+    if (runnerState.obstacleAnim) { try { runnerState.obstacleAnim.cancel(); } catch (e) {} }
+
+    playFallSound();
+    runnerCharEl.classList.remove('running', 'jump');
+    runnerCharEl.classList.add('fallen');
+
+    if (!prefersReducedMotion()) {
+      runnerTrackEl.classList.remove('shake');
+      void runnerTrackEl.offsetWidth;
+      runnerTrackEl.classList.add('shake');
+    }
+
+    runnerChoicesEl.innerHTML = '';
+    addStars(-1);
+    runnerState.starsLostThisRun += 1;
+    runnerState.livesRemaining--;
+    runnerUpdateLives();
+
+    const outOfLives = runnerState.livesRemaining <= 0;
+    const baseMsg = reason === 'wrong' ? 'Not quite!' : 'Too slow!';
+    showBanner('runnerBanner', outOfLives ? baseMsg : baseMsg + ' Try again!', true);
+
+    if (outOfLives) {
+      setTimeout(runnerShowGameOver, prefersReducedMotion() ? 200 : 650);
+    } else {
+      setTimeout(() => {
+        if (token !== runnerState.runToken) return;
+        runnerCharEl.classList.remove('fallen');
+        runnerCharEl.classList.add('running');
+        runnerNextObstacle();
+      }, prefersReducedMotion() ? 200 : 650);
+    }
+  }
+
+  function runnerShowWin() {
     playWinSound();
     runnerPromptEl.style.visibility = 'hidden';
     runnerScoreEl.textContent = '';
     runnerChoicesEl.innerHTML = '';
-    const overlay = document.createElement('div');
-    overlay.className = 'runner-overlay';
-    overlay.innerHTML = `
-      <div class="runner-complete">
+    runnerShowOverlay(`
+      <div class="runner-gameover win">
         <div class="medal">
           <div class="medal-ribbon medal-ribbon-l"></div>
           <div class="medal-ribbon medal-ribbon-r"></div>
           <div class="medal-disc"><span class="medal-star"></span></div>
         </div>
-        <div class="runner-complete-title">You cleared every hurdle!</div>
-        <p class="runner-complete-note">Amazing run, Andy!</p>
-        <button class="btn-fun" id="runnerAgainBtn">Run Again 🏃</button>
+        <div class="runner-gameover-title win">You Win!</div>
+        <div class="runner-gameover-score">You cleared all ${RUNNER_WIN_TARGET} obstacles!</div>
+        <p class="runner-gameover-note">Amazing work, Andy — +${RUNNER_WIN_BONUS_STARS} bonus stars! <span class="icon-star icon-star-inline" aria-hidden="true"></span></p>
+        <button class="btn-fun" id="runnerPlayAgain">Play again</button>
       </div>
-    `;
-    runnerTrackEl.appendChild(overlay);
-    document.getElementById('runnerAgainBtn').addEventListener('click', startRunnerRound);
+    `);
+    document.getElementById('runnerPlayAgain').addEventListener('click', runnerBeginRun);
     launchConfetti();
   }
 
-  document.getElementById('runnerArea').addEventListener('click', (e) => {
-    const runnerChoiceBtn = e.target.closest('.runner-choice');
-    if (!runnerChoiceBtn) return;
-    const token = Number(runnerChoiceBtn.dataset.token);
-    if (token !== runnerState.runToken || runnerState.resolved) return;
-    if (runnerChoiceBtn.dataset.correct === '1') {
-      runnerWinObstacle(token);
-    } else {
-      runnerChoiceBtn.classList.remove('wrong-flash');
-      void runnerChoiceBtn.offsetWidth;
-      runnerChoiceBtn.classList.add('wrong-flash');
-    }
-  });
+  function runnerShowGameOver() {
+    runnerPromptEl.style.visibility = 'hidden';
+    runnerScoreEl.textContent = '';
+    runnerShowOverlay(`
+      <div class="runner-gameover">
+        <div class="impact-burst"></div>
+        <div class="runner-gameover-title">Game Over</div>
+        <div class="run-stars-row">
+          <span class="run-star-stat gain">+${runnerState.starsEarnedThisRun}<span class="icon-star"></span></span>
+          <span class="run-star-stat loss">&minus;${runnerState.starsLostThisRun}<span class="icon-star"></span></span>
+        </div>
+        <button class="btn-fun" id="runnerTryAgain">Try again</button>
+      </div>
+    `);
+    document.getElementById('runnerTryAgain').addEventListener('click', runnerBeginRun);
+  }
+
+  function runnerBeginRun() {
+    runnerState.cleared = 0;
+    runnerState.resolved = false;
+    runnerState.bag = [];
+    runnerState.livesRemaining = RUNNER_MAX_LIVES;
+    runnerState.starsEarnedThisRun = 0;
+    runnerState.starsLostThisRun = 0;
+    runnerUpdateLives();
+    runnerRemoveOverlay();
+    runnerClearObstacle();
+    runnerCharEl.classList.remove('fallen', 'jump');
+    runnerCharEl.classList.add('running');
+    runnerPromptEl.style.visibility = 'visible';
+    runnerNextObstacle();
+  }
+
+  function runnerShowTutorial() {
+    runnerPromptEl.style.visibility = 'hidden';
+    runnerScoreEl.textContent = '';
+    runnerShowOverlay(`
+      <div class="runner-gameover tutorial">
+        <div class="runner-gameover-title win">How to Play</div>
+        <div class="tutorial-row"><span class="icon-runner" aria-hidden="true"></span><span>Pick the right answer to jump the hurdle.</span></div>
+        <div class="tutorial-row"><span class="icon-heart" aria-hidden="true"></span><span>You get ${RUNNER_MAX_LIVES} tries.</span></div>
+        <div class="tutorial-row"><span class="icon-star" aria-hidden="true"></span><span>Clear ${RUNNER_WIN_TARGET} to win a medal!</span></div>
+        <button class="btn-fun" id="runnerTutorialStart">Let's go!</button>
+      </div>
+    `);
+    document.getElementById('runnerTutorialStart').addEventListener('click', runnerBeginRun);
+  }
 
   document.getElementById('chefArea').addEventListener('click', (e) => {
     const shopToggle = e.target.closest('#chefShopToggle');
