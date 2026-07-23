@@ -1911,6 +1911,892 @@
     .hud-title { font-size: 1.4rem; }
     .sheet { padding: 1.1rem 1rem 1.4rem; }
   }
+
+  /* ---------- game: word blaster ---------- */
+
+  .icon-ship {
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    vertical-align: -0.25rem;
+    background: var(--sky-accent-ink);
+    clip-path: polygon(50% 0%, 20% 100%, 50% 78%, 80% 100%);
+  }
+  .tutorial-row .icon-ship { flex: none; width: 1.4rem; height: 1.4rem; }
+
+  #game-blaster.active {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .blaster-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    flex: none;
+  }
+
+  .blaster-prompt {
+    background: linear-gradient(180deg, rgba(24, 27, 64, 0.92), rgba(10, 12, 34, 0.92));
+    border: 1px solid color-mix(in srgb, var(--sky-accent) 45%, transparent);
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    text-align: center;
+    box-shadow: 0 4px 0 var(--shadow), 0 0 16px color-mix(in srgb, var(--sky-accent) 22%, transparent);
+    margin-bottom: 0.75rem;
+    flex: none;
+    min-height: 6.3rem;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .blaster-prompt-word {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: #eaf6ff;
+    text-shadow: 0 0 10px color-mix(in srgb, var(--sky-accent) 45%, transparent);
+    text-wrap: balance;
+    width: 100%;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .blaster-score {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--sky-accent);
+    letter-spacing: 0.03em;
+    margin-bottom: 0.5rem;
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .blaster-stage {
+    position: relative;
+    flex: 1;
+    min-height: 200px;
+    border-radius: 22px;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(255, 111, 145, 0.28), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(79, 182, 232, 0.28), transparent 46%),
+      radial-gradient(circle at 50% 105%, rgba(155, 127, 232, 0.4), transparent 58%),
+      linear-gradient(180deg, #05061a 0%, #0c0e2e 55%, #14163d 100%);
+    box-shadow: inset 0 0 0 2px rgba(79, 182, 232, 0.25);
+    overflow: hidden;
+    margin-bottom: 0.9rem;
+    transition: box-shadow 0.3s ease;
+  }
+  .blaster-stage.shake { animation: blaster-stage-shake 0.42s ease; }
+  @keyframes blaster-stage-shake {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    15% { transform: translateX(-9px) translateY(2px); }
+    35% { transform: translateX(8px) translateY(-2px); }
+    55% { transform: translateX(-6px) translateY(2px); }
+    75% { transform: translateX(5px) translateY(-1px); }
+  }
+  .blaster-stage.danger-near {
+    animation: blaster-danger-vignette 0.9s ease-in-out infinite alternate;
+  }
+  @keyframes blaster-danger-vignette {
+    from { box-shadow: inset 0 0 0 2px rgba(232, 85, 90, 0.3), inset 0 0 30px rgba(232, 85, 90, 0.05); }
+    to   { box-shadow: inset 0 0 0 3px rgba(232, 85, 90, 0.75), inset 0 0 46px rgba(232, 85, 90, 0.3); }
+  }
+
+  .space-planet {
+    position: absolute;
+    top: 9%;
+    right: 10%;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffd9a0, #d97a3f 55%, #7a3a1d 100%);
+    box-shadow: 0 0 18px rgba(255, 170, 100, 0.35);
+    opacity: 0.85;
+  }
+  .space-planet::after {
+    content: "";
+    position: absolute;
+    left: -25%; right: -25%;
+    top: 46%;
+    height: 0.32rem;
+    border-radius: 50%;
+    background: rgba(255, 224, 190, 0.4);
+    transform: rotate(-11deg);
+  }
+
+  .blaster-star-dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #fff;
+    animation: blaster-star-twinkle 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes blaster-star-twinkle {
+    from { opacity: 0.25; }
+    to   { opacity: 0.9; }
+  }
+  .blaster-star-dot.drift {
+    width: 2px;
+    height: 8px;
+    border-radius: 999px;
+    animation: blaster-star-twinkle 1.6s ease-in-out infinite alternate, blaster-star-drift 3.5s linear infinite;
+  }
+  @keyframes blaster-star-drift {
+    from { transform: translateY(-20px); }
+    to   { transform: translateY(360px); }
+  }
+
+  .blaster-ship {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    width: 3.2rem;
+    height: 2.6rem;
+    transform: translateX(-50%);
+  }
+  .blaster-ship.recoil { animation: blaster-ship-recoil 0.18s ease-out; }
+  @keyframes blaster-ship-recoil {
+    0%   { transform: translateX(-50%) translateY(0); }
+    40%  { transform: translateX(-50%) translateY(6px); }
+    100% { transform: translateX(-50%) translateY(0); }
+  }
+  .blaster-ship.hit { animation: blaster-ship-hit 0.4s ease; }
+  @keyframes blaster-ship-hit {
+    0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+    25% { transform: translateX(-52%) translateY(2px) rotate(-6deg); }
+    75% { transform: translateX(-48%) translateY(2px) rotate(6deg); }
+  }
+  .ship-body {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--sky-accent) 80%, #fff), var(--sky-accent));
+    clip-path: polygon(50% 0%, 62% 32%, 100% 58%, 76% 64%, 86% 100%, 50% 76%, 14% 100%, 24% 64%, 0% 58%, 38% 32%);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--sky-accent) 55%, transparent), 0 3px 0 var(--shadow);
+  }
+  .ship-cockpit {
+    position: absolute;
+    top: 0.6rem;
+    left: 50%;
+    width: 0.5rem;
+    height: 0.62rem;
+    background: color-mix(in srgb, var(--sky) 70%, #fff);
+    border-radius: 50% 50% 45% 45%;
+    transform: translateX(-50%);
+    opacity: 0.9;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  }
+  .ship-flame {
+    position: absolute;
+    bottom: -0.3rem;
+    width: 0.4rem;
+    height: 0.55rem;
+    background: var(--star);
+    border-radius: 0 0 50% 50%;
+    box-shadow: 0 0 8px var(--star);
+    animation: blaster-flame-flicker 0.3s ease-in-out infinite alternate;
+  }
+  .ship-flame-l { left: 22%; }
+  .ship-flame-r { right: 22%; }
+  @keyframes blaster-flame-flicker {
+    from { transform: scaleY(1); opacity: 0.95; }
+    to   { transform: scaleY(0.65); opacity: 0.55; }
+  }
+
+  .blaster-alien {
+    position: absolute;
+    left: 50%;
+    width: 2.6rem;
+    height: 1.9rem;
+    transform: translate(-50%, 0);
+    will-change: transform, top;
+  }
+  .alien-body {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1.2rem;
+    background: linear-gradient(180deg, var(--violet), color-mix(in srgb, var(--violet) 55%, #000));
+    clip-path: polygon(50% 100%, 8% 60%, 0% 25%, 22% 0%, 50% 15%, 78% 0%, 100% 25%, 92% 60%);
+    box-shadow: 0 3px 0 var(--shadow);
+    transition: background 0.4s ease;
+  }
+  .alien-eye {
+    position: absolute;
+    left: 50%;
+    top: 0.3rem;
+    width: 0.32rem;
+    height: 0.32rem;
+    border-radius: 50%;
+    background: var(--sky-accent);
+    box-shadow: 0 0 6px var(--sky-accent);
+    transform: translateX(-50%);
+    animation: blaster-eye-pulse 1.1s ease-in-out infinite alternate;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+  @keyframes blaster-eye-pulse {
+    from { opacity: 0.55; transform: translateX(-50%) scale(0.9); }
+    to   { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  }
+  .alien-light {
+    position: absolute;
+    bottom: 0.15rem;
+    width: 0.26rem;
+    height: 0.26rem;
+    border-radius: 50%;
+    background: var(--star);
+  }
+  .alien-light-l { left: 0.3rem; }
+  .alien-light-r { right: 0.3rem; }
+
+  /* danger escalation: the closer it gets, the hotter/redder it glows */
+  .blaster-alien.danger-near .alien-body {
+    background: linear-gradient(180deg, var(--danger), color-mix(in srgb, var(--danger) 55%, #000));
+  }
+  .blaster-alien.danger-near .alien-eye {
+    background: var(--danger);
+    box-shadow: 0 0 9px var(--danger);
+    animation: blaster-eye-pulse 0.45s ease-in-out infinite alternate;
+  }
+
+  .blaster-laser {
+    position: absolute;
+    left: 50%;
+    width: 0.22rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    background: var(--star);
+    box-shadow: 0 0 6px var(--star);
+    transform: translate(-50%, 0);
+  }
+
+  .blaster-explosion-ring {
+    position: absolute;
+    left: 50%;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid var(--star);
+    box-shadow: 0 0 10px var(--star);
+    pointer-events: none;
+  }
+
+  .blaster-choices {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+    justify-content: center;
+    align-items: stretch;
+    flex: none;
+    min-height: 4.4rem;
+    align-content: center;
+  }
+  .blaster-choice {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 10px;
+    padding: 0.7rem 0.6rem;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 0 4px 0 var(--shadow);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow-wrap: break-word;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .blaster-choice-label { width: 100%; min-width: 0; overflow-wrap: break-word; word-break: break-word; }
+  .blaster-choice:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--shadow); }
+  .blaster-choice.hue-happy  { background: linear-gradient(180deg, color-mix(in srgb, var(--happy) 85%, #fff), var(--happy));  box-shadow: 0 4px 0 var(--shadow), 0 0 10px color-mix(in srgb, var(--happy) 45%, transparent); }
+  .blaster-choice.hue-pop    { background: linear-gradient(180deg, color-mix(in srgb, var(--pop) 85%, #fff), var(--pop));      box-shadow: 0 4px 0 var(--shadow), 0 0 10px color-mix(in srgb, var(--pop) 45%, transparent); }
+  .blaster-choice.hue-sky    { background: linear-gradient(180deg, color-mix(in srgb, var(--sky-accent) 85%, #fff), var(--sky-accent)); box-shadow: 0 4px 0 var(--shadow), 0 0 10px color-mix(in srgb, var(--sky-accent) 45%, transparent); }
+  .blaster-choice.hue-violet { background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 85%, #fff), var(--violet)); box-shadow: 0 4px 0 var(--shadow), 0 0 10px color-mix(in srgb, var(--violet) 45%, transparent); }
+  .blaster-choice.wrong-flash { animation: blaster-choice-shake 0.35s ease; }
+  @keyframes blaster-choice-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blaster-star-dot, .blaster-star-dot.drift { animation: none; }
+    .blaster-alien.danger-near .alien-eye { animation: none; }
+    .blaster-stage.danger-near { animation: none; box-shadow: inset 0 0 0 2px rgba(232, 85, 90, 0.6); }
+    .blaster-ship.recoil, .blaster-ship.hit, .ship-flame { animation: none; }
+    .blaster-stage.shake { animation: none; }
+    .blaster-choice.wrong-flash { animation: none; }
+  }
+
+  @media (max-width: 360px) {
+    .blaster-ship { width: 2.7rem; height: 2.2rem; }
+    .blaster-alien { width: 2.2rem; height: 1.6rem; }
+    .blaster-prompt-word { font-size: 1.5rem; }
+    .blaster-choice { font-size: 1rem; padding: 0.6rem 1rem; }
+  }
+
+  /* ---------- game: sentence rocket ---------- */
+  /* Restyled onto the shared design tokens/Baloo 2 chrome (not the
+     standalone prototype's own dark-cockpit palette) so it reads as part of
+     the same app; the "space stage" box reuses the exact gradient Word
+     Blaster already established, so the two feel like siblings. Small
+     monospace touches on the countdown/combo numbers are a deliberate,
+     token-based accent, not a separate color system. */
+
+  #game-rocket.active {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .rocket-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    flex: none;
+  }
+  .rocket-combo-num { font-variant-numeric: tabular-nums; }
+
+  .rocket-pad {
+    position: relative;
+    flex: 1;
+    min-height: 260px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #05061a 0%, #0c0e2e 55%, #14163d 100%);
+    box-shadow: inset 0 0 0 2px rgba(79, 182, 232, 0.25);
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .rocket-star-dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #fff;
+    animation: rocket-star-twinkle 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes rocket-star-twinkle {
+    from { opacity: 0.25; }
+    to   { opacity: 0.9; }
+  }
+
+  .rocket-countdown {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .rocket-countdown span {
+    font: 700 3.6rem/1 "SF Mono", ui-monospace, "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--star);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--star) 55%, transparent), 0 0 50px color-mix(in srgb, var(--star) 35%, transparent);
+    opacity: 0;
+  }
+  .rocket-countdown span.tick { animation: rocket-count-pop 0.34s ease both; }
+  .rocket-countdown span.go {
+    font-size: 1.9rem;
+    letter-spacing: 0.04em;
+    color: var(--happy);
+    text-shadow: 0 0 24px color-mix(in srgb, var(--happy) 55%, transparent);
+    animation: rocket-count-pop 0.34s ease both;
+  }
+  @keyframes rocket-count-pop {
+    0%{ opacity: 0; transform: scale(0.4); }
+    55%{ opacity: 1; transform: scale(1.15); }
+    100%{ opacity: 1; transform: scale(1); }
+  }
+
+  .rocket-fx {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .rocket-ship {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.5s cubic-bezier(.3,.9,.4,1), opacity 0.5s ease;
+  }
+  .rocket-ship.launching { transform: translateY(-420px) scale(0.85); opacity: 0; }
+  .rocket-ship.shake { animation: rocket-shake 0.5s ease; }
+  .rocket-ship.cheer { animation: rocket-hop 0.5s ease; }
+  @keyframes rocket-shake {
+    10%,90%{transform:translateX(-2px) rotate(0);}
+    20%,80%{transform:translateX(4px) rotate(-1deg);}
+    30%,50%,70%{transform:translateX(-8px) rotate(1deg);}
+    40%,60%{transform:translateX(8px) rotate(-1deg);}
+  }
+  @keyframes rocket-hop {
+    0%,100%{ transform:translateY(0) rotate(0); }
+    30%{ transform:translateY(-14px) rotate(-3deg); }
+    60%{ transform:translateY(0) rotate(3deg); }
+  }
+
+  .rocket-nose {
+    width: 0; height: 0;
+    border-left: 26px solid transparent;
+    border-right: 26px solid transparent;
+    border-bottom: 42px solid #fff;
+    filter: drop-shadow(0 2px 2px var(--shadow));
+  }
+  .rocket-hull {
+    background: linear-gradient(180deg, #ffffff, #d7deee);
+    width: 152px;
+    border-radius: 14px;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.04);
+  }
+  .rocket-stripe {
+    height: 6px;
+    border-radius: 4px;
+    background: var(--rocket-accent, var(--pop));
+    opacity: 0.9;
+    transition: background 0.4s ease;
+  }
+  .rocket-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  .rocket-slot {
+    min-width: 40px;
+    height: 34px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    border: 2px dashed var(--ink-faint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  .rocket-slot.filled {
+    background: var(--happy);
+    border: 2px solid var(--happy);
+    color: var(--happy-ink);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--star) 35%, transparent);
+    animation: rocket-pop-in 0.18s ease;
+  }
+  @keyframes rocket-pop-in {
+    0%{ transform: scale(0.6); opacity: 0.4; }
+    70%{ transform: scale(1.08); opacity: 1; }
+    100%{ transform: scale(1); }
+  }
+  .rocket-slot.filled:active { transform: scale(0.94); }
+
+  .rocket-fins {
+    display: flex;
+    justify-content: space-between;
+    width: 152px;
+    margin-top: -4px;
+  }
+  .rocket-fin {
+    width: 0; height: 0;
+    border-top: 22px solid transparent;
+    transition: border-color 0.4s ease;
+  }
+  .rocket-fin.left { border-right: 18px solid var(--rocket-accent, var(--pop)); }
+  .rocket-fin.right { border-left: 18px solid var(--rocket-accent, var(--pop)); }
+  .rocket-flame {
+    width: 18px; height: 26px;
+    margin-top: 2px;
+    background: radial-gradient(circle at 50% 0%, var(--star), var(--rocket-accent, var(--pop)) 60%, transparent 75%);
+    border-radius: 0 0 50% 50%;
+    opacity: 0.9;
+    animation: rocket-flicker 0.35s infinite alternate ease-in-out;
+    transform-origin: top center;
+    transition: background 0.4s ease;
+  }
+  @keyframes rocket-flicker {
+    from{ transform: scaleY(1) scaleX(1); opacity: 0.85; }
+    to{ transform: scaleY(1.25) scaleX(0.85); opacity: 1; }
+  }
+
+  .rocket-status {
+    text-align: center;
+    min-height: 1.1rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0.3rem 0 0;
+    font-family: "SF Mono", ui-monospace, "Courier New", monospace;
+  }
+  .rocket-status.good { color: var(--happy); }
+  .rocket-status.retry { color: var(--pop); }
+
+  .icon-astro {
+    display: inline-block;
+    width: 1.6rem;
+    height: 1.6rem;
+    flex: none;
+    position: relative;
+    border-radius: 50%;
+    background: var(--sky-accent);
+    box-shadow: inset -3px -3px 0 rgba(0,0,0,0.08), 0 2px 0 var(--shadow);
+  }
+  .icon-astro::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--sky) 70%, #fff);
+    transform: translate(-50%, -50%);
+  }
+
+  .rocket-mascot-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+    flex: none;
+  }
+  .icon-astro.cheer { animation: rocket-cheer-spin 0.6s ease; }
+  .icon-astro.oops { animation: rocket-oops-tilt 0.5s ease; }
+  @keyframes rocket-cheer-spin {
+    0%{ transform: scale(1) rotate(0); }
+    40%{ transform: scale(1.3) rotate(12deg); }
+    70%{ transform: scale(1.1) rotate(-8deg); }
+    100%{ transform: scale(1) rotate(0); }
+  }
+  @keyframes rocket-oops-tilt {
+    0%,100%{ transform: rotate(0); }
+    30%{ transform: rotate(-10deg); }
+    60%{ transform: rotate(8deg); }
+  }
+  .rocket-bubble {
+    position: relative;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    flex: 1;
+    box-shadow: 0 3px 0 var(--shadow);
+  }
+  .rocket-bubble::before {
+    content: "";
+    position: absolute;
+    left: -5px; top: 12px;
+    width: 10px; height: 10px;
+    background: var(--card);
+    transform: rotate(45deg);
+    border-radius: 2px;
+  }
+
+  .rocket-cargo { margin-top: 0.6rem; flex: none; }
+  .rocket-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+    margin: 0 0 0.5rem 0.1rem;
+  }
+  .rocket-dock {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 2.6rem;
+  }
+  .rocket-tile {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    border: 2px solid var(--pop);
+    background: var(--card);
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 0.5rem 0.8rem;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--pop);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
+    animation: rocket-tile-in 0.28s ease both;
+  }
+  @keyframes rocket-tile-in {
+    0%{ opacity: 0; transform: translateY(8px) scale(0.85); }
+    100%{ opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .rocket-tile:active { transform: translateY(3px); box-shadow: 0 0 0 var(--pop); }
+  .rocket-tile:focus-visible { outline: 3px solid var(--sky-accent); outline-offset: 2px; }
+
+  .rocket-controls { display: flex; gap: 0.6rem; margin-top: 0.9rem; flex: none; }
+  .rocket-controls .btn-fun.launch { flex: 2; }
+  .rocket-controls .btn-fun.launch.ready { animation: rocket-ready-pulse 1.6s ease-in-out infinite; }
+  @keyframes rocket-ready-pulse {
+    0%,100%{ box-shadow: 0 4px 0 var(--shadow); }
+    50%{ box-shadow: 0 4px 0 var(--shadow), 0 0 16px color-mix(in srgb, var(--star) 45%, transparent); }
+  }
+  .rocket-controls .btn-fun.launch:disabled {
+    background: var(--line);
+    color: var(--ink-faint);
+    box-shadow: none;
+    cursor: not-allowed;
+    animation: none;
+  }
+  .rocket-controls .btn-fun.repack { background: var(--sky); color: var(--ink); }
+
+  .rocket-manifest {
+    margin-top: 0.6rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    min-height: 1.3rem;
+    flex: none;
+  }
+  .rocket-manifest b { color: var(--ink); }
+
+  .rocket-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    margin: 0.3rem 0 0;
+    flex: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rocket-star-dot { animation: none; }
+    .rocket-ship, .rocket-ship.launching, .rocket-ship.shake, .rocket-ship.cheer { transition: none; animation: none; }
+    .rocket-flame { animation: none; }
+    .rocket-tile { animation: none; }
+    .rocket-controls .btn-fun.launch.ready { animation: none; }
+    .rocket-slot.filled { animation: none; }
+    .rocket-countdown span, .rocket-countdown span.tick, .rocket-countdown span.go { animation: none; opacity: 1; }
+    .icon-astro.cheer, .icon-astro.oops { animation: none; }
+  }
+
+  @media (max-width: 360px) {
+    .rocket-hull, .rocket-fins { width: 132px; }
+    .rocket-countdown span { font-size: 2.8rem; }
+  }
+
+  /* ---------- game: balloon pop ---------- */
+
+  .icon-balloon {
+    display: inline-block;
+    width: 1.15rem;
+    height: 1.35rem;
+    vertical-align: -0.28rem;
+    background: var(--pop-ink);
+    border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
+    position: relative;
+  }
+  .icon-balloon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -0.32rem;
+    width: 0;
+    height: 0;
+    border-left: 0.2rem solid transparent;
+    border-right: 0.2rem solid transparent;
+    border-top: 0.28rem solid var(--pop-ink);
+    transform: translateX(-50%);
+  }
+
+  #game-balloon.active {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .balloon-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+    flex: none;
+  }
+
+  .balloon-target {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 0.9rem 1.1rem;
+    text-align: center;
+    box-shadow: 0 4px 0 var(--shadow);
+    margin-bottom: 0.75rem;
+    flex: none;
+  }
+  .balloon-target-word {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .balloon-progress {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .balloon-stage {
+    position: relative;
+    flex: 1;
+    min-height: 260px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--sky-accent) 14%, transparent), transparent 60%);
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .balloon {
+    position: absolute;
+    bottom: -170px;
+    width: 152px;
+    margin-left: -76px;
+    will-change: transform;
+  }
+
+  .balloon-sway {
+    animation: balloon-sway-anim 3.2s ease-in-out infinite alternate;
+  }
+  @keyframes balloon-sway-anim {
+    from { transform: translateX(-8px) rotate(-3deg); }
+    to   { transform: translateX(8px) rotate(3deg); }
+  }
+
+  .balloon-string {
+    width: 2px;
+    height: 34px;
+    background: var(--ink-faint);
+    margin: 0 auto;
+    opacity: 0.6;
+  }
+
+  .balloon-body {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 6;
+    border: none;
+    border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
+    color: #fff;
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    padding: 0.6rem 0.7rem;
+    cursor: pointer;
+    box-shadow:
+      inset -8px -10px 0 rgba(0,0,0,0.06),
+      inset 8px 10px 0 rgba(255,255,255,0.18),
+      0 6px 0 var(--shadow);
+    position: relative;
+  }
+  .balloon-body::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -9px;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 10px solid currentColor;
+    transform: translateX(-50%);
+    opacity: 0.9;
+  }
+  .balloon-body.hue-happy  { background: var(--happy);      color: var(--happy); }
+  .balloon-body.hue-pop    { background: var(--pop);        color: var(--pop); }
+  .balloon-body.hue-sky    { background: var(--sky-accent); color: var(--sky-accent); }
+  .balloon-body.hue-star   { background: var(--star);       color: var(--star); }
+  .balloon-body.hue-violet { background: var(--violet);     color: var(--violet); }
+  .balloon-body.hue-happy, .balloon-body.hue-pop, .balloon-body.hue-sky, .balloon-body.hue-violet {
+    -webkit-text-fill-color: initial;
+  }
+  .balloon-body.hue-happy  span, .balloon-body.hue-pop span, .balloon-body.hue-sky span,
+  .balloon-body.hue-violet span, .balloon-body.hue-star span { color: inherit; filter: brightness(0) invert(1); }
+  .balloon-body.hue-star span { filter: brightness(0.35); }
+
+  .balloon-body.wrong-flash {
+    animation: balloon-body-shake 0.35s ease;
+  }
+  @keyframes balloon-body-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px) rotate(-3deg); }
+    75% { transform: translateX(8px) rotate(3deg); }
+  }
+
+  .balloon-summary {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    text-align: center;
+    background: var(--card);
+    border-radius: 22px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 6px 0 var(--shadow);
+  }
+  .balloon-summary-icon {
+    width: 2.4rem;
+    height: 2.85rem;
+  }
+  .balloon-summary-score {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .balloon-sway { animation: none; }
+    .balloon-body.wrong-flash { animation: none; }
+  }
+
+  @media (max-width: 360px) {
+    .balloon { width: 128px; margin-left: -64px; }
+    .balloon-body { font-size: 1.2rem; }
+    .balloon-target-word { font-size: 1.7rem; }
+  }
 </style>
 
 <div class="app">
@@ -2017,6 +2903,18 @@
 
       <div class="game-panel" id="game-speak">
         <div id="speakArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-blaster">
+        <div id="blasterArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-rocket">
+        <div id="rocketArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-balloon">
+        <div id="balloonArea"></div>
       </div>
     </section>
 
@@ -2919,6 +3817,9 @@
     runner: { value: 'runner', label: 'Routine Runner' },
     sorter: { value: 'sorter', label: 'Clue Sort' },
     speak: { value: 'speak', label: 'Say It Back' },
+    blaster: { value: 'blaster', label: 'Word Blaster' },
+    rocket: { value: 'rocket', label: 'Sentence Rocket' },
+    balloon: { value: 'balloon', label: 'Balloon Pop' },
   };
   // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
   // Runner) instead of the generic Word Match / Unscramble.
@@ -2932,7 +3833,7 @@
   function gamesForTopic(topic) {
     if (VERB_TOPICS.has(topic)) return ['chef', 'runner', 'speak'];
     if (QUESTION_TOPICS.has(topic)) return ['match', 'scramble', 'sorter', 'speak'];
-    return ['match', 'scramble', 'speak'];
+    return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon'];
   }
 
   function renderButtonRow(containerId, items, selected, onSelect) {
@@ -2964,6 +3865,9 @@
     else if (game === 'runner') startRunnerRound();
     else if (game === 'sorter') startSorterRound();
     else if (game === 'speak') startSpeakRound();
+    else if (game === 'blaster') startBlasterRound();
+    else if (game === 'rocket') startRocketRound();
+    else if (game === 'balloon') startBalloonRound();
   }
 
   function selectTopic(topic) {
@@ -2971,6 +3875,8 @@
     matchState.category = topic;
     scrambleState.category = topic;
     speakState.category = topic;
+    blasterState.category = topic;
+    balloonState.category = topic;
     const games = gamesForTopic(topic);
     if (!games.includes(currentGame)) currentGame = games[0];
     renderGameTopTabs();
@@ -4021,6 +4927,1176 @@
       setTimeout(() => choiceBtn.classList.remove('shake'), 400);
     }
   });
+
+  /* ---------- game: word blaster ---------- */
+  // A space target-practice quiz — same quiz loop as Routine Runner (5
+  // lives, clear 20 to win a medal, tutorial, sound, screen shake) reskinned
+  // as a ship shooting down a descending alien instead of jumping a hurdle.
+  // Pulls from the shared word list (data.words), filtered by the current
+  // topic, same as Word Match / Unscramble / Say It Back.
+
+  const BLASTER_ALIEN_MS = 9000;
+  const BLASTER_CHOICE_HUES = ['hue-happy', 'hue-pop', 'hue-sky', 'hue-violet'];
+  const BLASTER_WIN_TARGET = 20;
+  const BLASTER_WIN_BONUS_STARS = 5;
+  const BLASTER_MAX_LIVES = 5;
+  const BLASTER_LASER_MS = 150;
+
+  const blasterState = {
+    category: 'All',
+    cleared: 0,
+    bag: [],
+    resolved: false,
+    alienAnim: null,
+    dangerTimer: null,
+    runToken: 0,
+    livesRemaining: BLASTER_MAX_LIVES,
+    starsEarnedThisRun: 0,
+    starsLostThisRun: 0,
+  };
+  let blasterTutorialShown = false;
+  let blasterStageEl, blasterShipEl, blasterWordEl, blasterScoreEl, blasterChoicesEl, blasterPromptEl, blasterLivesRowEl;
+
+  /* ---- tiny synthesized sound effects, local to Word Blaster (no audio
+     files, and deliberately NOT shared with Routine Runner's playTone/
+     getAudioCtx/playWinSound — same names, separate instances, so neither
+     game's audio context leaks into the other) ---- */
+  let blasterAudioCtx = null;
+  function getBlasterAudioCtx() {
+    const Ctor = window.AudioContext || window.webkitAudioContext;
+    if (!Ctor) return null;
+    if (!blasterAudioCtx) blasterAudioCtx = new Ctor();
+    if (blasterAudioCtx.state === 'suspended') blasterAudioCtx.resume().catch(() => {});
+    return blasterAudioCtx;
+  }
+  function blasterPlayTone(freqStart, freqEnd, duration, type, volume) {
+    const ctx = getBlasterAudioCtx();
+    if (!ctx) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(freqStart, now);
+      if (freqEnd !== freqStart) osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 1), now + duration);
+      gain.gain.setValueAtTime(volume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    } catch (e) {}
+  }
+  function playLaserSound() {
+    blasterPlayTone(1500, 500, 0.09, 'square', 0.14);
+    setTimeout(() => blasterPlayTone(1100, 350, 0.08, 'square', 0.1), 45);
+  }
+  function playExplosionSound() {
+    blasterPlayTone(160, 35, 0.35, 'sawtooth', 0.22);
+    blasterPlayTone(650, 90, 0.14, 'square', 0.09);
+  }
+  function playHitSound() { blasterPlayTone(220, 70, 0.35, 'sawtooth', 0.18); }
+  function playAlarmBeep() { blasterPlayTone(880, 880, 0.11, 'square', 0.09); }
+  function playBlasterWinSound() {
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      setTimeout(() => blasterPlayTone(f, f, 0.2, 'triangle', 0.18), i * 110);
+    });
+  }
+
+  function renderBlasterMarkup() {
+    return `
+      <div class="blaster-toolbar">
+        <div class="lives-row" id="blasterLivesRow"></div>
+        <button class="btn-fun blue small" id="blasterRestartBtn">Restart</button>
+      </div>
+      <div class="blaster-prompt" id="blasterPrompt">
+        <span class="blaster-prompt-word" id="blasterWord">—</span>
+      </div>
+      <p class="blaster-score" id="blasterScore"></p>
+      <div class="blaster-stage" id="blasterStage">
+        <div class="space-planet"></div>
+        <div class="blaster-ship" id="blasterShip">
+          <div class="ship-flame ship-flame-l"></div>
+          <div class="ship-flame ship-flame-r"></div>
+          <div class="ship-body"></div>
+          <div class="ship-cockpit"></div>
+        </div>
+      </div>
+      <div class="blaster-choices" id="blasterChoices"></div>
+      <p class="banner" id="blasterBanner"></p>
+    `;
+  }
+
+  function blasterSeedStars() {
+    for (let i = 0; i < 16; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'blaster-star-dot';
+      dot.style.left = Math.random() * 100 + '%';
+      dot.style.top = Math.random() * 75 + '%';
+      dot.style.animationDelay = (Math.random() * -2.4) + 's';
+      blasterStageEl.appendChild(dot);
+    }
+    for (let i = 0; i < 6; i++) {
+      const streak = document.createElement('div');
+      streak.className = 'blaster-star-dot drift';
+      streak.style.left = Math.random() * 100 + '%';
+      streak.style.top = (Math.random() * -100) + 'px';
+      streak.style.animationDelay = (Math.random() * -3.5) + 's, ' + (Math.random() * -3.5) + 's';
+      blasterStageEl.appendChild(streak);
+    }
+  }
+
+  function startBlasterRound() {
+    const area = document.getElementById('blasterArea');
+    area.innerHTML = renderBlasterMarkup();
+    blasterStageEl = document.getElementById('blasterStage');
+    blasterShipEl = document.getElementById('blasterShip');
+    blasterWordEl = document.getElementById('blasterWord');
+    blasterScoreEl = document.getElementById('blasterScore');
+    blasterChoicesEl = document.getElementById('blasterChoices');
+    blasterPromptEl = document.getElementById('blasterPrompt');
+    blasterLivesRowEl = document.getElementById('blasterLivesRow');
+    blasterSeedStars();
+    blasterState.livesRemaining = BLASTER_MAX_LIVES;
+    blasterUpdateLives();
+    document.getElementById('blasterRestartBtn').addEventListener('click', blasterBeginRun);
+    // Tutorial only on this game's first visit per page session; switching
+    // back to this tab later goes straight into a run, like Routine Runner.
+    if (!blasterTutorialShown) {
+      blasterTutorialShown = true;
+      blasterShowTutorial();
+    } else {
+      blasterBeginRun();
+    }
+  }
+
+  function blasterDrawFromBag(pool) {
+    if (blasterState.bag.length === 0) blasterState.bag = shuffleArray(pool);
+    return blasterState.bag.pop();
+  }
+
+  function blasterPickOptions(target, pool) {
+    const others = shuffleArray(pool.filter(w => w.word !== target.word)).slice(0, 2);
+    return shuffleArray([target, ...others]);
+  }
+
+  function blasterUpdateScore() {
+    blasterScoreEl.textContent = `${blasterState.cleared} of ${BLASTER_WIN_TARGET}`;
+  }
+
+  function blasterUpdateLives() {
+    const remaining = Math.max(0, blasterState.livesRemaining);
+    blasterLivesRowEl.innerHTML = '';
+    blasterLivesRowEl.setAttribute('aria-label', `${remaining} of ${BLASTER_MAX_LIVES} lives remaining`);
+    for (let i = 0; i < BLASTER_MAX_LIVES; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'icon-heart' + (i < remaining ? '' : ' spent');
+      blasterLivesRowEl.appendChild(heart);
+    }
+  }
+
+  function blasterClearAlien() {
+    if (blasterState.alienAnim) {
+      try { blasterState.alienAnim.cancel(); } catch (e) {}
+      blasterState.alienAnim = null;
+    }
+    if (blasterState.dangerTimer) {
+      clearTimeout(blasterState.dangerTimer);
+      blasterState.dangerTimer = null;
+    }
+    blasterStageEl.classList.remove('danger-near');
+    const existing = blasterStageEl.querySelector('.blaster-alien');
+    if (existing) existing.remove();
+    const laser = blasterStageEl.querySelector('.blaster-laser');
+    if (laser) laser.remove();
+  }
+
+  function blasterShowOverlay(innerHtml) {
+    blasterRemoveOverlay();
+    const overlay = document.createElement('div');
+    overlay.className = 'runner-overlay';
+    overlay.id = 'blasterOverlay';
+    overlay.innerHTML = innerHtml;
+    blasterStageEl.appendChild(overlay);
+    return overlay;
+  }
+  function blasterRemoveOverlay() {
+    const existing = document.getElementById('blasterOverlay');
+    if (existing) existing.remove();
+  }
+
+  function blasterCollisionLineY() {
+    return blasterStageEl.clientHeight - 78;
+  }
+
+  function blasterSpawnAlien(token) {
+    const startY = -60;
+    const deltaY = blasterCollisionLineY() - startY;
+
+    const outer = document.createElement('div');
+    outer.className = 'blaster-alien';
+    outer.style.top = startY + 'px';
+    outer.innerHTML =
+      '<div class="alien-body"><span class="alien-light alien-light-l"></span><span class="alien-light alien-light-r"></span></div>' +
+      '<span class="alien-eye"></span>';
+    blasterStageEl.appendChild(outer);
+
+    const dangerTimer = setTimeout(() => {
+      if (token !== blasterState.runToken || blasterState.resolved) return;
+      outer.classList.add('danger-near');
+      blasterStageEl.classList.add('danger-near');
+      playAlarmBeep();
+    }, BLASTER_ALIEN_MS * 0.6);
+    blasterState.dangerTimer = dangerTimer;
+
+    const anim = outer.animate(
+      [{ transform: 'translate(-50%, 0px)' }, { transform: `translate(-50%, ${deltaY}px)` }],
+      { duration: BLASTER_ALIEN_MS, easing: 'linear', fill: 'forwards' }
+    );
+    blasterState.alienAnim = anim;
+    anim.onfinish = () => {
+      if (token !== blasterState.runToken || blasterState.resolved) return;
+      blasterLoseRun('timeout', token);
+    };
+    return outer;
+  }
+
+  function blasterNextAlien() {
+    const pool = wordsInCategory(blasterState.category);
+    if (pool.length < 3) {
+      blasterChoicesEl.innerHTML = '';
+      blasterShowOverlay('<div class="game-empty">Add at least 3 words first, then come back to play!</div>');
+      blasterPromptEl.style.visibility = 'hidden';
+      return;
+    }
+    blasterRemoveOverlay();
+    blasterPromptEl.style.visibility = 'visible';
+    blasterClearAlien();
+    blasterState.resolved = false;
+    blasterState.runToken++;
+    const token = blasterState.runToken;
+
+    const target = blasterDrawFromBag(pool);
+    const options = blasterPickOptions(target, pool);
+
+    blasterWordEl.textContent = target.word;
+    blasterWordEl.setAttribute('lang', 'en');
+    blasterUpdateScore();
+
+    const hues = shuffleArray(BLASTER_CHOICE_HUES);
+    blasterChoicesEl.innerHTML = '';
+    options.forEach((entry, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'blaster-choice ' + hues[i % hues.length];
+      btn.innerHTML = '<span class="blaster-choice-label" lang="zh-Hant">' + escapeHtml(entry.meaning) + '</span>';
+      const isCorrect = entry.word === target.word;
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        blasterHandleChoiceTap(btn, isCorrect, token);
+      }, { passive: false });
+      blasterChoicesEl.appendChild(btn);
+    });
+
+    blasterSpawnAlien(token);
+  }
+
+  function blasterHandleChoiceTap(btn, isCorrect, token) {
+    if (token !== blasterState.runToken || blasterState.resolved) return;
+    if (isCorrect) {
+      blasterShootAlien(token);
+    } else {
+      btn.classList.remove('wrong-flash');
+      void btn.offsetWidth;
+      btn.classList.add('wrong-flash');
+      blasterLoseRun('wrong', token);
+    }
+  }
+
+  function blasterFireLaser(targetY, onImpact) {
+    if (prefersReducedMotion()) { onImpact(); return; }
+    const muzzleY = blasterStageEl.clientHeight - 46;
+    const bolt = document.createElement('div');
+    bolt.className = 'blaster-laser';
+    bolt.style.top = muzzleY + 'px';
+    blasterStageEl.appendChild(bolt);
+    const deltaY = targetY - muzzleY;
+    const anim = bolt.animate(
+      [{ transform: 'translate(-50%, 0px)' }, { transform: `translate(-50%, ${deltaY}px)` }],
+      { duration: BLASTER_LASER_MS, easing: 'linear', fill: 'forwards' }
+    );
+    anim.onfinish = () => { bolt.remove(); onImpact(); };
+  }
+
+  function blasterShootAlien(token) {
+    if (blasterState.resolved) return;
+    blasterState.resolved = true;
+
+    const alienEl = blasterStageEl.querySelector('.blaster-alien');
+    let alienY = blasterCollisionLineY();
+    if (alienEl && blasterState.alienAnim) {
+      const elapsed = blasterState.alienAnim.currentTime || 0;
+      const startY = -60;
+      const deltaY = blasterCollisionLineY() - startY;
+      const progress = Math.min(1, elapsed / BLASTER_ALIEN_MS);
+      alienY = startY + progress * deltaY;
+      try { blasterState.alienAnim.cancel(); } catch (e) {}
+      alienEl.style.top = alienY + 'px';
+      alienEl.style.transform = 'translate(-50%, 0)';
+    }
+
+    blasterShipEl.classList.remove('recoil');
+    void blasterShipEl.offsetWidth;
+    blasterShipEl.classList.add('recoil');
+    playLaserSound();
+
+    blasterFireLaser(alienY, () => {
+      playExplosionSound();
+      if (alienEl) {
+        if (prefersReducedMotion()) {
+          alienEl.remove();
+        } else {
+          const ring = document.createElement('div');
+          ring.className = 'blaster-explosion-ring';
+          ring.style.top = alienY + 'px';
+          blasterStageEl.appendChild(ring);
+          const ringAnim = ring.animate(
+            [{ transform: 'translate(-50%, -50%) scale(0.3)', opacity: 1 }, { transform: 'translate(-50%, -50%) scale(3.2)', opacity: 0 }],
+            { duration: 340, easing: 'ease-out' }
+          );
+          ringAnim.onfinish = () => ring.remove();
+
+          const burst = alienEl.animate(
+            [{ transform: 'translate(-50%, 0) scale(1)', opacity: 1 }, { transform: 'translate(-50%, 0) scale(1.6)', opacity: 0 }],
+            { duration: 220, easing: 'ease-out' }
+          );
+          burst.onfinish = () => alienEl.remove();
+        }
+      }
+
+      blasterState.cleared++;
+      addStars(1);
+      blasterState.starsEarnedThisRun += 1;
+      recordQualifyingActivity();
+      blasterUpdateScore();
+
+      if (blasterState.cleared >= BLASTER_WIN_TARGET) {
+        addStars(BLASTER_WIN_BONUS_STARS);
+        blasterState.starsEarnedThisRun += BLASTER_WIN_BONUS_STARS;
+        showBanner('blasterBanner', 'Gold medal!');
+        setTimeout(blasterShowWin, 500);
+        return;
+      }
+
+      showBanner('blasterBanner', pickEncouragement());
+      setTimeout(() => { if (token === blasterState.runToken) blasterNextAlien(); }, 500);
+    });
+  }
+
+  function blasterLoseRun(reason, token) {
+    blasterState.resolved = true;
+    blasterClearAlien();
+
+    playHitSound();
+    blasterShipEl.classList.remove('recoil');
+    void blasterShipEl.offsetWidth;
+    blasterShipEl.classList.add('hit');
+    setTimeout(() => blasterShipEl.classList.remove('hit'), 400);
+
+    if (!prefersReducedMotion()) {
+      blasterStageEl.classList.remove('shake');
+      void blasterStageEl.offsetWidth;
+      blasterStageEl.classList.add('shake');
+    }
+
+    blasterChoicesEl.innerHTML = '';
+    addStars(-1);
+    blasterState.starsLostThisRun += 1;
+    blasterState.livesRemaining--;
+    blasterUpdateLives();
+
+    const outOfLives = blasterState.livesRemaining <= 0;
+    const baseMsg = reason === 'wrong' ? 'Not quite!' : 'It got past you!';
+    showBanner('blasterBanner', outOfLives ? baseMsg : baseMsg + ' Try again!', true);
+
+    if (outOfLives) {
+      setTimeout(blasterShowGameOver, prefersReducedMotion() ? 200 : 500);
+    } else {
+      setTimeout(() => {
+        if (token !== blasterState.runToken) return;
+        blasterNextAlien();
+      }, prefersReducedMotion() ? 200 : 500);
+    }
+  }
+
+  function blasterShowWin() {
+    playBlasterWinSound();
+    blasterPromptEl.style.visibility = 'hidden';
+    blasterScoreEl.textContent = '';
+    blasterChoicesEl.innerHTML = '';
+    blasterShowOverlay(`
+      <div class="runner-gameover win">
+        <div class="medal">
+          <div class="medal-ribbon medal-ribbon-l"></div>
+          <div class="medal-ribbon medal-ribbon-r"></div>
+          <div class="medal-disc"><span class="medal-star"></span></div>
+        </div>
+        <div class="runner-gameover-title win">You Win!</div>
+        <div class="runner-gameover-score">You shot down all ${BLASTER_WIN_TARGET}!</div>
+        <p class="runner-gameover-note">Amazing work, Andy — +${BLASTER_WIN_BONUS_STARS} bonus stars! <span class="icon-star icon-star-inline" aria-hidden="true"></span></p>
+        <button class="btn-fun" id="blasterPlayAgain">Play again</button>
+      </div>
+    `);
+    document.getElementById('blasterPlayAgain').addEventListener('click', blasterBeginRun);
+    launchConfetti();
+  }
+
+  function blasterShowGameOver() {
+    blasterPromptEl.style.visibility = 'hidden';
+    blasterScoreEl.textContent = '';
+    blasterShowOverlay(`
+      <div class="runner-gameover">
+        <div class="impact-burst"></div>
+        <div class="runner-gameover-title">Game Over</div>
+        <div class="run-stars-row">
+          <span class="run-star-stat gain">+${blasterState.starsEarnedThisRun}<span class="icon-star"></span></span>
+          <span class="run-star-stat loss">&minus;${blasterState.starsLostThisRun}<span class="icon-star"></span></span>
+        </div>
+        <button class="btn-fun" id="blasterTryAgain">Try again</button>
+      </div>
+    `);
+    document.getElementById('blasterTryAgain').addEventListener('click', blasterBeginRun);
+  }
+
+  function blasterBeginRun() {
+    blasterState.cleared = 0;
+    blasterState.resolved = false;
+    blasterState.bag = [];
+    blasterState.livesRemaining = BLASTER_MAX_LIVES;
+    blasterState.starsEarnedThisRun = 0;
+    blasterState.starsLostThisRun = 0;
+    blasterUpdateLives();
+    blasterRemoveOverlay();
+    blasterClearAlien();
+    blasterPromptEl.style.visibility = 'visible';
+    blasterNextAlien();
+  }
+
+  function blasterShowTutorial() {
+    blasterPromptEl.style.visibility = 'hidden';
+    blasterScoreEl.textContent = '';
+    blasterShowOverlay(`
+      <div class="runner-gameover tutorial">
+        <div class="runner-gameover-title win">How to Play</div>
+        <div class="tutorial-row"><span class="icon-ship" aria-hidden="true"></span><span>Pick the right answer to shoot the alien.</span></div>
+        <div class="tutorial-row"><span class="icon-heart" aria-hidden="true"></span><span>You get ${BLASTER_MAX_LIVES} tries.</span></div>
+        <div class="tutorial-row"><span class="icon-star" aria-hidden="true"></span><span>Shoot down ${BLASTER_WIN_TARGET} to win a medal!</span></div>
+        <button class="btn-fun" id="blasterTutorialStart">Let's go!</button>
+      </div>
+    `);
+    document.getElementById('blasterTutorialStart').addEventListener('click', blasterBeginRun);
+  }
+
+  /* ---------- game: sentence rocket ---------- */
+  // A sentence word-order builder: tap words into slots in the right
+  // order, then Launch. Its 15 sentences are fixed local content (not
+  // pulled from data.words), so unlike the other games this one doesn't
+  // filter by topic - it shows the same deck everywhere.
+
+  const ROCKET_SENTENCES = [
+    { en: ["The", "dog", "runs", "fast."], zh: "那只狗跑得很快。" },
+    { en: ["I", "eat", "an", "apple."], zh: "我吃一个苹果。" },
+    { en: ["She", "reads", "a", "book."], zh: "她读一本书。" },
+    { en: ["We", "play", "soccer", "together."], zh: "我们一起踢足球。" },
+    { en: ["The", "cat", "sleeps", "here."], zh: "猫在这里睡觉。" },
+    { en: ["He", "drinks", "cold", "milk."], zh: "他喝冷牛奶。" },
+    { en: ["They", "watch", "a", "movie."], zh: "他们看一部电影。" },
+    { en: ["My", "mom", "cooks", "dinner."], zh: "我妈妈做晚饭。" },
+    { en: ["The", "bird", "flies", "high."], zh: "那只鸟飞得很高。" },
+    { en: ["You", "draw", "a", "picture."], zh: "你画一幅画。" },
+    { en: ["The", "sun", "shines", "bright."], zh: "太阳照得很亮。" },
+    { en: ["We", "ride", "our", "bikes."], zh: "我们骑自行车。" },
+    { en: ["She", "sings", "a", "song."], zh: "她唱一首歌。" },
+    { en: ["The", "boy", "kicks", "the", "ball."], zh: "那个男孩踢球。" },
+    { en: ["I", "like", "ice", "cream."], zh: "我喜欢冰淇淋。" },
+  ];
+
+  const ROCKET_SKINS = ['var(--pop)', 'var(--sky-accent)', 'var(--happy)', 'var(--violet)', 'var(--star)'];
+  const ROCKET_IDLE_LINES = ["Let's build a sentence!", "Pick the first word!", "I bet you can do this one!", "Ready when you are!", "Load 'em up!"];
+  const ROCKET_GOOD_LINES = ["Great sentence!", "Blast off!", "Nailed it!", "You're a rocket scientist!", "Perfect launch!"];
+  const ROCKET_RETRY_LINES = ["So close! Try again.", "Almost there!", "Let's check the order.", "One more try, you've got this!"];
+
+  const rocketState = { combo: 0 };
+  let rocketDeck = [];
+  let rocketCurrent = null;
+  let rocketSlotsData = [];
+  let rocketBank = [];
+  let rocketBusy = false;
+
+  let rocketSlotsEl, rocketDockEl, rocketStatusEl, rocketManifestEl, rocketLaunchBtn,
+      rocketRepackBtn, rocketShipEl, rocketComboEl, rocketBubbleEl, rocketMascotEl,
+      rocketCountdownEl, rocketFxCanvas, rocketFxCtx;
+  let rocketFxParticles = [];
+  let rocketFxRunning = false;
+
+  function rocketPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function rocketBumpEl(el) {
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
+  function rocketRenderCombo(prevCombo) {
+    rocketComboEl.textContent = rocketState.combo;
+    if (typeof prevCombo === 'number' && prevCombo !== rocketState.combo) rocketBumpEl(rocketComboEl);
+    rocketApplySkin();
+  }
+
+  function rocketApplySkin() {
+    const idx = Math.floor(data.stars / 5) % ROCKET_SKINS.length;
+    rocketShipEl.style.setProperty('--rocket-accent', ROCKET_SKINS[idx]);
+  }
+
+  function rocketSay(text) { rocketBubbleEl.textContent = text; }
+
+  /* ---- tiny synthesized sound effects, local to Sentence Rocket - kept
+     separate from Routine Runner's / Word Blaster's own local audio
+     contexts by design, same names reused per-game on purpose but never
+     shared across games. ---- */
+  let rocketAudioCtx = null;
+  function rocketCtxReady() {
+    if (!rocketAudioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      rocketAudioCtx = new AC();
+    }
+    if (rocketAudioCtx.state === 'suspended') rocketAudioCtx.resume().catch(() => {});
+    return rocketAudioCtx;
+  }
+  function rocketTone(freq, start, dur, type, peak) {
+    const ac = rocketCtxReady();
+    if (!ac) return;
+    try {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.value = freq;
+      const t0 = ac.currentTime + start;
+      gain.gain.setValueAtTime(0, t0);
+      gain.gain.linearRampToValueAtTime(peak || 0.15, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+      osc.connect(gain).connect(ac.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.02);
+    } catch (e) {}
+  }
+  function rocketSfxPlace() { rocketTone(760, 0, 0.09, 'triangle', 0.12); }
+  function rocketSfxSuccess() { rocketTone(523, 0, 0.16, 'sine', 0.16); rocketTone(659, 0.12, 0.16, 'sine', 0.16); rocketTone(784, 0.24, 0.26, 'sine', 0.18); }
+  function rocketSfxRetry() { rocketTone(330, 0, 0.16, 'sine', 0.1); rocketTone(262, 0.12, 0.2, 'sine', 0.1); }
+  function rocketSfxTick() { rocketTone(880, 0, 0.09, 'square', 0.09); }
+  function rocketSfxGo() { rocketTone(660, 0, 0.1, 'square', 0.11); rocketTone(990, 0.08, 0.14, 'square', 0.12); }
+  function rocketSfxWhoosh() {
+    const ac = rocketCtxReady();
+    if (!ac) return;
+    try {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sawtooth';
+      const t0 = ac.currentTime;
+      osc.frequency.setValueAtTime(90, t0);
+      osc.frequency.exponentialRampToValueAtTime(360, t0 + 0.5);
+      gain.gain.setValueAtTime(0, t0);
+      gain.gain.linearRampToValueAtTime(0.16, t0 + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.55);
+      osc.connect(gain).connect(ac.destination);
+      osc.start(t0);
+      osc.stop(t0 + 0.6);
+    } catch (e) {}
+  }
+
+  function renderRocketMarkup() {
+    return `
+      <div class="rocket-toolbar">
+        <div class="hud-stat">
+          <span class="hud-num rocket-combo-num" id="rocketComboCount">0</span>
+          <span class="hud-label">combo</span>
+        </div>
+      </div>
+      <div class="rocket-pad" id="rocketPad">
+        <div class="rocket-countdown" id="rocketCountdown"></div>
+        <canvas class="rocket-fx" id="rocketFx"></canvas>
+        <div class="rocket-ship" id="rocketShip">
+          <div class="rocket-nose"></div>
+          <div class="rocket-hull">
+            <div class="rocket-stripe"></div>
+            <div class="rocket-slots" id="rocketSlots"></div>
+          </div>
+          <div class="rocket-fins">
+            <div class="rocket-fin left"></div>
+            <div class="rocket-fin right"></div>
+          </div>
+          <div class="rocket-flame" id="rocketFlame"></div>
+        </div>
+        <p class="rocket-status" id="rocketStatus">AWAITING CARGO</p>
+      </div>
+      <div class="rocket-mascot-row">
+        <span class="icon-astro" id="rocketMascot" aria-hidden="true"></span>
+        <div class="rocket-bubble" id="rocketBubble">Let's build a sentence!</div>
+      </div>
+      <div class="rocket-cargo">
+        <p class="rocket-eyebrow">Cargo Bay</p>
+        <div class="rocket-dock" id="rocketDock"></div>
+      </div>
+      <div class="rocket-controls">
+        <button class="btn-fun repack" id="rocketRepackBtn" type="button">Repack</button>
+        <button class="btn-fun launch" id="rocketLaunchBtn" type="button" disabled>Launch</button>
+      </div>
+      <p class="rocket-manifest" id="rocketManifest"></p>
+      <p class="banner" id="rocketBanner"></p>
+      <p class="rocket-hint">Tap words in order, then hit Launch — getting it wrong just means try again, no penalty!</p>
+    `;
+  }
+
+  function rocketSeedStars() {
+    const pad = document.getElementById('rocketPad');
+    for (let i = 0; i < 14; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'rocket-star-dot';
+      dot.style.left = Math.random() * 100 + '%';
+      dot.style.top = Math.random() * 60 + '%';
+      dot.style.animationDelay = (Math.random() * -2.4) + 's';
+      pad.appendChild(dot);
+    }
+  }
+
+  function rocketSizeCanvas() {
+    const rect = rocketFxCanvas.parentElement.getBoundingClientRect();
+    rocketFxCanvas.width = rect.width;
+    rocketFxCanvas.height = rect.height;
+  }
+
+  function startRocketRound() {
+    const area = document.getElementById('rocketArea');
+    area.innerHTML = renderRocketMarkup();
+    rocketSlotsEl = document.getElementById('rocketSlots');
+    rocketDockEl = document.getElementById('rocketDock');
+    rocketStatusEl = document.getElementById('rocketStatus');
+    rocketManifestEl = document.getElementById('rocketManifest');
+    rocketLaunchBtn = document.getElementById('rocketLaunchBtn');
+    rocketRepackBtn = document.getElementById('rocketRepackBtn');
+    rocketShipEl = document.getElementById('rocketShip');
+    rocketComboEl = document.getElementById('rocketComboCount');
+    rocketBubbleEl = document.getElementById('rocketBubble');
+    rocketMascotEl = document.getElementById('rocketMascot');
+    rocketCountdownEl = document.getElementById('rocketCountdown');
+    rocketFxCanvas = document.getElementById('rocketFx');
+    rocketFxCtx = rocketFxCanvas.getContext('2d');
+    rocketFxParticles = [];
+    rocketFxRunning = false;
+
+    rocketSeedStars();
+    rocketSizeCanvas();
+
+    rocketLaunchBtn.addEventListener('click', rocketAttempt);
+    rocketRepackBtn.addEventListener('click', rocketRepack);
+
+    rocketRenderCombo();
+    rocketDeck = [];
+    rocketNewRound();
+  }
+
+  function rocketRefillDeck() {
+    rocketDeck = shuffleArray(ROCKET_SENTENCES.map((_, i) => i));
+  }
+
+  function rocketNewRound() {
+    if (rocketDeck.length === 0) rocketRefillDeck();
+    const idx = rocketDeck.pop();
+    rocketCurrent = ROCKET_SENTENCES[idx];
+    rocketSlotsData = rocketCurrent.en.map(() => null);
+
+    let order;
+    do {
+      order = shuffleArray(rocketCurrent.en.map((_, i) => i));
+    } while (rocketCurrent.en.length > 1 && order.every((v, i) => v === i));
+    rocketBank = order.map(i => ({ word: rocketCurrent.en[i], placed: false }));
+
+    rocketManifestEl.innerHTML = '';
+    rocketStatusEl.textContent = 'AWAITING CARGO';
+    rocketStatusEl.className = 'rocket-status';
+    rocketSay(rocketPick(ROCKET_IDLE_LINES));
+    rocketRenderSlots();
+    rocketRenderDock();
+    rocketUpdateLaunchEnabled();
+  }
+
+  function rocketRenderSlots() {
+    rocketSlotsEl.innerHTML = '';
+    rocketSlotsData.forEach((word, i) => {
+      const d = document.createElement('div');
+      d.className = 'rocket-slot' + (word ? ' filled' : '');
+      d.textContent = word || '';
+      if (word) {
+        d.title = 'Tap to send back to cargo bay';
+        d.addEventListener('click', () => { if (!rocketBusy) rocketUnplace(i); });
+      }
+      rocketSlotsEl.appendChild(d);
+    });
+  }
+
+  function rocketRenderDock() {
+    rocketDockEl.innerHTML = '';
+    rocketBank.forEach((item, bi) => {
+      if (item.placed) return;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rocket-tile';
+      b.textContent = item.word;
+      b.addEventListener('click', () => { if (!rocketBusy) rocketPlace(bi); });
+      rocketDockEl.appendChild(b);
+    });
+  }
+
+  function rocketPlace(bankIndex) {
+    const slotPos = rocketSlotsData.indexOf(null);
+    if (slotPos === -1) return;
+    rocketBank[bankIndex].placed = true;
+    rocketSlotsData[slotPos] = rocketBank[bankIndex].word;
+    rocketSfxPlace();
+    rocketRenderSlots();
+    rocketRenderDock();
+    rocketUpdateLaunchEnabled();
+    rocketStatusEl.textContent = rocketSlotsData.every(w => w !== null) ? 'CARGO LOADED' : 'LOADING CARGO';
+  }
+
+  function rocketUnplace(slotPos) {
+    const word = rocketSlotsData[slotPos];
+    if (!word) return;
+    for (let i = rocketBank.length - 1; i >= 0; i--) {
+      if (rocketBank[i].placed && rocketBank[i].word === word) { rocketBank[i].placed = false; break; }
+    }
+    rocketSlotsData[slotPos] = null;
+    rocketStatusEl.textContent = 'LOADING CARGO';
+    rocketStatusEl.className = 'rocket-status';
+    rocketRenderSlots();
+    rocketRenderDock();
+    rocketUpdateLaunchEnabled();
+  }
+
+  function rocketRepack() {
+    if (rocketBusy) return;
+    rocketBank.forEach(item => { item.placed = false; });
+    rocketSlotsData = rocketSlotsData.map(() => null);
+    rocketRenderSlots();
+    rocketRenderDock();
+    rocketUpdateLaunchEnabled();
+    rocketStatusEl.textContent = 'AWAITING CARGO';
+    rocketStatusEl.className = 'rocket-status';
+    rocketSay('Cargo repacked — try again!');
+  }
+
+  function rocketUpdateLaunchEnabled() {
+    const ready = rocketSlotsData.every(w => w !== null);
+    rocketLaunchBtn.disabled = !ready;
+    rocketLaunchBtn.classList.toggle('ready', ready);
+  }
+
+  function rocketAttempt() {
+    if (rocketBusy) return;
+    const correct = rocketSlotsData.every((w, i) => w === rocketCurrent.en[i]);
+    if (correct) rocketLaunchSuccess(); else rocketLaunchFail();
+  }
+
+  function rocketShowCount(text, cls) {
+    rocketCountdownEl.innerHTML = '';
+    const s = document.createElement('span');
+    s.className = cls;
+    s.textContent = text;
+    rocketCountdownEl.appendChild(s);
+  }
+  function rocketClearCount() { rocketCountdownEl.innerHTML = ''; }
+
+  function rocketLaunchSuccess() {
+    rocketBusy = true;
+    const prevCombo = rocketState.combo;
+    rocketState.combo += 1;
+    addStars(1);
+    recordQualifyingActivity();
+    rocketRenderCombo(prevCombo);
+
+    rocketStatusEl.textContent = 'COUNTDOWN';
+    rocketStatusEl.className = 'rocket-status good';
+    rocketSay(rocketPick(ROCKET_GOOD_LINES));
+    rocketManifestEl.innerHTML = 'Mission translation: <b>' + escapeHtml(rocketCurrent.zh) + '</b>';
+
+    rocketRunCountdown();
+  }
+
+  function rocketRunCountdown() {
+    const steps = [3, 2, 1];
+    let i = 0;
+    if (prefersReducedMotion()) {
+      rocketDoLiftoff();
+      return;
+    }
+    rocketShowCount(steps[0], 'tick');
+    rocketSfxTick();
+    const timer = setInterval(() => {
+      i += 1;
+      if (i < steps.length) {
+        rocketShowCount(steps[i], 'tick');
+        rocketSfxTick();
+      } else {
+        clearInterval(timer);
+        rocketShowCount('LIFTOFF!', 'go');
+        rocketSfxGo();
+        setTimeout(() => rocketDoLiftoff(), 220);
+      }
+    }, 340);
+  }
+
+  function rocketDoLiftoff() {
+    rocketClearCount();
+    rocketStatusEl.textContent = 'LIFTOFF';
+    rocketShipEl.classList.add('launching');
+    rocketMascotEl.classList.remove('oops');
+    void rocketMascotEl.offsetWidth;
+    rocketMascotEl.classList.add('cheer');
+    rocketBurstFx();
+    rocketSfxWhoosh();
+
+    showBanner('rocketBanner', rocketPick(ROCKET_GOOD_LINES));
+    setTimeout(rocketSfxSuccess, 120);
+
+    setTimeout(() => {
+      rocketShipEl.classList.remove('launching');
+      rocketMascotEl.classList.remove('cheer');
+      rocketBusy = false;
+      rocketNewRound();
+    }, 900);
+  }
+
+  function rocketLaunchFail() {
+    const prevCombo = rocketState.combo;
+    rocketState.combo = 0;
+    rocketRenderCombo(prevCombo);
+    rocketStatusEl.textContent = 'CHECK ORDER';
+    rocketStatusEl.className = 'rocket-status retry';
+    if (!prefersReducedMotion()) {
+      rocketShipEl.classList.remove('shake');
+      void rocketShipEl.offsetWidth;
+      rocketShipEl.classList.add('shake');
+    }
+    rocketMascotEl.classList.remove('cheer');
+    void rocketMascotEl.offsetWidth;
+    rocketMascotEl.classList.add('oops');
+    rocketSay(rocketPick(ROCKET_RETRY_LINES));
+    rocketSfxRetry();
+    setTimeout(() => {
+      rocketShipEl.classList.remove('shake');
+      rocketMascotEl.classList.remove('oops');
+    }, 500);
+  }
+
+  function rocketDrawStar(cx, cy, r, rot) {
+    rocketFxCtx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a = rot + i * (Math.PI * 2 / 5) - Math.PI / 2;
+      const xOuter = cx + Math.cos(a) * r, yOuter = cy + Math.sin(a) * r;
+      const aIn = a + Math.PI / 5;
+      const xInner = cx + Math.cos(aIn) * (r * 0.42), yInner = cy + Math.sin(aIn) * (r * 0.42);
+      if (i === 0) rocketFxCtx.moveTo(xOuter, yOuter); else rocketFxCtx.lineTo(xOuter, yOuter);
+      rocketFxCtx.lineTo(xInner, yInner);
+    }
+    rocketFxCtx.closePath();
+    rocketFxCtx.fill();
+  }
+
+  function rocketBurstFx() {
+    if (prefersReducedMotion()) return;
+    const cx = rocketFxCanvas.width / 2, cy = rocketFxCanvas.height * 0.55;
+    const colors = ['#ffc93c', '#ff6f91', '#3db670', '#4fb6e8', '#9b7fe8', '#ffffff'];
+    for (let i = 0; i < 30; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2 + Math.random() * 4.5;
+      rocketFxParticles.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2,
+        life: 1,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        r: 2 + Math.random() * 3.4,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.3,
+        star: Math.random() < 0.35,
+      });
+    }
+    if (!rocketFxRunning) rocketRunFx();
+  }
+  function rocketRunFx() {
+    rocketFxRunning = true;
+    rocketFxCtx.clearRect(0, 0, rocketFxCanvas.width, rocketFxCanvas.height);
+    rocketFxParticles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= 0.016; p.rot += p.vr;
+      rocketFxCtx.globalAlpha = Math.max(p.life, 0);
+      rocketFxCtx.fillStyle = p.color;
+      if (p.star) rocketDrawStar(p.x, p.y, p.r * 1.6, p.rot);
+      else { rocketFxCtx.beginPath(); rocketFxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); rocketFxCtx.fill(); }
+    });
+    rocketFxCtx.globalAlpha = 1;
+    rocketFxParticles = rocketFxParticles.filter(p => p.life > 0);
+    if (rocketFxParticles.length > 0) {
+      requestAnimationFrame(rocketRunFx);
+    } else {
+      rocketFxCtx.clearRect(0, 0, rocketFxCanvas.width, rocketFxCanvas.height);
+      rocketFxRunning = false;
+    }
+  }
+
+  /* ---------- game: balloon pop ---------- */
+  // Balloon-popping quiz, mixed English<->Chinese direction, drawing from
+  // the shared word list (data.words) filtered by the current topic, same
+  // as Word Match / Unscramble / Say It Back / Word Blaster.
+
+  const BALLOON_ROUND_SIZE = 10;
+  const BALLOON_HUES = ['hue-happy', 'hue-pop', 'hue-sky', 'hue-violet'];
+  const BALLOON_RISE_MS = 10500;
+  const BALLOON_SPAWN_STAGGER_MS = 800;
+
+  const balloonState = {
+    category: 'All',
+    solved: 0,
+    correct: 0,
+    roundToken: 0,
+    resolved: false,
+    balloons: [],
+    roundQueue: [],
+    roundIndex: 0,
+    currentTargetAnswer: '',
+  };
+
+  let balloonStageEl, balloonWordEl, balloonProgressEl, balloonTargetSection;
+
+  function renderBalloonMarkup() {
+    return `
+      <div class="balloon-toolbar">
+        <button class="btn-fun blue small" id="balloonNewBtn">New Round</button>
+      </div>
+      <div class="balloon-target" id="balloonTarget">
+        <span class="balloon-target-word" id="balloonWord">—</span>
+      </div>
+      <p class="balloon-progress" id="balloonProgress"></p>
+      <div class="balloon-stage" id="balloonStage"></div>
+      <p class="banner" id="balloonBanner"></p>
+    `;
+  }
+
+  function startBalloonRound() {
+    const area = document.getElementById('balloonArea');
+    area.innerHTML = renderBalloonMarkup();
+    balloonStageEl = document.getElementById('balloonStage');
+    balloonWordEl = document.getElementById('balloonWord');
+    balloonProgressEl = document.getElementById('balloonProgress');
+    balloonTargetSection = document.getElementById('balloonTarget');
+    document.getElementById('balloonNewBtn').addEventListener('click', balloonBeginRound);
+    balloonBeginRound();
+  }
+
+  function balloonPickDistractorsAndDirection(target, pool) {
+    const others = shuffleArray(pool.filter(w => w.word !== target.word));
+    const distractors = others.slice(0, 2);
+    const direction = Math.random() < 0.5 ? 'en2zh' : 'zh2en';
+    return { options: shuffleArray([target, ...distractors]), direction };
+  }
+
+  function balloonClearStage() {
+    balloonState.balloons.forEach(b => { try { b.anim.cancel(); } catch (e) {} });
+    balloonState.balloons = [];
+    balloonStageEl.innerHTML = '';
+  }
+
+  function balloonSpawnBalloon(labelText, isCorrect, hue, xPercent, token) {
+    const outer = document.createElement('div');
+    outer.className = 'balloon';
+    outer.style.left = xPercent + '%';
+
+    const sway = document.createElement('div');
+    sway.className = 'balloon-sway';
+    sway.style.animationDelay = (Math.random() * -3.2) + 's';
+
+    const body = document.createElement('button');
+    body.type = 'button';
+    body.className = 'balloon-body ' + hue;
+    body.innerHTML = '<span>' + escapeHtml(labelText) + '</span>';
+
+    const string = document.createElement('div');
+    string.className = 'balloon-string';
+
+    sway.appendChild(body);
+    sway.appendChild(string);
+    outer.appendChild(sway);
+    balloonStageEl.appendChild(outer);
+
+    const travel = balloonStageEl.clientHeight + 220;
+    const wobbleX = (Math.random() - 0.5) * 40;
+    const anim = outer.animate(
+      [
+        { transform: 'translate(0px, 0px)' },
+        { transform: `translate(${wobbleX}px, -${travel}px)` },
+      ],
+      { duration: BALLOON_RISE_MS, easing: 'linear', fill: 'forwards' }
+    );
+
+    const record = { outer, anim, isCorrect, token };
+    balloonState.balloons.push(record);
+
+    anim.onfinish = () => balloonHandleEscaped(record);
+
+    body.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      balloonHandleTap(record, body);
+    }, { passive: false });
+
+    return record;
+  }
+
+  function balloonHandleEscaped(record) {
+    if (record.token !== balloonState.roundToken || balloonState.resolved) return;
+    if (record.isCorrect) balloonResolveTarget(false);
+  }
+
+  function balloonHandleTap(record, bodyEl) {
+    if (record.token !== balloonState.roundToken || balloonState.resolved) return;
+    if (record.isCorrect) {
+      balloonResolveTarget(true);
+    } else {
+      bodyEl.classList.remove('wrong-flash');
+      void bodyEl.offsetWidth;
+      bodyEl.classList.add('wrong-flash');
+      showBanner('balloonBanner', 'Not quite — try another one!', true);
+    }
+  }
+
+  function balloonPop(record) {
+    if (prefersReducedMotion()) {
+      record.outer.remove();
+      return;
+    }
+    try { record.anim.pause(); } catch (e) {}
+    const body = record.outer.querySelector('.balloon-body');
+    const popAnim = body.animate(
+      [
+        { transform: 'scale(1)', opacity: 1 },
+        { transform: 'scale(1.35)', opacity: 0 },
+      ],
+      { duration: 260, easing: 'ease-out' }
+    );
+    popAnim.onfinish = () => record.outer.remove();
+  }
+
+  function balloonFadeAway(record) {
+    try { record.anim.cancel(); } catch (e) {}
+    record.outer.style.transition = 'opacity 0.3s ease';
+    record.outer.style.opacity = '0';
+    setTimeout(() => record.outer.remove(), 320);
+  }
+
+  function balloonResolveTarget(success) {
+    if (balloonState.resolved) return;
+    balloonState.resolved = true;
+
+    balloonState.balloons.forEach(b => {
+      if (success && b.isCorrect) balloonPop(b);
+      else balloonFadeAway(b);
+    });
+
+    balloonState.solved++;
+    if (success) {
+      balloonState.correct++;
+      addStars(1);
+      recordQualifyingActivity();
+      showBanner('balloonBanner', pickEncouragement());
+    } else {
+      showBanner('balloonBanner', `So close! It was "${balloonState.currentTargetAnswer}".`, true);
+    }
+
+    if (balloonState.solved >= BALLOON_ROUND_SIZE) {
+      setTimeout(balloonShowRoundSummary, success ? 750 : 1050);
+    } else {
+      setTimeout(balloonNextTarget, success ? 650 : 950);
+    }
+  }
+
+  function balloonNextTarget() {
+    const pool = wordsInCategory(balloonState.category);
+    if (pool.length < 3) {
+      balloonStageEl.innerHTML = '<div class="game-empty">Add at least 3 words in <strong>My Words</strong> first, then come back to play!</div>';
+      balloonTargetSection.style.visibility = 'hidden';
+      balloonProgressEl.textContent = '';
+      return;
+    }
+    balloonTargetSection.style.visibility = 'visible';
+    balloonClearStage();
+    balloonState.resolved = false;
+    balloonState.roundToken++;
+    const token = balloonState.roundToken;
+
+    const target = balloonState.roundQueue[balloonState.roundIndex];
+    balloonState.roundIndex++;
+    const { options, direction } = balloonPickDistractorsAndDirection(target, pool);
+    if (direction === 'en2zh') {
+      balloonWordEl.textContent = target.word;
+      balloonWordEl.setAttribute('lang', 'en');
+      balloonState.currentTargetAnswer = target.meaning;
+    } else {
+      balloonWordEl.textContent = target.meaning;
+      balloonWordEl.setAttribute('lang', 'zh-Hant');
+      balloonState.currentTargetAnswer = target.word;
+    }
+    balloonProgressEl.textContent = `Balloon ${balloonState.solved + 1} of ${BALLOON_ROUND_SIZE} · ${balloonState.correct} popped correctly`;
+
+    const hues = shuffleArray(BALLOON_HUES);
+    const xs = balloonSpreadPositions(options.length);
+    options.forEach((entry, i) => {
+      const label = direction === 'en2zh' ? entry.meaning : entry.word;
+      setTimeout(() => {
+        if (token !== balloonState.roundToken) return;
+        balloonSpawnBalloon(label, entry.word === target.word, hues[i % hues.length], xs[i], token);
+      }, i * BALLOON_SPAWN_STAGGER_MS);
+    });
+  }
+
+  function balloonSpreadPositions(count) {
+    const slots = [18, 50, 82];
+    return shuffleArray(slots).slice(0, count);
+  }
+
+  function balloonShowRoundSummary() {
+    balloonStageEl.innerHTML = '';
+    balloonTargetSection.style.visibility = 'hidden';
+    balloonProgressEl.textContent = '';
+    const el = document.createElement('div');
+    el.className = 'balloon-summary';
+    el.innerHTML = `
+      <span class="icon-balloon balloon-summary-icon" aria-hidden="true"></span>
+      <div class="balloon-summary-score">You popped ${balloonState.correct} out of ${BALLOON_ROUND_SIZE}!</div>
+      <button class="btn-fun" id="balloonPlayAgain">Play again</button>
+    `;
+    balloonStageEl.appendChild(el);
+    document.getElementById('balloonPlayAgain').addEventListener('click', balloonBeginRound);
+  }
+
+  function balloonBeginRound() {
+    balloonState.solved = 0;
+    balloonState.correct = 0;
+    balloonState.resolved = false;
+    const pool = wordsInCategory(balloonState.category);
+    balloonState.roundQueue = shuffleArray(pool).slice(0, Math.min(BALLOON_ROUND_SIZE, pool.length));
+    balloonState.roundIndex = 0;
+    balloonTargetSection.style.visibility = 'visible';
+    balloonNextTarget();
+  }
 
   /* ---------- init ---------- */
 
