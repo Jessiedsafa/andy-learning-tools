@@ -940,6 +940,104 @@
   .chef-skin-btn.locked { opacity: 0.6; cursor: default; }
   .chef-skin-btn:disabled { cursor: default; }
 
+  /* ---------- game: clue sort (question words) ---------- */
+
+  .sorter-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .sorter-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .sorter-progress {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sorter-clue-card {
+    background: var(--sky);
+    border-radius: 18px;
+    padding: 1.3rem 1.6rem;
+    min-height: 3.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 320px;
+    width: 100%;
+  }
+
+  .sorter-clue-text {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .sorter-baskets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 380px;
+  }
+
+  .sorter-basket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    width: 5.4rem;
+    border: none;
+    border-radius: 16px;
+    padding: 0.7rem 0.4rem 0.5rem;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 0 4px 0 var(--shadow);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+
+  .sorter-basket:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--shadow); }
+  .sorter-basket:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+  .sorter-basket.hue-violet { background: var(--violet); }
+  .sorter-basket.hue-pop    { background: var(--pop); }
+  .sorter-basket.hue-star   { background: var(--star); color: var(--star-ink); }
+  .sorter-basket.hue-sky    { background: var(--sky-accent); }
+  .sorter-basket.hue-happy  { background: var(--happy); }
+
+  .sorter-basket-emoji { font-size: 1.4rem; line-height: 1; }
+  .sorter-basket-label {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .sorter-basket-count {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.72rem;
+    opacity: 0.85;
+  }
+
+  .sorter-basket.wrong-flash { animation: shake 0.3s ease; }
+  .sorter-basket.correct-bump { animation: chef-pop 0.35s ease; }
+
+  .sorter-complete .chef-dish-name {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ink);
+    margin: 0;
+  }
+
   /* ---------- game: verb chef, medium difficulty (routine runner) ---------- */
 
   .runner-toolbar {
@@ -1729,6 +1827,10 @@
 
       <div class="game-panel" id="game-runner">
         <div id="runnerArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-sorter">
+        <div id="sorterArea"></div>
       </div>
     </section>
 
@@ -2557,13 +2659,18 @@
     scramble: { value: 'scramble', label: '🔤 Unscramble' },
     chef: { value: 'chef', label: '🍲 Verb Chef' },
     runner: { value: 'runner', label: '🏃 Routine Runner' },
+    sorter: { value: 'sorter', label: '🧺 Clue Sort' },
   };
   // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
   // Runner) instead of the generic Word Match / Unscramble.
   const VERB_TOPICS = new Set(['Verbs & Practice Use']);
+  // Question Words gets an extra dedicated game (Clue Sort) alongside the
+  // generic Word Match / Unscramble, rather than replacing them.
+  const QUESTION_TOPICS = new Set(['Question Words']);
 
   function gamesForTopic(topic) {
     if (VERB_TOPICS.has(topic)) return ['chef', 'runner'];
+    if (QUESTION_TOPICS.has(topic)) return ['match', 'scramble', 'sorter'];
     return ['match', 'scramble'];
   }
 
@@ -2594,6 +2701,7 @@
     else if (game === 'scramble') newScrambleRound();
     else if (game === 'chef') startChefRound();
     else if (game === 'runner') startRunnerRound();
+    else if (game === 'sorter') startSorterRound();
   }
 
   function selectTopic(topic) {
@@ -2893,6 +3001,135 @@
     addStars(bonus);
     launchConfetti();
   }
+
+  /* ---------- game: clue sort (question words) ---------- */
+  // Andy sees a short clue phrase and taps the basket for the question word
+  // it answers (Who/What/When/Where/Why). Wrong taps just shake the basket
+  // — same forgiving rule as every other game here — no life or star loss.
+
+  const SORTER_CLUES = [
+    { text: 'my grandma', category: 'who' },
+    { text: 'the teacher', category: 'who' },
+    { text: 'my best friend', category: 'who' },
+    { text: 'the doctor', category: 'who' },
+    { text: 'a red apple', category: 'what' },
+    { text: 'my new backpack', category: 'what' },
+    { text: 'a soccer ball', category: 'what' },
+    { text: 'her homework', category: 'what' },
+    { text: 'at 3 o’clock', category: 'when' },
+    { text: 'every morning', category: 'when' },
+    { text: 'on Monday', category: 'when' },
+    { text: 'in the summer', category: 'when' },
+    { text: 'at the park', category: 'where' },
+    { text: 'in the kitchen', category: 'where' },
+    { text: 'under the table', category: 'where' },
+    { text: 'at school', category: 'where' },
+    { text: 'because it’s raining', category: 'why' },
+    { text: 'because I was hungry', category: 'why' },
+    { text: 'because he was late', category: 'why' },
+    { text: 'because she was tired', category: 'why' },
+  ];
+
+  const SORTER_CATEGORIES = [
+    { key: 'who', label: 'Who', emoji: '🧑', hue: 'hue-violet' },
+    { key: 'what', label: 'What', emoji: '🎁', hue: 'hue-pop' },
+    { key: 'when', label: 'When', emoji: '⏰', hue: 'hue-star' },
+    { key: 'where', label: 'Where', emoji: '📍', hue: 'hue-sky' },
+    { key: 'why', label: 'Why', emoji: '❓', hue: 'hue-happy' },
+  ];
+
+  const SORTER_ROUND_SIZE = 10;
+
+  const sorterState = { roundClues: [], index: 0, done: false, firstTryCount: 0, missedCurrent: false, counts: {} };
+
+  function sorterResetCounts() {
+    SORTER_CATEGORIES.forEach(c => { sorterState.counts[c.key] = 0; });
+  }
+
+  function startSorterRound() {
+    sorterState.roundClues = shuffleArray(SORTER_CLUES).slice(0, SORTER_ROUND_SIZE);
+    sorterState.index = 0;
+    sorterState.done = false;
+    sorterState.firstTryCount = 0;
+    sorterState.missedCurrent = false;
+    sorterResetCounts();
+    renderSorterRound();
+  }
+
+  function renderSorterBaskets() {
+    return SORTER_CATEGORIES.map(c => `
+      <button class="sorter-basket ${c.hue}" data-key="${c.key}">
+        <span class="sorter-basket-emoji">${c.emoji}</span>
+        <span class="sorter-basket-label">${c.label}</span>
+        <span class="sorter-basket-count">${sorterState.counts[c.key] || 0} sorted</span>
+      </button>
+    `).join('');
+  }
+
+  function renderSorterRound() {
+    const area = document.getElementById('sorterArea');
+    const current = sorterState.roundClues[sorterState.index];
+    area.innerHTML = `
+      <div class="sorter-wrap">
+        <div class="sorter-toolbar">
+          <button class="btn-fun blue small" id="sorterNewBtn">🔄 New Round</button>
+        </div>
+        <p class="sorter-progress">Clue ${sorterState.index + 1} of ${sorterState.roundClues.length}</p>
+        <div class="sorter-clue-card">
+          <span class="sorter-clue-text">${escapeHtml(current.text)}</span>
+        </div>
+        <div class="sorter-baskets">${renderSorterBaskets()}</div>
+        <div class="banner neutral" id="sorterBanner"></div>
+      </div>
+    `;
+    document.getElementById('sorterNewBtn').addEventListener('click', startSorterRound);
+  }
+
+  function renderSorterComplete() {
+    const area = document.getElementById('sorterArea');
+    const total = sorterState.roundClues.length;
+    const bonus = Math.max(1, sorterState.firstTryCount);
+    area.innerHTML = `
+      <div class="sorter-wrap sorter-complete">
+        <div class="chef-pot">🧺</div>
+        <p class="chef-dish-name">All clues sorted!</p>
+        <p class="chef-dish-sub">${sorterState.firstTryCount} out of ${total} got it right first try — +${bonus} bonus star${bonus === 1 ? '' : 's'}!</p>
+        <button class="btn-fun" id="sorterAgainBtn">Sort Another Round 🧺</button>
+      </div>
+    `;
+    document.getElementById('sorterAgainBtn').addEventListener('click', startSorterRound);
+    addStars(bonus);
+    launchConfetti();
+  }
+
+  document.getElementById('sorterArea').addEventListener('click', (e) => {
+    const basketBtn = e.target.closest('.sorter-basket');
+    if (!basketBtn || sorterState.done) return;
+    const current = sorterState.roundClues[sorterState.index];
+    if (basketBtn.dataset.key === current.category) {
+      sorterState.counts[current.category] = (sorterState.counts[current.category] || 0) + 1;
+      if (!sorterState.missedCurrent) sorterState.firstTryCount++;
+      addStars(1);
+      recordQualifyingActivity();
+      basketBtn.classList.add('correct-bump');
+      showBanner('sorterBanner', pickEncouragement());
+      sorterState.index++;
+      sorterState.missedCurrent = false;
+      setTimeout(() => {
+        if (sorterState.index >= sorterState.roundClues.length) {
+          sorterState.done = true;
+          renderSorterComplete();
+        } else {
+          renderSorterRound();
+        }
+      }, 500);
+    } else {
+      sorterState.missedCurrent = true;
+      basketBtn.classList.remove('wrong-flash');
+      void basketBtn.offsetWidth;
+      basketBtn.classList.add('wrong-flash');
+    }
+  });
 
   /* ---------- game: verb chef, medium difficulty (routine runner) ---------- */
   // An endless-runner quiz: an obstacle drifts toward Andy on a generous
