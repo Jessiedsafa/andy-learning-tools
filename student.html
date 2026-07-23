@@ -2648,6 +2648,19 @@
 
   /* ---------- words ---------- */
 
+  function renderWordPronunciationRow(w) {
+    if (wordItemRecordingId === w.id) {
+      return `<div class="word-voice-row"><button type="button" class="btn-fun small word-stop-btn" data-id="${w.id}"><span class="icon-stop" aria-hidden="true"></span> Stop</button><span class="rec-indicator">● Recording…</span></div>`;
+    }
+    if (w.audioDataUrl) {
+      return `<div class="word-voice-row"><audio controls src="${w.audioDataUrl}"></audio><button type="button" class="btn-fun blue small word-record-btn" data-id="${w.id}">Re-record</button></div>`;
+    }
+    if (supportsRecording()) {
+      return `<div class="word-voice-row"><button type="button" class="btn-fun small word-record-btn" data-id="${w.id}"><span class="icon-mic" aria-hidden="true"></span> Record pronunciation</button></div>`;
+    }
+    return '';
+  }
+
   function renderWords() {
     const list = document.getElementById('list-words');
     if (!data.words.length) {
@@ -2662,10 +2675,58 @@
           <span class="word-category-badge">${escapeHtml(w.category || 'General')}</span>
         </div>
         ${w.example ? `<div class="word-example">"${escapeHtml(w.example)}"</div>` : ''}
-        ${w.audioDataUrl ? `<audio controls src="${w.audioDataUrl}" style="margin-top: 0.4rem; height: 34px;"></audio>` : ''}
+        ${renderWordPronunciationRow(w)}
         <button class="mini-delete" data-id="${w.id}" aria-label="Delete word">&times;</button>
       </li>
     `).join('');
+  }
+
+  /* ---------- record/replace pronunciation for an existing word ---------- */
+
+  let wordItemMediaRecorder = null;
+  let wordItemActiveStream = null;
+  let wordItemRecordChunks = [];
+  let wordItemRecordingId = null;
+  let wordItemRecordTimeout = null;
+
+  async function startWordItemRecording(id) {
+    if (!supportsRecording()) return;
+    if (wordItemMediaRecorder && wordItemMediaRecorder.state === 'recording') return;
+    try {
+      wordItemActiveStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      alert('Allow microphone access to record the word.');
+      return;
+    }
+    wordItemRecordChunks = [];
+    wordItemRecordingId = id;
+    wordItemMediaRecorder = new MediaRecorder(wordItemActiveStream);
+    wordItemMediaRecorder.addEventListener('dataavailable', e => { if (e.data.size > 0) wordItemRecordChunks.push(e.data); });
+    wordItemMediaRecorder.addEventListener('stop', () => {
+      const blob = new Blob(wordItemRecordChunks, { type: wordItemMediaRecorder.mimeType || 'audio/webm' });
+      const reader = new FileReader();
+      const finishedId = wordItemRecordingId;
+      reader.onload = () => {
+        const item = data.words.find(w => w.id === finishedId);
+        if (item) {
+          item.audioDataUrl = reader.result;
+          saveData();
+        }
+        wordItemRecordingId = null;
+        renderWords();
+      };
+      reader.readAsDataURL(blob);
+      wordItemActiveStream.getTracks().forEach(t => t.stop());
+      wordItemActiveStream = null;
+    });
+    wordItemMediaRecorder.start();
+    renderWords();
+    wordItemRecordTimeout = setTimeout(() => stopWordItemRecording(), 60000);
+  }
+
+  function stopWordItemRecording() {
+    clearTimeout(wordItemRecordTimeout);
+    if (wordItemMediaRecorder && wordItemMediaRecorder.state === 'recording') wordItemMediaRecorder.stop();
   }
 
   /* ---------- record voice for a new word ---------- */
@@ -2755,8 +2816,19 @@
   });
 
   document.getElementById('list-words').addEventListener('click', (e) => {
+    const recordBtn = e.target.closest('.word-record-btn');
+    if (recordBtn) {
+      startWordItemRecording(recordBtn.dataset.id);
+      return;
+    }
+    const stopBtn = e.target.closest('.word-stop-btn');
+    if (stopBtn) {
+      stopWordItemRecording();
+      return;
+    }
     const btn = e.target.closest('.mini-delete');
     if (!btn) return;
+    if (wordItemRecordingId === btn.dataset.id) stopWordItemRecording();
     data.words = data.words.filter(w => w.id !== btn.dataset.id);
     saveData();
     renderWords();
