@@ -1048,6 +1048,60 @@
     margin: 0;
   }
 
+  /* ---------- game: say it back (speaking practice) ---------- */
+
+  .speak-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .speak-progress {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .speak-card {
+    background: var(--sky);
+    border-radius: 20px;
+    padding: 1.5rem 1.8rem;
+    max-width: 340px;
+    width: 100%;
+  }
+
+  .speak-word {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    font-size: 2.1rem;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .speak-meaning {
+    margin-top: 0.3rem;
+    color: var(--ink-soft);
+    font-size: 1rem;
+  }
+
+  .speak-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+  }
+
+  .speak-heard {
+    min-height: 1.3rem;
+    font-size: 0.9rem;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  .speak-skip-row { margin-top: -0.2rem; }
+
   /* ---------- game: verb chef, medium difficulty (routine runner) ---------- */
 
   .runner-toolbar {
@@ -1960,6 +2014,10 @@
       <div class="game-panel" id="game-sorter">
         <div id="sorterArea"></div>
       </div>
+
+      <div class="game-panel" id="game-speak">
+        <div id="speakArea"></div>
+      </div>
     </section>
 
     <section class="panel" id="panel-words">
@@ -2860,6 +2918,7 @@
     chef: { value: 'chef', label: 'Verb Chef' },
     runner: { value: 'runner', label: 'Routine Runner' },
     sorter: { value: 'sorter', label: 'Clue Sort' },
+    speak: { value: 'speak', label: 'Say It Back' },
   };
   // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
   // Runner) instead of the generic Word Match / Unscramble.
@@ -2868,10 +2927,12 @@
   // generic Word Match / Unscramble, rather than replacing them.
   const QUESTION_TOPICS = new Set(['Question Words']);
 
+  // Say It Back (speaking practice) works from the shared word list, same as
+  // Word Match / Unscramble, so it makes sense under every topic.
   function gamesForTopic(topic) {
-    if (VERB_TOPICS.has(topic)) return ['chef', 'runner'];
-    if (QUESTION_TOPICS.has(topic)) return ['match', 'scramble', 'sorter'];
-    return ['match', 'scramble'];
+    if (VERB_TOPICS.has(topic)) return ['chef', 'runner', 'speak'];
+    if (QUESTION_TOPICS.has(topic)) return ['match', 'scramble', 'sorter', 'speak'];
+    return ['match', 'scramble', 'speak'];
   }
 
   function renderButtonRow(containerId, items, selected, onSelect) {
@@ -2902,12 +2963,14 @@
     else if (game === 'chef') startChefRound();
     else if (game === 'runner') startRunnerRound();
     else if (game === 'sorter') startSorterRound();
+    else if (game === 'speak') startSpeakRound();
   }
 
   function selectTopic(topic) {
     currentTopic = topic;
     matchState.category = topic;
     scrambleState.category = topic;
+    speakState.category = topic;
     const games = gamesForTopic(topic);
     if (!games.includes(currentGame)) currentGame = games[0];
     renderGameTopTabs();
@@ -3333,6 +3396,162 @@
       basketBtn.classList.add('wrong-flash');
     }
   });
+
+  /* ---------- game: say it back (speaking practice) ---------- */
+  // Andy hears the word (the teacher's recorded pronunciation if this word
+  // has one, otherwise the browser reads it aloud), then taps the mic and
+  // says it back. Speech recognition checks what he said — same forgiving
+  // rule as everywhere else here: a miss just says "try again", no penalty.
+
+  const SPEAK_ROUND_SIZE = 8;
+  const speakState = { pool: [], index: 0, done: false, firstTryCount: 0, missedCurrent: false, category: 'All', recognizing: false };
+
+  function speakSupported() {
+    return !!SpeechRecognitionCtor;
+  }
+
+  function normalizeSpeech(s) {
+    return s.toLowerCase().trim().replace(/[.,!?'"]/g, '');
+  }
+
+  function speechMatches(said, target) {
+    const a = normalizeSpeech(said);
+    const b = normalizeSpeech(target);
+    if (!a || !b) return false;
+    if (a === b) return true;
+    const escaped = b.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp('(^|\\s)' + escaped + '(\\s|$)').test(a);
+  }
+
+  function playWordAudio(word) {
+    if (word.audioDataUrl) {
+      new Audio(word.audioDataUrl).play().catch(() => {});
+    } else if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(new SpeechSynthesisUtterance(word.word));
+    }
+  }
+
+  function startSpeakRound() {
+    const area = document.getElementById('speakArea');
+    const pool = wordsInCategory(speakState.category);
+    if (pool.length < 3) {
+      const where = speakState.category === 'All' ? '' : ` in <strong>${escapeHtml(speakState.category)}</strong>`;
+      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to practice!</div>`;
+      return;
+    }
+    speakState.pool = shuffleArray(pool).slice(0, SPEAK_ROUND_SIZE);
+    speakState.index = 0;
+    speakState.done = false;
+    speakState.firstTryCount = 0;
+    speakState.missedCurrent = false;
+    renderSpeakRound();
+  }
+
+  function renderSpeakRound() {
+    const area = document.getElementById('speakArea');
+    const current = speakState.pool[speakState.index];
+    const micMarkup = speakSupported()
+      ? `<button type="button" class="btn-fun mic-btn" id="speakMicBtn"><span class="icon-mic" aria-hidden="true"></span> Say it</button>`
+      : `<span class="empty-note">Voice practice isn't supported in this browser.</span>`;
+    area.innerHTML = `
+      <div class="speak-wrap">
+        <p class="speak-progress">Word ${speakState.index + 1} of ${speakState.pool.length}</p>
+        <div class="speak-card">
+          <div class="speak-word">${escapeHtml(current.word)}</div>
+          <div class="speak-meaning">${escapeHtml(current.meaning)}</div>
+        </div>
+        <div class="speak-controls">
+          <button type="button" class="btn-fun blue small" id="speakListenBtn"><span class="icon-speaker" aria-hidden="true"></span> Listen</button>
+          ${micMarkup}
+        </div>
+        <p class="speak-heard" id="speakHeard"></p>
+        <div class="banner" id="speakBanner"></div>
+        <div class="speak-skip-row"><button type="button" class="link-btn" id="speakSkip">Skip to another word →</button></div>
+      </div>
+    `;
+    document.getElementById('speakListenBtn').addEventListener('click', () => playWordAudio(current));
+    document.getElementById('speakSkip').addEventListener('click', advanceSpeak);
+    const micBtn = document.getElementById('speakMicBtn');
+    if (micBtn) micBtn.addEventListener('click', () => startSpeakListening(current));
+  }
+
+  function startSpeakListening(current) {
+    if (!speakSupported() || speakState.recognizing) return;
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    const micBtn = document.getElementById('speakMicBtn');
+
+    recognition.addEventListener('start', () => {
+      speakState.recognizing = true;
+      if (micBtn) micBtn.classList.add('listening');
+    });
+
+    recognition.addEventListener('result', (e) => {
+      const transcript = e.results[0][0].transcript;
+      const heardEl = document.getElementById('speakHeard');
+      if (heardEl) heardEl.textContent = `You said: "${transcript}"`;
+      if (speechMatches(transcript, current.word)) {
+        if (!speakState.missedCurrent) speakState.firstTryCount++;
+        addStars(1);
+        recordQualifyingActivity();
+        showBanner('speakBanner', pickEncouragement());
+        setTimeout(advanceSpeak, 900);
+      } else {
+        speakState.missedCurrent = true;
+        showBanner('speakBanner', 'Not quite — try again!', true);
+      }
+    });
+
+    recognition.addEventListener('error', (e) => {
+      if (e.error !== 'no-speech' && e.error !== 'aborted') {
+        showBanner('speakBanner', "Couldn't hear that — try again!", true);
+      }
+    });
+
+    recognition.addEventListener('end', () => {
+      speakState.recognizing = false;
+      if (micBtn) micBtn.classList.remove('listening');
+    });
+
+    try {
+      recognition.start();
+    } catch (err) {}
+  }
+
+  function advanceSpeak() {
+    speakState.index++;
+    speakState.missedCurrent = false;
+    if (speakState.index >= speakState.pool.length) {
+      speakState.done = true;
+      renderSpeakComplete();
+    } else {
+      renderSpeakRound();
+    }
+  }
+
+  function renderSpeakComplete() {
+    const area = document.getElementById('speakArea');
+    const total = speakState.pool.length;
+    const bonus = Math.max(1, speakState.firstTryCount);
+    area.innerHTML = `
+      <div class="speak-wrap">
+        <div class="medal">
+          <div class="medal-ribbon medal-ribbon-l"></div>
+          <div class="medal-ribbon medal-ribbon-r"></div>
+          <div class="medal-disc"><span class="medal-star"></span></div>
+        </div>
+        <p class="chef-dish-name">All words practiced!</p>
+        <p class="chef-dish-sub">${speakState.firstTryCount} out of ${total} got it right first try — +${bonus} bonus star${bonus === 1 ? '' : 's'}!</p>
+        <button class="btn-fun" id="speakAgainBtn">Practice Again</button>
+      </div>
+    `;
+    document.getElementById('speakAgainBtn').addEventListener('click', startSpeakRound);
+    addStars(bonus);
+    launchConfetti();
+  }
 
   /* ---------- game: verb chef, medium difficulty (routine runner) ---------- */
   // An endless-runner quiz: an obstacle drifts toward Andy on a generous
