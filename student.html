@@ -2797,6 +2797,450 @@
     .balloon-body { font-size: 1.2rem; }
     .balloon-target-word { font-size: 1.7rem; }
   }
+
+  /* ---------- game: cat & rat chase ---------- */
+  /* Scoped under #catratArea so its room/sofa palette never leaks into the
+     rest of the app; reuses the host's --ink/--ink-soft/--card/--shadow
+     tokens directly and only introduces new names for its own scenery. */
+  #catratArea {
+    --catrat-wall: #f4e9d8;
+    --catrat-wall-2: #efe0c9;
+    --catrat-floor-a: #c98a52;
+    --catrat-floor-b: #b97a44;
+    --catrat-sofa: #2f7f79;
+    --catrat-sofa-shade: #215a56;
+    --catrat-sofa-light: #3f958d;
+    --catrat-rug: #e2574c;
+    --catrat-rug-2: #f2b8a8;
+    --catrat-gold: #ffce54;
+    --catrat-gold-ink: #5c3d00;
+  }
+  @media (prefers-color-scheme: dark) {
+    #catratArea {
+      --catrat-wall: #231c1a;
+      --catrat-wall-2: #2b221f;
+      --catrat-floor-a: #3a2a1c;
+      --catrat-floor-b: #33251a;
+      --catrat-sofa: #2f8f86;
+      --catrat-sofa-shade: #1c5450;
+      --catrat-sofa-light: #3fa89e;
+      --catrat-rug: #b3453c;
+      --catrat-rug-2: #5c2c26;
+      --catrat-gold: #ffd873;
+      --catrat-gold-ink: #402c00;
+    }
+  }
+  :root[data-theme="dark"] #catratArea {
+    --catrat-wall: #231c1a;
+    --catrat-wall-2: #2b221f;
+    --catrat-floor-a: #3a2a1c;
+    --catrat-floor-b: #33251a;
+    --catrat-sofa: #2f8f86;
+    --catrat-sofa-shade: #1c5450;
+    --catrat-sofa-light: #3fa89e;
+    --catrat-rug: #b3453c;
+    --catrat-rug-2: #5c2c26;
+    --catrat-gold: #ffd873;
+    --catrat-gold-ink: #402c00;
+  }
+
+  #catratArea .catrat-hud-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+  }
+  #catratArea .catrat-readout {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 0.4rem 0.9rem;
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 700;
+    color: var(--ink);
+    box-shadow: 0 3px 0 var(--shadow);
+  }
+  #catratArea .catrat-readout.bump { animation: catrat-bump 0.35s ease; }
+  @keyframes catrat-bump { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+  .catrat-room {
+    position: relative;
+    height: 300px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--catrat-wall) 0%, var(--catrat-wall) 62%, var(--catrat-floor-a) 62%, var(--catrat-floor-b) 100%);
+    box-shadow: inset 0 0 0 2px var(--catrat-wall-2);
+    touch-action: none;
+    user-select: none;
+  }
+  .catrat-floor-stripes {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 38%;
+    background: repeating-linear-gradient(90deg, transparent, transparent 9%, rgba(0,0,0,0.05) 9%, rgba(0,0,0,0.05) 9.6%);
+    pointer-events: none;
+  }
+  .catrat-rug {
+    position: absolute; left: 50%; bottom: 8%;
+    width: 56%; height: 22%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, var(--catrat-rug) 0%, var(--catrat-rug) 58%, var(--catrat-rug-2) 60%, var(--catrat-rug-2) 100%);
+    border-radius: 50%;
+    box-shadow: 0 6px 14px var(--shadow);
+  }
+  .catrat-sofa { position: absolute; left: 50%; top: 32%; width: 46%; transform: translateX(-50%); z-index: 5; }
+  .catrat-sofa-back {
+    height: 44%;
+    background: linear-gradient(180deg, var(--catrat-sofa-light), var(--catrat-sofa));
+    border-radius: 16px 16px 6px 6px;
+    box-shadow: 0 4px 10px var(--shadow);
+  }
+  .catrat-sofa-seat-row { display: flex; align-items: flex-end; margin-top: -6%; }
+  .catrat-sofa-arm { width: 14%; height: 24px; background: var(--catrat-sofa-shade); border-radius: 10px; box-shadow: 0 4px 8px var(--shadow); }
+  .catrat-sofa-seat {
+    flex: 1; height: 34px; margin: 0 -2px;
+    background: var(--catrat-sofa); border-radius: 12px;
+    box-shadow: 0 5px 10px var(--shadow), inset 0 -6px 0 var(--catrat-sofa-shade);
+  }
+  .catrat-sofa-legs { display: flex; justify-content: space-between; padding: 0 6%; }
+  .catrat-sofa-legs i { width: 6px; height: 16px; background: var(--ink-soft); border-radius: 2px; display: block; }
+
+  .catrat-caption {
+    position: absolute; left: 50%; top: 6%;
+    transform: translateX(-50%);
+    background: var(--card);
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--ink);
+    box-shadow: 0 4px 10px var(--shadow);
+    white-space: nowrap;
+    z-index: 20;
+    text-align: center;
+  }
+
+  .catrat-critter { position: absolute; top: 0; left: 0; width: 1px; height: 1px; z-index: 10; will-change: transform; }
+  .catrat-critter .catrat-face {
+    display: block;
+    font-size: 34px;
+    line-height: 1;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 4px 4px var(--shadow));
+    transition: transform 0.12s ease;
+  }
+  #catratRat.behind { z-index: 3; }
+  #catratRat.caught .catrat-face { animation: catrat-caught-pop 0.5s ease; }
+  @keyframes catrat-caught-pop {
+    0% { transform: translate(-50%,-50%) scale(1); }
+    40% { transform: translate(-50%,-50%) scale(1.5) rotate(-10deg); }
+    100% { transform: translate(-50%,-50%) scale(1); }
+  }
+  #catratRat.idle .catrat-face { animation: catrat-idle-bounce 1.4s ease-in-out infinite; }
+  @keyframes catrat-idle-bounce {
+    0%, 100% { transform: translate(-50%,-50%) translateY(0); }
+    50% { transform: translate(-50%,-50%) translateY(-5px); }
+  }
+  #catratRat.fleeing .catrat-face { animation: catrat-flee-shake 0.18s linear infinite; }
+  @keyframes catrat-flee-shake {
+    0%, 100% { transform: translate(-50%,-50%) rotate(-6deg); }
+    50% { transform: translate(-50%,-50%) rotate(6deg); }
+  }
+  #catratCat.moving .catrat-face { animation: catrat-run 0.28s ease-in-out infinite; }
+  @keyframes catrat-run {
+    0%, 100% { transform: translate(-50%,-50%) translateY(0) rotate(0deg); }
+    50% { transform: translate(-50%,-50%) translateY(-3px) rotate(-4deg); }
+  }
+
+  #catratFx { position: absolute; inset: 0; z-index: 30; pointer-events: none; width: 100%; height: 100%; }
+
+  .catrat-controls-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 0.1rem 0.2rem; }
+  .catrat-joystick {
+    position: relative;
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: var(--card);
+    box-shadow: 0 4px 10px var(--shadow), inset 0 0 0 2px var(--catrat-wall-2);
+    flex: 0 0 auto;
+    touch-action: none;
+  }
+  .catrat-nub {
+    position: absolute; left: 50%; top: 50%;
+    width: 38px; height: 38px;
+    margin: -19px 0 0 -19px;
+    border-radius: 50%;
+    background: var(--catrat-sofa);
+    box-shadow: 0 3px 6px var(--shadow);
+  }
+  .catrat-hint { margin: 0; font-size: 0.78rem; color: var(--ink-soft); line-height: 1.4; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #catratRat.idle .catrat-face, #catratRat.fleeing .catrat-face,
+    #catratCat.moving .catrat-face, #catratRat.caught .catrat-face { animation: none; }
+  }
+
+  /* ---------- game: storm boss battle ---------- */
+
+  .stormboss-target { background: var(--sky); border-radius: 16px; padding: 0.9rem 1.4rem; text-align: center; }
+  .stormboss-target-emoji { font-size: 2.6rem; line-height: 1; }
+  .stormboss-target-word { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); margin-top: 0.25rem; }
+
+  .stormboss-hp-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--ink-soft); margin: 0.8rem 0 0.3rem; }
+  .stormboss-hp-track { height: 14px; border-radius: 8px; background: var(--sky); border: 2px solid var(--line); overflow: hidden; }
+  .stormboss-hp-fill { height: 100%; background: linear-gradient(90deg, #ff5c5c, #ffb020); transition: width 0.3s ease; width: 100%; }
+
+  .stormboss-battlefield {
+    position: relative; height: 200px; margin-top: 0.7rem;
+    border-radius: 18px; overflow: hidden; border: 3px solid #10132a;
+    background: linear-gradient(180deg, #1b1f3b 0%, #2c2f66 55%, #3a3f7a 100%);
+  }
+  .stormboss-battlefield::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22%;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.35));
+  }
+  .stormboss-person { position: absolute; left: 6%; bottom: 8%; font-size: 2.6rem; line-height: 1; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.35)); }
+  @keyframes stormboss-person-flinch { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+  .stormboss-person.flinch { animation: stormboss-person-flinch 0.3s ease; }
+
+  .stormboss-monster {
+    position: absolute; left: 82%; top: 40%; font-size: 3.2rem; line-height: 1;
+    transform: scale(var(--stormboss-mscale, 0.8));
+    transition: transform 0.4s ease;
+    filter: drop-shadow(0 5px 6px rgba(0,0,0,0.4));
+  }
+  @keyframes stormboss-flinch {
+    0% { transform: scale(var(--stormboss-mscale, 0.8)) translateX(0) rotate(0deg); }
+    30% { transform: scale(calc(var(--stormboss-mscale, 0.8) * 0.88)) translateX(10px) rotate(-8deg); }
+    60% { transform: scale(calc(var(--stormboss-mscale, 0.8) * 1.1)) translateX(-6px) rotate(6deg); }
+    100% { transform: scale(var(--stormboss-mscale, 0.8)) translateX(0) rotate(0deg); }
+  }
+  .stormboss-monster.hit { animation: stormboss-flinch 0.4s ease; }
+  @keyframes stormboss-defeat {
+    0% { transform: scale(var(--stormboss-mscale, 0.8)) rotate(0deg); opacity: 1; }
+    100% { transform: scale(0) rotate(35deg); opacity: 0; }
+  }
+  .stormboss-monster.defeated { animation: stormboss-defeat 0.5s ease forwards; }
+
+  .stormboss-danger-row { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.7rem; font-size: 0.78rem; color: var(--ink-soft); }
+  .stormboss-danger-track { display: flex; gap: 0.3rem; }
+  .stormboss-danger-step {
+    width: 1.4rem; height: 1.4rem; border-radius: 50%;
+    background: var(--sky); border: 2px dashed var(--line);
+    display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+  }
+  .stormboss-danger-step.filled { background: var(--danger); border-color: var(--danger); }
+
+  .stormboss-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1rem; }
+  .stormboss-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+
+  .stormboss-battlefield.aiming { cursor: crosshair; }
+  @keyframes stormboss-aim-pulse {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(255,255,255,0.55)) drop-shadow(0 5px 6px rgba(0,0,0,0.4)); }
+    50% { filter: drop-shadow(0 0 18px rgba(255,255,255,0.95)) drop-shadow(0 5px 6px rgba(0,0,0,0.4)); }
+  }
+  .stormboss-monster.aim-target { animation: stormboss-aim-pulse 0.9s ease-in-out infinite; }
+
+  .stormboss-projectile {
+    position: absolute;
+    font-size: 1.6rem;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 5;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes stormboss-miss-puff {
+    0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+  }
+  .stormboss-miss-puff {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.75);
+    pointer-events: none;
+    animation: stormboss-miss-puff 0.35s ease-out forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stormboss-person.flinch, .stormboss-monster.hit, .stormboss-monster.defeated,
+    .stormboss-monster.aim-target { animation: none; }
+  }
+
+  /* ---------- game: verb ninja ---------- */
+
+  .ninja-target {
+    background: linear-gradient(135deg, #2a1a0f, #4a2f18);
+    border: 2px solid #caa057;
+    border-radius: 20px;
+    padding: 1rem 1.4rem;
+    text-align: center;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.35);
+  }
+  .ninja-target-emoji { font-size: 2.6rem; line-height: 1; display: inline-block; animation: ninja-target-bounce 1.8s ease-in-out infinite; }
+  @keyframes ninja-target-bounce {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-6px) rotate(4deg); }
+  }
+  .ninja-target-word { font-size: 0.95rem; font-weight: 600; color: #f3dca6; margin-top: 0.3rem; }
+
+  .ninja-stats-row { text-align: center; font-size: 0.85rem; color: var(--ink-soft); margin: 0.5rem 0 0.2rem; }
+  .ninja-lives-row { text-align: center; font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 0.4rem; }
+  .ninja-lives-badge { position: relative; display: inline-block; font-weight: 700; color: var(--ink); }
+  .ninja-lives-badge .negative { color: var(--danger); }
+
+  .ninja-arena {
+    position: relative;
+    height: 300px;
+    margin-top: 0.6rem;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 4px solid #23150c;
+    box-shadow: 0 6px 0 var(--shadow), inset 0 0 26px rgba(0,0,0,0.55);
+    background:
+      repeating-linear-gradient(45deg, rgba(0,0,0,0.14) 0 3px, transparent 3px 16px),
+      repeating-linear-gradient(-45deg, rgba(0,0,0,0.14) 0 3px, transparent 3px 16px),
+      linear-gradient(180deg, #d8a856 0%, #b3803a 55%, #8a5f28 100%);
+  }
+  .ninja-arena::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 42%, transparent 42%, rgba(10,6,2,0.55) 100%);
+    pointer-events: none;
+  }
+
+  .ninja-card { position: absolute; left: var(--ninja-x, 40%); bottom: -100px; transform: translate(0, 0) rotate(var(--ninja-tilt, 0deg)); }
+  .ninja-card.rising { animation: ninja-rise var(--ninja-dur, 6s) ease-out forwards; }
+  @keyframes ninja-rise {
+    0% { transform: translate(0, 0) rotate(var(--ninja-tilt, 0deg)); opacity: 1; }
+    30% { transform: translate(calc(var(--ninja-dx, 0px) * 0.3), -130px) rotate(calc(var(--ninja-tilt, 0deg) + var(--ninja-wobble, 12deg))); }
+    60% { transform: translate(calc(var(--ninja-dx, 0px) * 0.65), -280px) rotate(calc(var(--ninja-tilt, 0deg) - var(--ninja-wobble, 12deg))); }
+    88% { opacity: 1; }
+    100% { transform: translate(var(--ninja-dx, 0px), -440px) rotate(var(--ninja-tilt, 0deg)); opacity: 0; }
+  }
+
+  .ninja-card-btn {
+    position: relative;
+    width: 5rem; height: 5rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 3px solid color-mix(in srgb, var(--ninja-bubble, var(--sky-accent)) 65%, black);
+    border-radius: 50%;
+    padding: 0.4rem;
+    cursor: pointer;
+    background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.8), rgba(255,255,255,0) 42%), var(--ninja-bubble, var(--sky-accent));
+    box-shadow: 0 4px 0 color-mix(in srgb, var(--ninja-bubble, var(--sky-accent)) 55%, black), 0 3px 8px rgba(0,0,0,0.35);
+  }
+  .ninja-leaf { position: absolute; top: -0.6rem; left: 50%; transform: translateX(-50%) rotate(-18deg); font-size: 0.85rem; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); }
+  .ninja-word-label {
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+    font-weight: 800; font-size: 0.68rem; line-height: 1.05;
+    color: #23244a; background: #fffdf8;
+    border-radius: 10px; padding: 0.3rem 0.38rem;
+    max-width: 4.2rem; text-align: center; white-space: normal; text-transform: lowercase;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .ninja-slice-trail { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  .ninja-slice-trail::before {
+    content: '';
+    position: absolute;
+    width: 150%; height: 6px;
+    background: linear-gradient(90deg, transparent, #fff 15%, #dff6ff 50%, #fff 85%, transparent);
+    box-shadow: 0 0 10px 2px rgba(255,255,255,0.85);
+    border-radius: 4px;
+    transform: rotate(-30deg) scaleX(0);
+    opacity: 0;
+    animation: ninja-trail 0.35s ease forwards;
+  }
+  @keyframes ninja-trail {
+    0% { transform: rotate(-30deg) scaleX(0); opacity: 1; }
+    60% { transform: rotate(-30deg) scaleX(1); opacity: 1; }
+    100% { transform: rotate(-30deg) scaleX(1); opacity: 0; }
+  }
+  @keyframes ninja-slice { 0% { transform: scale(1) rotate(0deg); opacity: 1; } 100% { transform: scale(1.6) rotate(25deg); opacity: 0; } }
+  .ninja-card.sliced .ninja-card-btn { animation: ninja-slice 0.3s ease forwards; }
+  @keyframes ninja-poof { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.5); opacity: 0; } }
+  .ninja-card.poofed .ninja-card-btn { animation: ninja-poof 0.25s ease forwards; filter: grayscale(0.6); }
+
+  .ninja-particle {
+    position: absolute; top: 0; left: 0;
+    width: var(--ninja-psize, 8px); height: var(--ninja-psize, 8px);
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    pointer-events: none;
+    animation: ninja-particle-fly 0.5s ease-out forwards;
+  }
+  @keyframes ninja-particle-fly {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--ninja-dx), var(--ninja-dy)); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ninja-target-emoji { animation: none; }
+    .ninja-card.rising { animation: none; }
+  }
+
+  /* ---------- game: greetings & polite words ---------- */
+
+  .greet-panel { display: none; }
+  .greet-panel.active { display: block; }
+
+  .greet-section-title { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem; color: var(--ink); }
+  .greet-section-hint { color: var(--ink-soft); font-size: 0.85rem; margin: -0.15rem 0 0.8rem; }
+
+  .greet-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.6rem; }
+  .greet-flip-card { perspective: 900px; cursor: pointer; }
+  .greet-flip-card-inner { position: relative; width: 100%; height: 100px; transition: transform 0.5s; transform-style: preserve-3d; }
+  .greet-flip-card.flipped .greet-flip-card-inner { transform: rotateY(180deg); }
+  .greet-flip-card-front, .greet-flip-card-back {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0.5rem; text-align: center; box-shadow: 0 3px 0 var(--shadow);
+  }
+  .greet-flip-card-front { background: var(--sky-accent); color: var(--sky-accent-ink); }
+  .greet-flip-card-back { background: var(--happy); color: var(--happy-ink); transform: rotateY(180deg); }
+  .greet-flip-card-en { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.88rem; }
+  .greet-flip-card-zh { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .greet-flip-card-hint { font-size: 0.65rem; opacity: 0.85; margin-top: 0.3rem; }
+  .greet-mini-listen-btn {
+    position: absolute; top: 0.3rem; right: 0.35rem;
+    background: rgba(255,255,255,0.3); border: none; border-radius: 8px;
+    cursor: pointer; padding: 0.2rem 0.4rem;
+  }
+  .greet-mini-listen-btn:hover { background: rgba(255,255,255,0.5); }
+  .greet-mini-listen-btn .icon-speaker { width: 0.85rem; height: 0.85rem; }
+
+  .greet-convo-intro { text-align: center; font-size: 0.88rem; color: var(--ink-soft); margin: 0 0 0.8rem; }
+  .greet-convo-scene { background: var(--sky); border-radius: 18px; padding: 1.1rem 1rem; text-align: center; }
+  .greet-convo-npc-avatar { font-size: 2.4rem; line-height: 1; display: block; margin-bottom: 0.5rem; }
+  .greet-convo-bubble {
+    background: var(--card); border-radius: 14px; padding: 0.7rem 0.9rem; display: inline-block;
+    font-weight: 600; box-shadow: 0 3px 0 var(--shadow); max-width: 90%;
+  }
+  .greet-convo-reply-bubble {
+    background: var(--happy); color: var(--happy-ink); border-radius: 14px; padding: 0.55rem 0.85rem;
+    display: inline-block; font-weight: 600; margin-top: 0.65rem; box-shadow: 0 3px 0 var(--shadow); max-width: 90%;
+  }
+  .greet-convo-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; margin-top: 0.9rem; }
+  .greet-convo-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+  .greet-convo-progress { display: flex; justify-content: center; gap: 0.3rem; margin-top: 0.9rem; }
+  .greet-convo-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--line); }
+  .greet-convo-dot.done { background: var(--happy); }
+  .greet-convo-dot.current { background: var(--sky-accent); }
+  .greet-convo-toolbar { text-align: center; margin-top: 0.9rem; }
+
+  .greet-situation-target { background: var(--sky); border-radius: 16px; padding: 0.9rem 1.3rem; text-align: center; }
+  .greet-situation-emoji { font-size: 2.4rem; line-height: 1; }
+  .greet-situation-text { font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.35rem; }
+  .greet-situation-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; margin-top: 0.9rem; }
+  .greet-situation-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+  .greet-situation-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; margin-top: 0.7rem; }
+  .greet-situation-slot {
+    width: 1.7rem; height: 1.7rem; border-radius: 9px; background: var(--sky);
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+  }
+  .greet-situation-slot.filled { background: var(--card); border: 2px solid var(--happy); }
+  .greet-situation-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
 </style>
 
 <div class="app">
@@ -2916,6 +3360,22 @@
       <div class="game-panel" id="game-balloon">
         <div id="balloonArea"></div>
       </div>
+
+      <div class="game-panel" id="game-catrat">
+        <div id="catratArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-stormboss">
+        <div id="stormbossArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-ninja">
+        <div id="ninjaArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-greetings">
+        <div id="greetingsArea"></div>
+      </div>
     </section>
 
     <section class="panel" id="panel-words">
@@ -3022,6 +3482,9 @@
         ];
         parsed.dishesCooked = typeof parsed.dishesCooked === 'number' ? parsed.dishesCooked : 0;
         parsed.potSkin = typeof parsed.potSkin === 'string' ? parsed.potSkin : 'classic';
+        parsed.catRatWins = typeof parsed.catRatWins === 'number' ? parsed.catRatWins : 0;
+        parsed.bossesDefeated = typeof parsed.bossesDefeated === 'number' ? parsed.bossesDefeated : 0;
+        parsed.ninjaSliced = typeof parsed.ninjaSliced === 'number' ? parsed.ninjaSliced : 0;
         return parsed;
       }
     } catch (e) {}
@@ -3034,6 +3497,9 @@
       streakRewards: [{ id: 'default-video', threshold: 7, type: 'video', note: '' }],
       dishesCooked: 0,
       potSkin: 'classic',
+      catRatWins: 0,
+      bossesDefeated: 0,
+      ninjaSliced: 0,
       homework: [],
       words: [],
     };
@@ -3820,6 +4286,10 @@
     blaster: { value: 'blaster', label: 'Word Blaster' },
     rocket: { value: 'rocket', label: 'Sentence Rocket' },
     balloon: { value: 'balloon', label: 'Balloon Pop' },
+    catrat: { value: 'catrat', label: 'Cat & Rat Chase' },
+    stormboss: { value: 'stormboss', label: 'Storm Boss Battle' },
+    ninja: { value: 'ninja', label: 'Verb Ninja' },
+    greetings: { value: 'greetings', label: 'Greetings & Polite Words' },
   };
   // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
   // Runner) instead of the generic Word Match / Unscramble.
@@ -3827,12 +4297,22 @@
   // Question Words gets an extra dedicated game (Clue Sort) alongside the
   // generic Word Match / Unscramble, rather than replacing them.
   const QUESTION_TOPICS = new Set(['Question Words']);
+  // Each of these topics gets one extra dedicated game alongside the
+  // generic set, rather than replacing them.
+  const CATRAT_TOPICS = new Set(['Prepositions & Places']);
+  const STORMBOSS_TOPICS = new Set(['Weather']);
+  const NINJA_TOPICS = new Set(['Daily Routine']);
+  const GREETINGS_TOPICS = new Set(['Play with me Convo']);
 
   // Say It Back (speaking practice) works from the shared word list, same as
   // Word Match / Unscramble, so it makes sense under every topic.
   function gamesForTopic(topic) {
     if (VERB_TOPICS.has(topic)) return ['chef', 'runner', 'speak'];
     if (QUESTION_TOPICS.has(topic)) return ['match', 'scramble', 'sorter', 'speak'];
+    if (CATRAT_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'catrat'];
+    if (STORMBOSS_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'stormboss'];
+    if (NINJA_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'ninja'];
+    if (GREETINGS_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'greetings'];
     return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon'];
   }
 
@@ -3868,6 +4348,10 @@
     else if (game === 'blaster') startBlasterRound();
     else if (game === 'rocket') startRocketRound();
     else if (game === 'balloon') startBalloonRound();
+    else if (game === 'catrat') startCatratGame();
+    else if (game === 'stormboss') startStormbossRound();
+    else if (game === 'ninja') startNinja();
+    else if (game === 'greetings') startGreetings();
   }
 
   function selectTopic(topic) {
@@ -6097,6 +6581,1384 @@
     balloonTargetSection.style.visibility = 'visible';
     balloonNextTarget();
   }
+
+  /* ---------- game: cat & rat chase ---------- */
+  // A joystick/keyboard-controlled cat chases a rat that hides in
+  // different preposition-illustrating spots relative to a sofa (on /
+  // under / behind / in front of / next to). Catching the rat awards a
+  // shared star + qualifying activity, same as every other game. There
+  // is no losing — Andy just keeps chasing until 5 catches.
+
+  const CATRAT_SPOTS = [
+    { key: 'on', en: 'The rat is on the sofa.', x: 0.50, y: 0.50, behind: false },
+    { key: 'under', en: 'The rat is under the sofa.', x: 0.50, y: 0.74, behind: false },
+    { key: 'behind', en: 'The rat is behind the sofa.', x: 0.50, y: 0.30, behind: true },
+    { key: 'infront', en: 'The rat is in front of the sofa.', x: 0.50, y: 0.88, behind: false },
+    { key: 'nextL', en: 'The rat is next to the sofa.', x: 0.20, y: 0.56, behind: false },
+    { key: 'nextR', en: 'The rat is next to the sofa.', x: 0.80, y: 0.56, behind: false },
+  ];
+  const CATRAT_WIN_TARGET = 5;
+  const CATRAT_CAT_SIZE = 40, CATRAT_RAT_SIZE = 36;
+  const CATRAT_CAT_SPEED_FRAC = 0.46;
+  const CATRAT_RAT_MOVE_FRAC = 0.15;
+  const CATRAT_RAT_FLEE_FRAC = 0.24;
+  const CATRAT_CATCH_DIST_FRAC = 0.09;
+  const CATRAT_FLEE_TRIGGER_FRAC = 0.20;
+
+  const catratState = {
+    cat: { x: 150, y: 150, facing: 1 },
+    rat: { x: 150, y: 150, targetX: 150, targetY: 150, state: 'idle', spotIndex: 0, facing: 1 },
+    catchCount: 0,
+    seenSpots: {},
+    busy: false,
+    roomRect: { width: 300, height: 300 },
+    keys: {},
+    joyVec: { x: 0, y: 0 },
+    joyActive: false,
+    joyCenter: { x: 42, y: 42 },
+    idleTimer: 0,
+    lastT: null,
+    runToken: 0,
+  };
+
+  function catratMarkup() {
+    return `
+      <div class="catrat-hud-row">
+        <div class="catrat-readout" id="catratReadout">Catches: <span id="catratCatchVal">0 / ${CATRAT_WIN_TARGET}</span></div>
+      </div>
+      <div class="catrat-room" id="catratRoom">
+        <div class="catrat-floor-stripes"></div>
+        <div class="catrat-rug"></div>
+        <div class="catrat-sofa">
+          <div class="catrat-sofa-back"></div>
+          <div class="catrat-sofa-seat-row">
+            <div class="catrat-sofa-arm"></div>
+            <div class="catrat-sofa-seat"></div>
+            <div class="catrat-sofa-arm"></div>
+          </div>
+          <div class="catrat-sofa-legs"><i></i><i></i></div>
+        </div>
+        <div class="catrat-caption" id="catratCaption">Chase the rat with your cat!</div>
+        <div class="catrat-critter" id="catratRat"><span class="catrat-face">🐭</span></div>
+        <div class="catrat-critter" id="catratCat"><span class="catrat-face">🐱</span></div>
+        <canvas id="catratFx"></canvas>
+      </div>
+      <div class="catrat-controls-row">
+        <div class="catrat-joystick" id="catratJoystick"><div class="catrat-nub" id="catratNub"></div></div>
+        <p class="catrat-hint">Drag the joystick, or use arrow keys / WASD, to move the cat. Catch the rat ${CATRAT_WIN_TARGET} times — there's no losing, just keep chasing!</p>
+      </div>
+      <div class="banner" id="catratBanner"></div>
+    `;
+  }
+
+  let catratRoomEl, catratRatEl, catratCatEl, catratCaptionEl, catratCatchValEl, catratJoystickEl, catratNubEl, catratFxCanvas, catratFxCtx;
+
+  function catratPickSpot(excludeIndex) {
+    let idx;
+    do { idx = Math.floor(Math.random() * CATRAT_SPOTS.length); } while (idx === excludeIndex && CATRAT_SPOTS.length > 1);
+    return idx;
+  }
+
+  function catratSpotPixelPos(spot) {
+    return { x: spot.x * catratState.roomRect.width, y: spot.y * catratState.roomRect.height };
+  }
+
+  function catratSetRatTarget(idx) {
+    catratState.rat.spotIndex = idx;
+    const p = catratSpotPixelPos(CATRAT_SPOTS[idx]);
+    catratState.rat.targetX = p.x;
+    catratState.rat.targetY = p.y;
+  }
+
+  function catratShowCaption(spot) {
+    if (catratCaptionEl) catratCaptionEl.textContent = spot.en;
+  }
+
+  function catratUpdateHud() {
+    if (catratCatchValEl) catratCatchValEl.textContent = catratState.catchCount + ' / ' + CATRAT_WIN_TARGET;
+  }
+
+  function catratBump(el) {
+    if (prefersReducedMotion() || !el) return;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
+  /* ---- tiny synthesized sound effects, local to Cat & Rat ---- */
+  let catratAudioCtx = null;
+  function catratCtxReady() {
+    try {
+      if (!catratAudioCtx) catratAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (catratAudioCtx.state === 'suspended') catratAudioCtx.resume();
+      return catratAudioCtx;
+    } catch (e) { return null; }
+  }
+  function catratTone(freq, start, dur, type, peak) {
+    const ac = catratCtxReady();
+    if (!ac) return;
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    const t0 = ac.currentTime + start;
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(peak || 0.15, t0 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(gain).connect(ac.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+  function catratSfxCatch() { catratTone(660, 0, 0.12, 'triangle', 0.15); catratTone(880, 0.08, 0.18, 'triangle', 0.16); }
+  function catratSfxSqueak() { catratTone(1200, 0, 0.06, 'square', 0.06); catratTone(900, 0.05, 0.06, 'square', 0.05); }
+  function catratSfxWin() { catratTone(523, 0, 0.15, 'sine', 0.16); catratTone(659, 0.12, 0.15, 'sine', 0.16); catratTone(784, 0.24, 0.15, 'sine', 0.16); catratTone(1046, 0.36, 0.3, 'sine', 0.2); }
+
+  /* ---- confetti-style burst on the game's own fx canvas ---- */
+  let catratParticles = [];
+  let catratFxRunning = false;
+  function catratBurst(px, py, count) {
+    if (prefersReducedMotion() || !catratFxCtx) return;
+    const colors = ['#ffce54', '#4ecdc4', '#2f7f79', '#e2574c', '#ffffff'];
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 3.5;
+      catratParticles.push({
+        x: px, y: py,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 1.5,
+        life: 1, color: colors[Math.floor(Math.random() * colors.length)], r: 2 + Math.random() * 3,
+      });
+    }
+    if (!catratFxRunning) catratRunFx();
+  }
+  function catratRunFx() {
+    catratFxRunning = true;
+    catratFxCtx.clearRect(0, 0, catratFxCanvas.width, catratFxCanvas.height);
+    catratParticles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.018;
+      catratFxCtx.globalAlpha = Math.max(p.life, 0);
+      catratFxCtx.fillStyle = p.color;
+      catratFxCtx.beginPath();
+      catratFxCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      catratFxCtx.fill();
+    });
+    catratFxCtx.globalAlpha = 1;
+    catratParticles = catratParticles.filter(p => p.life > 0);
+    if (catratParticles.length > 0) requestAnimationFrame(catratRunFx);
+    else { catratFxCtx.clearRect(0, 0, catratFxCanvas.width, catratFxCanvas.height); catratFxRunning = false; }
+  }
+
+  function catratPanelActive() {
+    const panel = document.getElementById('game-catrat');
+    return !!panel && panel.classList.contains('active');
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (!catratPanelActive()) return;
+    const k = e.key.toLowerCase();
+    if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].indexOf(k) !== -1) {
+      catratState.keys[k] = true;
+      e.preventDefault();
+    }
+  });
+  window.addEventListener('keyup', (e) => {
+    catratState.keys[e.key.toLowerCase()] = false;
+  });
+
+  function catratKeyboardVector() {
+    const keys = catratState.keys;
+    let vx = 0, vy = 0;
+    if (keys['arrowup'] || keys['w']) vy -= 1;
+    if (keys['arrowdown'] || keys['s']) vy += 1;
+    if (keys['arrowleft'] || keys['a']) vx -= 1;
+    if (keys['arrowright'] || keys['d']) vx += 1;
+    const len = Math.sqrt(vx * vx + vy * vy);
+    if (len > 0) { vx /= len; vy /= len; }
+    return { x: vx, y: vy };
+  }
+
+  function catratUpdateJoyCenter() {
+    const r = catratJoystickEl.getBoundingClientRect();
+    if (r.width) { catratState.joyCenter.x = r.width / 2; catratState.joyCenter.y = r.height / 2; }
+  }
+  function catratJoyPointerMove(clientX, clientY) {
+    const rect = catratJoystickEl.getBoundingClientRect();
+    let dx = clientX - (rect.left + catratState.joyCenter.x);
+    let dy = clientY - (rect.top + catratState.joyCenter.y);
+    const maxR = catratState.joyCenter.x - 4 || 1;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > maxR) { dx = dx / dist * maxR; dy = dy / dist * maxR; }
+    catratNubEl.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    catratState.joyVec.x = dx / maxR;
+    catratState.joyVec.y = dy / maxR;
+  }
+  function catratJoyReset() {
+    catratState.joyVec.x = 0; catratState.joyVec.y = 0;
+    catratNubEl.style.transform = 'translate(0,0)';
+  }
+
+  function catratRefreshRoomRect() {
+    const r = catratRoomEl.getBoundingClientRect();
+    if (r.width) catratState.roomRect.width = r.width;
+    if (r.height) catratState.roomRect.height = r.height;
+    catratFxCanvas.width = catratState.roomRect.width;
+    catratFxCanvas.height = catratState.roomRect.height;
+  }
+
+  function catratClamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  // Picks a spot for the rat that isn't already suspiciously close to
+  // (awayX, awayY) — used so a fresh spawn/respawn never lands right on
+  // top of the cat for a "free" catch the child didn't earn.
+  function catratPickFarSpot(excludeIndex, awayX, awayY) {
+    const minDist = CATRAT_CATCH_DIST_FRAC * catratState.roomRect.width * 2;
+    let idx, tries = 0;
+    do {
+      idx = catratPickSpot(excludeIndex);
+      const p = catratSpotPixelPos(CATRAT_SPOTS[idx]);
+      const d = Math.sqrt((p.x - awayX) ** 2 + (p.y - awayY) ** 2);
+      if (d >= minDist || tries >= 8) break;
+      tries++;
+    } while (true);
+    return idx;
+  }
+
+  function catratInitPositions() {
+    catratRefreshRoomRect();
+    catratState.cat.x = catratState.roomRect.width * 0.5;
+    catratState.cat.y = catratState.roomRect.height * 0.94;
+    const startSpot = catratPickFarSpot(-1, catratState.cat.x, catratState.cat.y);
+    catratSetRatTarget(startSpot);
+    catratState.rat.x = catratState.rat.targetX;
+    catratState.rat.y = catratState.rat.targetY;
+    catratState.rat.state = 'idle';
+    catratShowCaption(CATRAT_SPOTS[startSpot]);
+    catratRatEl.className = 'catrat-critter idle' + (CATRAT_SPOTS[startSpot].behind ? ' behind' : '');
+  }
+
+  function catratStep(dt) {
+    const kv = catratKeyboardVector();
+    let mvx = kv.x + catratState.joyVec.x;
+    let mvy = kv.y + catratState.joyVec.y;
+    const mlen = Math.sqrt(mvx * mvx + mvy * mvy);
+    if (mlen > 1) { mvx /= mlen; mvy /= mlen; }
+
+    const cat = catratState.cat, rat = catratState.rat, roomRect = catratState.roomRect;
+    const catMoving = Math.abs(mvx) > 0.05 || Math.abs(mvy) > 0.05;
+    const catSpeed = CATRAT_CAT_SPEED_FRAC * roomRect.width;
+    cat.x = catratClamp(cat.x + mvx * catSpeed * dt, CATRAT_CAT_SIZE * 0.5, roomRect.width - CATRAT_CAT_SIZE * 0.5);
+    cat.y = catratClamp(cat.y + mvy * catSpeed * dt, CATRAT_CAT_SIZE * 0.5, roomRect.height - CATRAT_CAT_SIZE * 0.5);
+    if (Math.abs(mvx) > 0.1) cat.facing = mvx < 0 ? -1 : 1;
+    catratCatEl.classList.toggle('moving', catMoving);
+
+    if (!catratState.busy) {
+      const dx = cat.x - rat.x, dy = cat.y - rat.y;
+      const distToCat = Math.sqrt(dx * dx + dy * dy);
+      const fleeTrigger = CATRAT_FLEE_TRIGGER_FRAC * roomRect.width;
+
+      if (distToCat < fleeTrigger && rat.state !== 'fleeing') {
+        rat.state = 'fleeing';
+        catratSfxSqueak();
+        catratRatEl.className = 'catrat-critter fleeing';
+      }
+
+      if (rat.state === 'fleeing') {
+        const fleeSpeed = CATRAT_RAT_FLEE_FRAC * roomRect.width;
+        let flx = rat.x - cat.x, fly = rat.y - cat.y;
+        const flen = Math.sqrt(flx * flx + fly * fly) || 1;
+        flx /= flen; fly /= flen;
+        rat.x = catratClamp(rat.x + flx * fleeSpeed * dt, CATRAT_RAT_SIZE * 0.5, roomRect.width - CATRAT_RAT_SIZE * 0.5);
+        rat.y = catratClamp(rat.y + fly * fleeSpeed * dt, CATRAT_RAT_SIZE * 0.5, roomRect.height - CATRAT_RAT_SIZE * 0.5);
+        if (Math.abs(flx) > 0.1) rat.facing = flx < 0 ? -1 : 1;
+        if (distToCat > fleeTrigger * 1.6) {
+          const nextIdx = catratPickSpot(rat.spotIndex);
+          catratSetRatTarget(nextIdx);
+          rat.state = 'moving';
+          catratRatEl.className = 'catrat-critter moving';
+        }
+      } else if (rat.state === 'moving') {
+        const mspeed = CATRAT_RAT_MOVE_FRAC * roomRect.width;
+        let tdx = rat.targetX - rat.x, tdy = rat.targetY - rat.y;
+        const tdist = Math.sqrt(tdx * tdx + tdy * tdy);
+        if (tdist < 4) {
+          rat.x = rat.targetX; rat.y = rat.targetY;
+          rat.state = 'idle';
+          catratState.idleTimer = 1.5 + Math.random() * 1.8;
+          catratShowCaption(CATRAT_SPOTS[rat.spotIndex]);
+          catratRatEl.className = 'catrat-critter idle' + (CATRAT_SPOTS[rat.spotIndex].behind ? ' behind' : '');
+        } else {
+          tdx /= tdist; tdy /= tdist;
+          rat.x += tdx * mspeed * dt;
+          rat.y += tdy * mspeed * dt;
+          if (Math.abs(tdx) > 0.1) rat.facing = tdx < 0 ? -1 : 1;
+        }
+      } else {
+        catratState.idleTimer -= dt;
+        if (catratState.idleTimer <= 0) {
+          const idx2 = catratPickSpot(rat.spotIndex);
+          catratSetRatTarget(idx2);
+          rat.state = 'moving';
+          catratRatEl.className = 'catrat-critter moving';
+        }
+      }
+
+      const catchDist = CATRAT_CATCH_DIST_FRAC * roomRect.width;
+      if (distToCat < catchDist) {
+        catratHandleCatch();
+      }
+    }
+
+    catratCatEl.style.transform = 'translate(' + cat.x + 'px,' + cat.y + 'px) scaleX(' + cat.facing + ')';
+    catratRatEl.style.transform = 'translate(' + rat.x + 'px,' + rat.y + 'px) scaleX(' + rat.facing + ')';
+  }
+
+  function catratHandleCatch() {
+    catratState.busy = true;
+    const spot = CATRAT_SPOTS[catratState.rat.spotIndex];
+    catratState.seenSpots[spot.key] = true;
+    catratState.catchCount++;
+    catratUpdateHud();
+    catratBump(catratCatchValEl);
+    catratSfxCatch();
+    catratBurst(catratState.rat.x, catratState.rat.y, 22);
+    catratRatEl.classList.add('caught');
+    catratShowCaption({ en: 'Gotcha! ' + spot.en });
+    addStars(1);
+    recordQualifyingActivity();
+    showBanner('catratBanner', pickEncouragement());
+
+    setTimeout(() => {
+      catratRatEl.classList.remove('caught');
+      if (catratState.catchCount >= CATRAT_WIN_TARGET) {
+        catratShowWin();
+      } else {
+        const idx = catratPickFarSpot(catratState.rat.spotIndex, catratState.cat.x, catratState.cat.y);
+        catratSetRatTarget(idx);
+        catratState.rat.x = catratState.rat.targetX;
+        catratState.rat.y = catratState.rat.targetY;
+        catratState.rat.state = 'idle';
+        catratState.idleTimer = 1.2 + Math.random() * 1.5;
+        catratShowCaption(CATRAT_SPOTS[idx]);
+        catratRatEl.className = 'catrat-critter idle' + (CATRAT_SPOTS[idx].behind ? ' behind' : '');
+        catratState.busy = false;
+      }
+    }, 700);
+  }
+
+  function catratShowWin() {
+    data.catRatWins = (data.catRatWins || 0) + 1;
+    saveData();
+    catratSfxWin();
+    catratBurst(catratState.roomRect.width * 0.5, catratState.roomRect.height * 0.4, 50);
+    const wordsSeen = Object.keys(catratState.seenSpots).length;
+    showMilestone(`Andy caught the rat ${CATRAT_WIN_TARGET} times, practicing ${wordsSeen} different prepositions! Lifetime wins: ${data.catRatWins}.`);
+    setTimeout(catratResetRound, 1400);
+  }
+
+  function catratResetRound() {
+    catratState.catchCount = 0;
+    catratState.seenSpots = {};
+    catratUpdateHud();
+    catratState.busy = false;
+    if (catratRoomEl) catratInitPositions();
+  }
+
+  function catratLoop(t) {
+    if (catratState.lastT === null) catratState.lastT = t;
+    const dt = Math.min((t - catratState.lastT) / 1000, 0.05);
+    catratState.lastT = t;
+    const token = catratState.runToken;
+    // Only advance the simulation (and only keep the loop alive) while
+    // this game's panel is actually the one on screen — otherwise Andy
+    // switching to another game would keep silently awarding stars and
+    // qualifying activity in the background from an unwatched chase.
+    if (catratPanelActive()) catratStep(dt);
+    if (token === catratState.runToken && catratPanelActive()) requestAnimationFrame(catratLoop);
+  }
+
+  function startCatratGame() {
+    const area = document.getElementById('catratArea');
+    area.innerHTML = catratMarkup();
+    catratRoomEl = document.getElementById('catratRoom');
+    catratRatEl = document.getElementById('catratRat');
+    catratCatEl = document.getElementById('catratCat');
+    catratCaptionEl = document.getElementById('catratCaption');
+    catratCatchValEl = document.getElementById('catratCatchVal');
+    catratJoystickEl = document.getElementById('catratJoystick');
+    catratNubEl = document.getElementById('catratNub');
+    catratFxCanvas = document.getElementById('catratFx');
+    catratFxCtx = catratFxCanvas && catratFxCanvas.getContext ? catratFxCanvas.getContext('2d') : null;
+
+    catratState.catchCount = 0;
+    catratState.seenSpots = {};
+    catratState.busy = false;
+    catratState.lastT = null;
+    catratState.joyVec = { x: 0, y: 0 };
+    catratState.joyActive = false;
+    catratState.runToken++;
+
+    catratJoystickEl.addEventListener('pointerdown', (e) => {
+      catratState.joyActive = true;
+      catratUpdateJoyCenter();
+      if (catratJoystickEl.setPointerCapture) { try { catratJoystickEl.setPointerCapture(e.pointerId); } catch (err) {} }
+      catratJoyPointerMove(e.clientX, e.clientY);
+    });
+    catratJoystickEl.addEventListener('pointermove', (e) => {
+      if (!catratState.joyActive) return;
+      catratJoyPointerMove(e.clientX, e.clientY);
+    });
+    const catratEndJoy = () => { catratState.joyActive = false; catratJoyReset(); };
+    catratJoystickEl.addEventListener('pointerup', catratEndJoy);
+    catratJoystickEl.addEventListener('pointercancel', catratEndJoy);
+    catratJoystickEl.addEventListener('pointerleave', (e) => { if (catratState.joyActive && e.buttons === 0) catratEndJoy(); });
+
+    catratUpdateHud();
+    catratInitPositions();
+    requestAnimationFrame(catratLoop);
+  }
+
+  /* ---------- game: storm boss battle ---------- */
+  // Andy answers weather-vs-feeling prompts to attack a Storm Monster.
+  // Right answer: aim and tap the monster to fire a weather-emoji shot,
+  // draining its health bar (+1 shared star per correct answer, plus a
+  // bonus when the monster falls). Wrong answer: the monster steps
+  // closer — 5 wrong steps and the round gently resets (a tap to retry).
+  // Wrong answers never touch the shared star total, only this battle's
+  // own danger meter. Uses emoji weather icons only (no embedded images)
+  // to keep this file light for a tablet.
+
+  const STORMBOSS_WEATHER_VOCAB = [
+    { weather: 'Sunny', weatherEmoji: '☀️', feeling: 'happy', feelingEmoji: '🙂' },
+    { weather: 'Rainy', weatherEmoji: '🌧️', feeling: 'sleepy', feelingEmoji: '😴' },
+    { weather: 'Cloudy', weatherEmoji: '☁️', feeling: 'quiet', feelingEmoji: '🤫' },
+    { weather: 'Snowy', weatherEmoji: '🌨️', feeling: 'fun', feelingEmoji: '🎉' },
+    { weather: 'Windy', weatherEmoji: '🌬️', feeling: 'silly', feelingEmoji: '🤪' },
+    { weather: 'Stormy', weatherEmoji: '⛈️', feeling: 'scared', feelingEmoji: '😨' },
+    { weather: 'Rainbow', weatherEmoji: '🌈', feeling: 'nice', feelingEmoji: '😍' },
+  ];
+
+  const STORMBOSS_MAX_HP = 8;
+  const STORMBOSS_WRONG_LIMIT = 5;
+
+  const stormbossState = { target: null, hp: STORMBOSS_MAX_HP, wrong: 0, over: false, armed: false };
+
+  function stormbossMarkup() {
+    return `
+      <div class="stormboss-target" id="stormbossTarget"></div>
+      <div class="stormboss-hp-label"><span>Storm Monster</span><span id="stormbossHpLabel">${STORMBOSS_MAX_HP} / ${STORMBOSS_MAX_HP}</span></div>
+      <div class="stormboss-hp-track"><div class="stormboss-hp-fill" id="stormbossHpFill"></div></div>
+      <div class="stormboss-battlefield" id="stormbossArena">
+        <div class="stormboss-person" id="stormbossPerson">🧒</div>
+        <div class="stormboss-monster" id="stormbossMonster">👾</div>
+      </div>
+      <div class="stormboss-danger-row"><span>Storm getting close:</span><div class="stormboss-danger-track" id="stormbossDangerTrack"></div></div>
+      <div class="stormboss-choices" id="stormbossChoices"></div>
+      <div class="banner neutral" id="stormbossBanner"></div>
+    `;
+  }
+
+  // Grade by feeling WORD (not emoji) so decoys never repeat a feeling.
+  function stormbossUniqueFeelingsExcluding(word) {
+    const seen = new Set();
+    const list = [];
+    STORMBOSS_WEATHER_VOCAB.forEach(w => {
+      const key = w.feeling.toLowerCase();
+      if (key === word || seen.has(key)) return;
+      seen.add(key);
+      list.push(w);
+    });
+    return list;
+  }
+
+  function stormbossPickTarget() {
+    let next;
+    do {
+      next = STORMBOSS_WEATHER_VOCAB[Math.floor(Math.random() * STORMBOSS_WEATHER_VOCAB.length)];
+    } while (stormbossState.target && next.weather === stormbossState.target.weather);
+    stormbossState.target = next;
+    stormbossRenderTarget();
+    stormbossRenderChoices();
+  }
+
+  function stormbossRenderTarget() {
+    const el = document.getElementById('stormbossTarget');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="stormboss-target-emoji">${stormbossState.target.weatherEmoji}</div>
+      <div class="stormboss-target-word">${escapeHtml(stormbossState.target.weather)}</div>
+    `;
+  }
+
+  function stormbossRenderChoices() {
+    const correctWord = stormbossState.target.feeling.toLowerCase();
+    const decoys = shuffleArray(stormbossUniqueFeelingsExcluding(correctWord)).slice(0, 2);
+    const choices = shuffleArray([stormbossState.target, ...decoys]);
+    document.getElementById('stormbossChoices').innerHTML = choices.map(c => `
+      <button type="button" class="btn-fun stormboss-choice" data-word="${escapeHtml(c.feeling.toLowerCase())}">${c.feelingEmoji} ${escapeHtml(c.feeling)}</button>
+    `).join('');
+  }
+
+  function stormbossRenderBattlefield() {
+    document.getElementById('stormbossHpFill').style.width = Math.max(0, (stormbossState.hp / STORMBOSS_MAX_HP) * 100) + '%';
+    document.getElementById('stormbossHpLabel').textContent = `${Math.max(0, stormbossState.hp)} / ${STORMBOSS_MAX_HP}`;
+    const scale = 0.8 + (stormbossState.wrong / STORMBOSS_WRONG_LIMIT) * 0.7;
+    document.getElementById('stormbossMonster').style.setProperty('--stormboss-mscale', scale.toFixed(2));
+    document.getElementById('stormbossDangerTrack').innerHTML = Array.from({ length: STORMBOSS_WRONG_LIMIT }, (_, i) =>
+      `<span class="stormboss-danger-step${i < stormbossState.wrong ? ' filled' : ''}">${i < stormbossState.wrong ? '⚡' : ''}</span>`
+    ).join('');
+  }
+
+  function stormbossRandomizeMonsterPosition() {
+    const left = 40 + Math.random() * 44;
+    const top = 8 + Math.random() * 48;
+    const monster = document.getElementById('stormbossMonster');
+    monster.style.left = left + '%';
+    monster.style.top = top + '%';
+  }
+
+  let stormbossAudioCtx = null;
+  function stormbossGetAudioCtx() {
+    try {
+      if (!stormbossAudioCtx) stormbossAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (stormbossAudioCtx.state === 'suspended') stormbossAudioCtx.resume();
+      return stormbossAudioCtx;
+    } catch (e) { return null; }
+  }
+  function stormbossPlayHitSound() {
+    const ctx = stormbossGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const bufferSize = Math.floor(ctx.sampleRate * 0.12);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const channel = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) channel[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 0.9;
+    filter.frequency.setValueAtTime(1400, now);
+    filter.frequency.exponentialRampToValueAtTime(220, now + 0.12);
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.32, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+    noise.connect(filter).connect(noiseGain).connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.14);
+    const thud = ctx.createOscillator();
+    thud.type = 'sine';
+    thud.frequency.setValueAtTime(160, now);
+    thud.frequency.exponentialRampToValueAtTime(70, now + 0.15);
+    const thudGain = ctx.createGain();
+    thudGain.gain.setValueAtTime(0.25, now);
+    thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    thud.connect(thudGain).connect(ctx.destination);
+    thud.start(now);
+    thud.stop(now + 0.2);
+  }
+  function stormbossPlayThumpSound() {
+    const ctx = stormbossGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(110, now);
+    osc.frequency.exponentialRampToValueAtTime(55, now + 0.22);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.16, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.26);
+  }
+  function stormbossPlayVictorySound() {
+    const ctx = stormbossGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    [523, 659, 784].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.11);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, now + i * 0.11);
+      gain.gain.linearRampToValueAtTime(0.18, now + i * 0.11 + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.11 + 0.35);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.11);
+      osc.stop(now + i * 0.11 + 0.36);
+    });
+  }
+
+  function stormbossFireProjectile(targetX, targetY, weatherEmoji) {
+    const arena = document.getElementById('stormbossArena');
+    const person = document.getElementById('stormbossPerson');
+    const arenaRect = arena.getBoundingClientRect();
+    const personRect = person.getBoundingClientRect();
+    const proj = document.createElement('div');
+    proj.className = 'stormboss-projectile';
+    proj.textContent = weatherEmoji;
+    proj.style.left = (personRect.left + personRect.width / 2 - arenaRect.left) + 'px';
+    proj.style.top = (personRect.top + personRect.height / 2 - arenaRect.top) + 'px';
+    arena.appendChild(proj);
+    requestAnimationFrame(() => {
+      proj.style.transition = 'left 0.28s ease-out, top 0.28s ease-out, transform 0.28s ease-out';
+      proj.style.left = targetX + 'px';
+      proj.style.top = targetY + 'px';
+      proj.style.transform = 'translate(-50%, -50%) scale(1.25) rotate(160deg)';
+    });
+    setTimeout(() => proj.remove(), 300);
+  }
+
+  function stormbossShowMissPuff(x, y) {
+    const arena = document.getElementById('stormbossArena');
+    const puff = document.createElement('div');
+    puff.className = 'stormboss-miss-puff';
+    puff.style.left = x + 'px';
+    puff.style.top = y + 'px';
+    arena.appendChild(puff);
+    setTimeout(() => puff.remove(), 400);
+  }
+
+  function stormbossArmShot() {
+    stormbossState.armed = true;
+    document.getElementById('stormbossArena').classList.add('aiming');
+    document.getElementById('stormbossMonster').classList.add('aim-target');
+    showBanner('stormbossBanner', 'Tap the Storm Monster to fire!');
+  }
+  function stormbossDisarmShot() {
+    stormbossState.armed = false;
+    document.getElementById('stormbossArena').classList.remove('aiming');
+    document.getElementById('stormbossMonster').classList.remove('aim-target');
+  }
+
+  function stormbossOnMonsterHit() {
+    const monster = document.getElementById('stormbossMonster');
+    monster.classList.remove('hit');
+    void monster.offsetWidth;
+    monster.classList.add('hit');
+    stormbossPlayHitSound();
+    stormbossState.hp = Math.max(0, stormbossState.hp - 1);
+    stormbossRenderBattlefield();
+    if (stormbossState.hp <= 0) {
+      stormbossState.over = true;
+      document.getElementById('stormbossChoices').innerHTML = '';
+      monster.classList.add('defeated');
+      data.bossesDefeated = (data.bossesDefeated || 0) + 1;
+      saveData();
+      addStars(5);
+      stormbossPlayVictorySound();
+      setTimeout(() => {
+        showMilestone(`Storm Monster defeated! Bosses beaten: ${data.bossesDefeated}`);
+        setTimeout(startStormbossRound, 900);
+      }, 350);
+    } else {
+      stormbossRandomizeMonsterPosition();
+      stormbossPickTarget();
+    }
+  }
+
+  function stormbossOnMonsterAdvance() {
+    stormbossState.wrong++;
+    stormbossRenderBattlefield();
+    stormbossRandomizeMonsterPosition();
+    const person = document.getElementById('stormbossPerson');
+    person.classList.remove('flinch');
+    void person.offsetWidth;
+    person.classList.add('flinch');
+    stormbossPlayThumpSound();
+    if (stormbossState.wrong >= STORMBOSS_WRONG_LIMIT) {
+      stormbossState.over = true;
+      document.getElementById('stormbossChoices').innerHTML = '';
+      stormbossDisarmShot();
+      setTimeout(() => {
+        showMilestone('The storm got close! Take a breath, then tap below to try again, Andy.');
+        setTimeout(startStormbossRound, 900);
+      }, 250);
+    }
+  }
+
+  function stormbossChoicesClick(e) {
+    const btn = e.target.closest('.stormboss-choice');
+    if (!btn || stormbossState.over || btn.disabled || stormbossState.armed) return;
+    if (btn.dataset.word === stormbossState.target.feeling.toLowerCase()) {
+      document.querySelectorAll('.stormboss-choice').forEach(b => { b.disabled = true; });
+      btn.classList.add('correct-flash');
+      addStars(1);
+      recordQualifyingActivity();
+      stormbossArmShot();
+    } else {
+      btn.classList.add('shake');
+      setTimeout(() => btn.classList.remove('shake'), 400);
+      showBanner('stormbossBanner', 'Not quite — try again!', true);
+      stormbossOnMonsterAdvance();
+    }
+  }
+
+  function stormbossArenaClick(e) {
+    if (!stormbossState.armed || stormbossState.over) return;
+    const arena = document.getElementById('stormbossArena');
+    const monster = document.getElementById('stormbossMonster');
+    const arenaRect = arena.getBoundingClientRect();
+    const monsterRect = monster.getBoundingClientRect();
+    const pad = 24;
+    const hit = e.clientX >= monsterRect.left - pad && e.clientX <= monsterRect.right + pad &&
+                e.clientY >= monsterRect.top - pad && e.clientY <= monsterRect.bottom + pad;
+    const targetX = e.clientX - arenaRect.left;
+    const targetY = e.clientY - arenaRect.top;
+    stormbossFireProjectile(targetX, targetY, stormbossState.target.weatherEmoji);
+    if (hit) {
+      stormbossDisarmShot();
+      setTimeout(stormbossOnMonsterHit, 300);
+    } else {
+      setTimeout(() => stormbossShowMissPuff(targetX, targetY), 260);
+    }
+  }
+
+  function startStormbossRound() {
+    const area = document.getElementById('stormbossArea');
+    area.innerHTML = stormbossMarkup();
+    stormbossState.hp = STORMBOSS_MAX_HP;
+    stormbossState.wrong = 0;
+    stormbossState.over = false;
+    stormbossState.armed = false;
+    document.getElementById('stormbossArena').addEventListener('click', stormbossArenaClick);
+    document.getElementById('stormbossChoices').addEventListener('click', stormbossChoicesClick);
+    stormbossRandomizeMonsterPosition();
+    stormbossPickTarget();
+    stormbossRenderBattlefield();
+  }
+
+  /* ---------- game: verb ninja ---------- */
+  // A target (emoji + word) is shown up top. Word cards rise up the
+  // arena; tap the one that matches the target to "slice" it. Wrong
+  // taps just poof away and cost a round-life; any card that drifts off
+  // the top untapped is quietly removed — no penalty either way. Note:
+  // `ninjaState.lives` is a PER-ROUND counter (starts at 3, can go
+  // negative, resets on win/loss) — it is a different concept from the
+  // host's lifetime `data.stars`. Every correct slice also awards a real
+  // shared star via addStars(1) so Pot Shop/streak progress reflects
+  // steady practice, not this round's win/loss swings.
+
+  const NINJA_VOCAB = [
+    { en: 'home', emoji: '🏠' },
+    { en: 'school', emoji: '🏫' },
+    { en: 'desk', emoji: '🍽️' },
+    { en: 'bag', emoji: '🎒' },
+    { en: 'park', emoji: '🏞️' },
+    { en: 'morning', emoji: '🌅' },
+    { en: 'afternoon', emoji: '☀️' },
+    { en: 'night', emoji: '🌙' },
+    { en: 'after school', emoji: '🔔' },
+  ];
+
+  const NINJA_LEVELS = [
+    { spawnMs: 1700, dur: 6.4 },
+    { spawnMs: 1500, dur: 5.7 },
+    { spawnMs: 1300, dur: 5.1 },
+    { spawnMs: 1150, dur: 4.6 },
+    { spawnMs: 1000, dur: 4.1 },
+    { spawnMs: 900, dur: 3.6 },
+  ];
+  const NINJA_SLICES_PER_LEVEL = 5;
+  const NINJA_MAX_CARDS = 5;
+  const NINJA_BUBBLE_COLORS = ['#e8433a', '#ff8a1f', '#7cc72b', '#ffd23f', '#9b4fdb', '#ff4f81'];
+  const NINJA_LEAVES = ['🍃', '🌿'];
+  const NINJA_LIVES_START = 3;
+  const NINJA_LIVES_WIN_TARGET = 20;
+  const NINJA_LIVES_LOSE_THRESHOLD = -10;
+  const NINJA_WRONG_MESSAGES = ["Oops, that one wasn't it!", 'Not quite — keep slicing!', 'So close! Try the next one.'];
+
+  const ninjaState = {
+    target: null,
+    level: 0,
+    sliceStreakSinceLevel: 0,
+    cardSeq: 0,
+    lives: NINJA_LIVES_START,
+    gameOver: false,
+    runToken: 0,
+  };
+
+  function ninjaMarkup() {
+    return `
+      <div class="ninja-target" id="ninjaTarget"></div>
+      <div class="ninja-lives-row">Lives this round: <span class="ninja-lives-badge"><span id="ninjaLivesVal">${NINJA_LIVES_START}</span></span></div>
+      <div class="ninja-stats-row">Words sliced: <span id="ninjaSlicedCount">0</span></div>
+      <div class="banner" id="ninjaBanner"></div>
+      <div class="ninja-arena" id="ninjaArena"></div>
+    `;
+  }
+
+  function ninjaPickNewTarget() {
+    let next;
+    do {
+      next = NINJA_VOCAB[Math.floor(Math.random() * NINJA_VOCAB.length)];
+    } while (ninjaState.target && next.en === ninjaState.target.en);
+    ninjaState.target = next;
+    ninjaRenderTarget();
+  }
+
+  function ninjaRenderTarget() {
+    const el = document.getElementById('ninjaTarget');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="ninja-target-emoji">${ninjaState.target.emoji}</div>
+      <div class="ninja-target-word">${escapeHtml(ninjaState.target.en)}</div>
+    `;
+  }
+
+  function ninjaRenderStats() {
+    const el = document.getElementById('ninjaSlicedCount');
+    if (el) el.textContent = data.ninjaSliced || 0;
+  }
+
+  function ninjaRenderLives() {
+    const el = document.getElementById('ninjaLivesVal');
+    if (!el) return;
+    el.textContent = ninjaState.lives;
+    el.classList.toggle('negative', ninjaState.lives < 0);
+  }
+
+  function ninjaFloatLivesDelta(n) {
+    if (prefersReducedMotion()) return;
+    const badge = document.querySelector('#game-ninja .ninja-lives-badge');
+    if (!badge) return;
+    const span = document.createElement('span');
+    span.className = 'float-plus' + (n < 0 ? ' minus' : '');
+    span.textContent = (n > 0 ? '+' : '') + n;
+    badge.appendChild(span);
+    span.addEventListener('animationend', () => span.remove());
+  }
+
+  function ninjaTriggerGameOver() {
+    ninjaState.gameOver = true;
+    const arena = document.getElementById('ninjaArena');
+    if (arena) arena.innerHTML = '';
+    setTimeout(() => {
+      showMilestone('Out of lives for this round! Take a breath, then tap below to try again, Andy.');
+      setTimeout(() => {
+        ninjaState.gameOver = false;
+        ninjaState.lives = NINJA_LIVES_START;
+        ninjaRenderLives();
+        startNinja();
+      }, 900);
+    }, 300);
+  }
+
+  function ninjaChangeLives(n) {
+    const prev = ninjaState.lives;
+    ninjaState.lives += n;
+    ninjaRenderLives();
+    ninjaFloatLivesDelta(n);
+    if (prev < NINJA_LIVES_WIN_TARGET && ninjaState.lives >= NINJA_LIVES_WIN_TARGET) {
+      setTimeout(() => {
+        showMilestone(`Andy wins Verb Ninja with ${NINJA_LIVES_WIN_TARGET} lives banked this round! Amazing work!`);
+        setTimeout(() => {
+          ninjaState.lives = NINJA_LIVES_START;
+          ninjaRenderLives();
+          startNinja();
+        }, 900);
+      }, 300);
+    } else if (ninjaState.lives <= NINJA_LIVES_LOSE_THRESHOLD && !ninjaState.gameOver) {
+      ninjaTriggerGameOver();
+    }
+  }
+
+  function ninjaPickWrongMessage() {
+    return NINJA_WRONG_MESSAGES[Math.floor(Math.random() * NINJA_WRONG_MESSAGES.length)];
+  }
+
+  function ninjaScheduleNextSpawn(token) {
+    if (ninjaState.gameOver || token !== ninjaState.runToken) return;
+    const level = NINJA_LEVELS[ninjaState.level];
+    setTimeout(() => ninjaSpawnCard(token), level.spawnMs);
+  }
+
+  function ninjaSpawnCard(token) {
+    if (token !== ninjaState.runToken || ninjaState.gameOver) return;
+    const arena = document.getElementById('ninjaArena');
+    if (!arena) return;
+    const liveCards = arena.querySelectorAll('.ninja-card');
+    if (liveCards.length >= NINJA_MAX_CARDS) {
+      ninjaScheduleNextSpawn(token);
+      return;
+    }
+    const onScreenHasTarget = Array.from(liveCards).some(c => c.dataset.en === ninjaState.target.en);
+    const spawnTarget = Math.random() < (onScreenHasTarget ? 0.2 : 0.45);
+    let word;
+    if (spawnTarget) {
+      word = ninjaState.target;
+    } else {
+      const decoys = NINJA_VOCAB.filter(v => v.en !== ninjaState.target.en);
+      word = decoys[Math.floor(Math.random() * decoys.length)];
+    }
+    const level = NINJA_LEVELS[ninjaState.level];
+    const x = 6 + Math.random() * 74;
+    const color = NINJA_BUBBLE_COLORS[Math.floor(Math.random() * NINJA_BUBBLE_COLORS.length)];
+    const card = document.createElement('div');
+    card.className = 'ninja-card rising';
+    card.id = 'ninjaCard' + (ninjaState.cardSeq++);
+    card.dataset.en = word.en;
+    card.style.setProperty('--ninja-x', x + '%');
+    card.style.setProperty('--ninja-dur', level.dur + 's');
+    card.style.setProperty('--ninja-tilt', (-18 + Math.random() * 36) + 'deg');
+    card.style.setProperty('--ninja-dx', (-55 + Math.random() * 110) + 'px');
+    card.style.setProperty('--ninja-wobble', (8 + Math.random() * 12) * (Math.random() < 0.5 ? -1 : 1) + 'deg');
+    const leaf = NINJA_LEAVES[Math.floor(Math.random() * NINJA_LEAVES.length)];
+    card.innerHTML = `<button type="button" class="ninja-card-btn" style="--ninja-bubble: ${color}"><span class="ninja-leaf">${leaf}</span><span class="ninja-word-label">${escapeHtml(word.en)}</span></button>`;
+    card.addEventListener('animationend', (e) => {
+      if (e.animationName === 'ninja-rise') card.remove();
+    });
+    arena.appendChild(card);
+    ninjaScheduleNextSpawn(token);
+  }
+
+  let ninjaAudioCtx = null;
+  function ninjaGetAudioCtx() {
+    try {
+      if (!ninjaAudioCtx) ninjaAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ninjaAudioCtx.state === 'suspended') ninjaAudioCtx.resume();
+      return ninjaAudioCtx;
+    } catch (e) { return null; }
+  }
+  function ninjaPlaySliceSound() {
+    const ctx = ninjaGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const bufferSize = Math.floor(ctx.sampleRate * 0.15);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const channel = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) channel[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.Q.value = 1.1;
+    filter.frequency.setValueAtTime(2600, now);
+    filter.frequency.exponentialRampToValueAtTime(500, now + 0.15);
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.3, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    noise.connect(filter).connect(noiseGain).connect(ctx.destination);
+    noise.start(now);
+    noise.stop(now + 0.16);
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(900, now + 0.03);
+    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.13);
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(0, now);
+    oscGain.gain.linearRampToValueAtTime(0.16, now + 0.045);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+    osc.connect(oscGain).connect(ctx.destination);
+    osc.start(now + 0.03);
+    osc.stop(now + 0.24);
+  }
+  function ninjaPlayPoofSound() {
+    const ctx = ninjaGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.22);
+  }
+
+  function ninjaBurstParticles(arena, xPct, yPx, color) {
+    if (prefersReducedMotion()) return;
+    const count = 12;
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      const dist = 30 + Math.random() * 38;
+      const size = 5 + Math.random() * 7;
+      const p = document.createElement('span');
+      p.className = 'ninja-particle';
+      p.style.left = xPct + '%';
+      p.style.top = yPx + 'px';
+      p.style.setProperty('--ninja-psize', size + 'px');
+      p.style.background = i % 3 === 0 ? '#fff' : color;
+      p.style.setProperty('--ninja-dx', Math.cos(angle) * dist + 'px');
+      p.style.setProperty('--ninja-dy', Math.sin(angle) * dist + 'px');
+      arena.appendChild(p);
+      setTimeout(() => p.remove(), 550);
+    }
+  }
+
+  function ninjaArenaClick(e) {
+    const card = e.target.closest('.ninja-card');
+    if (!card || card.classList.contains('sliced') || card.classList.contains('poofed') || ninjaState.gameOver) return;
+    if (card.dataset.en === ninjaState.target.en) {
+      const arena = document.getElementById('ninjaArena');
+      const btn = card.querySelector('.ninja-card-btn');
+      const color = btn ? getComputedStyle(btn).getPropertyValue('--ninja-bubble').trim() : '#ffc93c';
+      const cardRect = card.getBoundingClientRect();
+      const arenaRect = arena.getBoundingClientRect();
+      const centerXPct = arenaRect.width ? ((cardRect.left + cardRect.width / 2 - arenaRect.left) / arenaRect.width) * 100 : 50;
+      const centerY = cardRect.top + cardRect.height / 2 - arenaRect.top;
+
+      const trail = document.createElement('div');
+      trail.className = 'ninja-slice-trail';
+      card.appendChild(trail);
+      ninjaBurstParticles(arena, centerXPct, centerY, color);
+      ninjaPlaySliceSound();
+
+      card.classList.add('sliced');
+      setTimeout(() => card.remove(), 320);
+      data.ninjaSliced = (data.ninjaSliced || 0) + 1;
+      saveData();
+      ninjaRenderStats();
+      ninjaChangeLives(1);
+      addStars(1);
+      recordQualifyingActivity();
+      ninjaState.sliceStreakSinceLevel++;
+      if (ninjaState.sliceStreakSinceLevel >= NINJA_SLICES_PER_LEVEL && ninjaState.level < NINJA_LEVELS.length - 1) {
+        ninjaState.level++;
+        ninjaState.sliceStreakSinceLevel = 0;
+        showBanner('ninjaBanner', 'Speed up!');
+      } else {
+        showBanner('ninjaBanner', pickEncouragement());
+      }
+      ninjaPickNewTarget();
+    } else {
+      card.classList.add('poofed');
+      setTimeout(() => card.remove(), 260);
+      ninjaPlayPoofSound();
+      ninjaChangeLives(-1);
+      showBanner('ninjaBanner', ninjaPickWrongMessage(), true);
+    }
+  }
+
+  function startNinja() {
+    const area = document.getElementById('ninjaArea');
+    area.innerHTML = ninjaMarkup();
+    ninjaState.level = 0;
+    ninjaState.sliceStreakSinceLevel = 0;
+    ninjaState.cardSeq = 0;
+    ninjaState.lives = NINJA_LIVES_START;
+    ninjaState.gameOver = false;
+    ninjaState.target = null;
+    ninjaState.runToken++;
+    document.getElementById('ninjaArena').addEventListener('click', ninjaArenaClick);
+    ninjaRenderLives();
+    ninjaRenderStats();
+    ninjaPickNewTarget();
+    ninjaScheduleNextSpawn(ninjaState.runToken);
+  }
+
+  /* ---------- game: greetings & polite words ---------- */
+  // A 3-tab mini-lesson: flashcards to learn common greetings/polite
+  // phrases, a guided conversation with branching scenarios, and a
+  // situation-match quiz. Reuses the host's shared stars/banner/confetti
+  // plumbing throughout.
+
+  const GREET_PHRASES = [
+    { en: 'Hello', zh: '你好' },
+    { en: 'Goodbye', zh: '再見' },
+    { en: 'Please', zh: '請' },
+    { en: 'Thank you', zh: '謝謝' },
+    { en: "You're welcome", zh: '不客氣' },
+    { en: 'Sorry', zh: '對不起' },
+    { en: 'Excuse me', zh: '不好意思' },
+    { en: 'Yes', zh: '是' },
+    { en: 'No', zh: '不是' },
+    { en: 'Good morning', zh: '早安' },
+    { en: 'Good night', zh: '晚安' },
+    { en: 'How are you?', zh: '你好嗎？' },
+    { en: "I'm fine, thank you", zh: '我很好，謝謝' },
+    { en: 'Nice to meet you', zh: '很高興認識你' },
+    { en: "What's your name?", zh: '你叫什麼名字？' },
+    { en: 'My name is...', zh: '我叫...' },
+    { en: 'How old are you?', zh: '你幾歲？' },
+    { en: 'Where are you from?', zh: '你從哪裡來？' },
+    { en: 'Can you help me?', zh: '你可以幫我嗎？' },
+    { en: "I don't understand", zh: '我不懂' },
+    { en: 'Could you say that again?', zh: '可以再說一次嗎？' },
+    { en: 'See you later!', zh: '待會兒見！' },
+    { en: 'Have a nice day!', zh: '祝你有美好的一天！' },
+    { en: 'Take care!', zh: '保重！' },
+    { en: 'Congratulations!', zh: '恭喜！' },
+    { en: 'Welcome!', zh: '歡迎！' },
+  ];
+
+  const GREET_SCENARIOS = [
+    {
+      title: 'At the Park — 在公園',
+      intro: 'Andy meets a new friend at the park.',
+      steps: [
+        { npc: '👋 Hi there! I’m new here.', choices: [{ text: 'Hello! My name is Andy.', correct: true }, { text: 'Goodbye!', correct: false }, { text: 'Sorry!', correct: false }], reply: 'Nice to meet you, Andy! 😊' },
+        { npc: 'How are you today?', choices: [{ text: "I'm fine, thank you!", correct: true }, { text: 'Please.', correct: false }, { text: 'No.', correct: false }], reply: "That's great to hear!" },
+        { npc: 'Do you want to play together?', choices: [{ text: 'Yes, thank you!', correct: true }, { text: 'Excuse me.', correct: false }, { text: 'Good night.', correct: false }], reply: "Yay, let's play! 🎉" },
+      ],
+    },
+    {
+      title: 'Someone Helps You — 別人幫助你',
+      intro: 'Andy drops his book and a classmate helps him.',
+      steps: [
+        { npc: '🧑 *picks up your dropped book* Here you go!', choices: [{ text: 'Thank you!', correct: true }, { text: 'Good morning.', correct: false }, { text: 'No.', correct: false }], reply: "You're welcome! 😊" },
+        { npc: 'Do you need anything else?', choices: [{ text: 'No, thank you.', correct: true }, { text: 'Sorry.', correct: false }, { text: 'Hello.', correct: false }], reply: 'Okay, have a good day!' },
+        { npc: "🌙 It's getting late, I should go home.", choices: [{ text: 'Good night!', correct: true }, { text: 'Good morning!', correct: false }, { text: 'Please.', correct: false }], reply: 'Good night, see you soon!' },
+      ],
+    },
+    {
+      title: 'Oops! — 不小心',
+      intro: 'Andy bumps into someone and needs to get past in a hallway.',
+      steps: [
+        { npc: '😮 *You accidentally bump into someone*', choices: [{ text: 'Sorry!', correct: true }, { text: 'Hello!', correct: false }, { text: 'Thank you.', correct: false }], reply: "That's okay! 😊" },
+        { npc: '🚪 *Someone is blocking the narrow hallway*', choices: [{ text: 'Excuse me.', correct: true }, { text: 'Please.', correct: false }, { text: 'Yes.', correct: false }], reply: 'Oh sure, go ahead!' },
+        { npc: '👋 Time to say goodbye!', choices: [{ text: 'Goodbye! Nice to meet you!', correct: true }, { text: 'Good night.', correct: false }, { text: 'No.', correct: false }], reply: 'Bye Andy, see you next time! 👋' },
+      ],
+    },
+    {
+      title: 'Getting to Know You — 認識新朋友',
+      intro: 'A classmate wants to learn more about Andy.',
+      steps: [
+        { npc: "Hi! What's your name?", choices: [{ text: 'My name is Andy.', correct: true }, { text: 'Thank you.', correct: false }, { text: 'Goodbye.', correct: false }], reply: 'Nice to meet you, Andy!' },
+        { npc: 'How old are you?', choices: [{ text: 'I am 9 years old.', correct: true }, { text: "I'm fine, thank you.", correct: false }, { text: 'Sorry.', correct: false }], reply: 'Cool, same as me!' },
+        { npc: 'Where are you from?', choices: [{ text: "I'm from Taiwan.", correct: true }, { text: 'Please.', correct: false }, { text: 'No.', correct: false }], reply: "That's awesome! I'm glad we met." },
+        { npc: 'It was nice talking to you — I have to go now!', choices: [{ text: 'See you later!', correct: true }, { text: 'How are you?', correct: false }, { text: 'Excuse me.', correct: false }], reply: 'See you later, Andy! 👋' },
+      ],
+    },
+  ];
+
+  const GREET_SITUATIONS = [
+    { emoji: '🎁', text: 'Someone gives you a present.', answer: 'Thank you' },
+    { emoji: '😮', text: 'You bump into someone by accident.', answer: 'Sorry' },
+    { emoji: '☀️', text: 'You see your friend in the morning.', answer: 'Good morning' },
+    { emoji: '🌙', text: "It's time to go to sleep.", answer: 'Good night' },
+    { emoji: '🚪', text: 'You need to walk past someone.', answer: 'Excuse me' },
+    { emoji: '🙋', text: 'You meet someone new.', answer: 'Nice to meet you' },
+    { emoji: '🤝', text: 'Someone says "Thank you" to you.', answer: "You're welcome" },
+    { emoji: '👋', text: "It's time to leave.", answer: 'Goodbye' },
+    { emoji: '❓', text: 'You want to ask for something politely.', answer: 'Please' },
+    { emoji: '🤔', text: 'Someone asks "How are you?"', answer: "I'm fine, thank you" },
+    { emoji: '🆘', text: 'You need help opening a jar.', answer: 'Can you help me?' },
+    { emoji: '👋', text: "You're leaving, but you'll see them again soon.", answer: 'See you later!' },
+    { emoji: '🏆', text: 'Your friend just won a prize!', answer: 'Congratulations!' },
+    { emoji: '🚪', text: 'A new student walks into the classroom.', answer: 'Welcome!' },
+    { emoji: '🌞', text: 'Your friend is heading home for the day.', answer: 'Have a nice day!' },
+    { emoji: '❓', text: "You didn't hear what someone said.", answer: 'Could you say that again?' },
+  ];
+
+  const GREET_SITUATION_ROUND_SIZE = 6;
+  const greetConvoState = { scenarioIdx: 0, stepIdx: 0 };
+  const greetSituationState = { round: [], index: 0, done: false };
+
+  function greetSpeak(text) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
+
+  function greetingsMarkup() {
+    return `
+      <nav class="game-tabs" id="greetTabs">
+        <button type="button" class="game-tab-btn active" data-tab="learn">Learn</button>
+        <button type="button" class="game-tab-btn" data-tab="convo">Conversation</button>
+        <button type="button" class="game-tab-btn" data-tab="situation">Situation Match</button>
+      </nav>
+      <section class="greet-panel active" id="greet-panel-learn">
+        <h3 class="greet-section-title">Flashcards</h3>
+        <p class="greet-section-hint">Tap a card to flip it, tap the speaker to hear it out loud.</p>
+        <div class="greet-card-grid" id="greetCardGrid"></div>
+      </section>
+      <section class="greet-panel" id="greet-panel-convo">
+        <h3 class="greet-section-title" id="greetConvoTitle">Conversation Practice</h3>
+        <p class="greet-convo-intro" id="greetConvoIntro"></p>
+        <div class="greet-convo-scene">
+          <span class="greet-convo-npc-avatar" id="greetConvoAvatar">🧒</span>
+          <div class="greet-convo-bubble" id="greetConvoNpcBubble"></div>
+          <div id="greetConvoReplyWrap"></div>
+          <div class="greet-convo-choices" id="greetConvoChoices"></div>
+        </div>
+        <div class="greet-convo-progress" id="greetConvoProgress"></div>
+        <div class="greet-convo-toolbar">
+          <button type="button" class="btn-fun blue small" id="greetConvoNewBtn">New Scenario</button>
+        </div>
+        <div class="banner neutral" id="greetConvoBanner"></div>
+      </section>
+      <section class="greet-panel" id="greet-panel-situation">
+        <h3 class="greet-section-title">Situation Match</h3>
+        <p class="greet-section-hint">What's the right thing to say?</p>
+        <div class="greet-situation-slots" id="greetSituationSlots"></div>
+        <div class="greet-situation-target" id="greetSituationTarget"></div>
+        <div class="greet-situation-choices" id="greetSituationChoices"></div>
+        <div class="banner neutral" id="greetSituationBanner"></div>
+      </section>
+    `;
+  }
+
+  function greetRenderFlashcards() {
+    const grid = document.getElementById('greetCardGrid');
+    grid.innerHTML = GREET_PHRASES.map((p, i) => `
+      <div class="greet-flip-card" data-idx="${i}">
+        <div class="greet-flip-card-inner">
+          <div class="greet-flip-card-front">
+            <button type="button" class="greet-mini-listen-btn" data-en="${escapeHtml(p.en)}" aria-label="Listen"><span class="icon-speaker" aria-hidden="true"></span></button>
+            <div class="greet-flip-card-en">${escapeHtml(p.en)}</div>
+            <div class="greet-flip-card-hint">tap to flip</div>
+          </div>
+          <div class="greet-flip-card-back">
+            <div class="greet-flip-card-zh">${escapeHtml(p.zh)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function greetStartScenario(idx) {
+    greetConvoState.scenarioIdx = idx;
+    greetConvoState.stepIdx = 0;
+    const scenario = GREET_SCENARIOS[idx];
+    document.getElementById('greetConvoTitle').textContent = scenario.title;
+    document.getElementById('greetConvoIntro').textContent = scenario.intro;
+    greetRenderConvoStep();
+  }
+
+  function greetRenderConvoStep() {
+    const scenario = GREET_SCENARIOS[greetConvoState.scenarioIdx];
+    const step = scenario.steps[greetConvoState.stepIdx];
+    document.getElementById('greetConvoNpcBubble').textContent = step.npc;
+    document.getElementById('greetConvoReplyWrap').innerHTML = '';
+    document.getElementById('greetConvoChoices').innerHTML = shuffleArray(step.choices).map(c => `
+      <button type="button" class="btn-fun greet-convo-choice" data-correct="${c.correct ? '1' : '0'}">${escapeHtml(c.text)}</button>
+    `).join('');
+    document.getElementById('greetConvoProgress').innerHTML = scenario.steps.map((_, i) => {
+      const cls = i < greetConvoState.stepIdx ? 'done' : (i === greetConvoState.stepIdx ? 'current' : '');
+      return `<span class="greet-convo-dot ${cls}"></span>`;
+    }).join('');
+  }
+
+  function greetBuildSituationChoices(correct) {
+    const others = shuffleArray(GREET_SITUATIONS.filter(s => s.answer !== correct.answer)).slice(0, 2);
+    return shuffleArray([correct, ...others]);
+  }
+
+  function greetStartSituationRound() {
+    greetSituationState.round = shuffleArray(GREET_SITUATIONS).slice(0, GREET_SITUATION_ROUND_SIZE);
+    greetSituationState.index = 0;
+    greetSituationState.done = false;
+    greetRenderSituationRound();
+  }
+
+  function greetRenderSituationRound() {
+    const filled = greetSituationState.index;
+    const current = greetSituationState.round[greetSituationState.index];
+    const choices = greetBuildSituationChoices(current);
+
+    document.getElementById('greetSituationSlots').innerHTML = greetSituationState.round.map((s, i) => `
+      <span class="greet-situation-slot${i < filled ? ' filled' : ''}">${i < filled ? '✅' : ''}</span>
+    `).join('');
+
+    document.getElementById('greetSituationTarget').innerHTML = `
+      <div class="greet-situation-emoji">${current.emoji}</div>
+      <div class="greet-situation-text">${escapeHtml(current.text)}</div>
+    `;
+
+    document.getElementById('greetSituationChoices').innerHTML = choices.map(c => `
+      <button type="button" class="btn-fun greet-situation-choice" data-answer="${escapeHtml(c.answer)}">${escapeHtml(c.answer)}</button>
+    `).join('');
+  }
+
+  function greetRenderSituationComplete() {
+    document.getElementById('greetSituationSlots').innerHTML = '';
+    document.getElementById('greetSituationTarget').innerHTML = `<p class="greet-situation-complete-msg">All done! Great manners, Andy!</p>`;
+    document.getElementById('greetSituationChoices').innerHTML = `<button type="button" class="btn-fun" id="greetSituationAgainBtn">Play Again</button>`;
+    document.getElementById('greetSituationAgainBtn').addEventListener('click', greetStartSituationRound);
+    addStars(3);
+    launchConfetti();
+  }
+
+  function startGreetings() {
+    const area = document.getElementById('greetingsArea');
+    area.innerHTML = greetingsMarkup();
+
+    document.getElementById('greetTabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.game-tab-btn');
+      if (!btn) return;
+      document.querySelectorAll('#greetTabs .game-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+      const target = btn.dataset.tab;
+      document.querySelectorAll('#greetingsArea .greet-panel').forEach(p => p.classList.toggle('active', p.id === 'greet-panel-' + target));
+    });
+
+    document.getElementById('greetCardGrid').addEventListener('click', (e) => {
+      const listenBtn = e.target.closest('.greet-mini-listen-btn');
+      if (listenBtn) {
+        e.stopPropagation();
+        greetSpeak(listenBtn.dataset.en);
+        return;
+      }
+      const card = e.target.closest('.greet-flip-card');
+      if (card) card.classList.toggle('flipped');
+    });
+
+    document.getElementById('greetConvoChoices').addEventListener('click', (e) => {
+      const btn = e.target.closest('.greet-convo-choice');
+      if (!btn || btn.disabled) return;
+      const scenario = GREET_SCENARIOS[greetConvoState.scenarioIdx];
+      const step = scenario.steps[greetConvoState.stepIdx];
+      if (btn.dataset.correct === '1') {
+        document.querySelectorAll('.greet-convo-choice').forEach(b => { b.disabled = true; });
+        btn.classList.add('correct-flash');
+        document.getElementById('greetConvoReplyWrap').innerHTML = `<div class="greet-convo-reply-bubble">${escapeHtml(step.reply)}</div>`;
+        addStars(1);
+        recordQualifyingActivity();
+        showBanner('greetConvoBanner', pickEncouragement());
+        setTimeout(() => {
+          if (greetConvoState.stepIdx < scenario.steps.length - 1) {
+            greetConvoState.stepIdx++;
+            greetRenderConvoStep();
+          } else {
+            launchConfetti();
+            showBanner('greetConvoBanner', "Great conversation! Try 'New Scenario' for another one.");
+          }
+        }, 1100);
+      } else {
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 400);
+        showBanner('greetConvoBanner', 'Hmm, try a different one!', true);
+      }
+    });
+
+    document.getElementById('greetConvoNewBtn').addEventListener('click', () => {
+      const next = (greetConvoState.scenarioIdx + 1) % GREET_SCENARIOS.length;
+      greetStartScenario(next);
+    });
+
+    document.getElementById('greetSituationChoices').addEventListener('click', (e) => {
+      const btn = e.target.closest('.greet-situation-choice');
+      if (!btn || greetSituationState.done) return;
+      const current = greetSituationState.round[greetSituationState.index];
+      if (btn.dataset.answer === current.answer) {
+        document.querySelectorAll('.greet-situation-choice').forEach(b => { b.disabled = true; });
+        btn.classList.add('correct-flash');
+        addStars(1);
+        recordQualifyingActivity();
+        showBanner('greetSituationBanner', pickEncouragement());
+        greetSituationState.index++;
+        setTimeout(() => {
+          if (greetSituationState.index >= greetSituationState.round.length) {
+            greetSituationState.done = true;
+            greetRenderSituationComplete();
+          } else {
+            greetRenderSituationRound();
+          }
+        }, 500);
+      } else {
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 400);
+        showBanner('greetSituationBanner', 'Not quite — try again!', true);
+      }
+    });
+
+    greetRenderFlashcards();
+    greetStartScenario(0);
+    greetStartSituationRound();
+  }
+
 
   /* ---------- init ---------- */
 
