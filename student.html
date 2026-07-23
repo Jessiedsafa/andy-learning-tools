@@ -154,7 +154,24 @@
 
   .milestone-overlay.show .milestone-card { transform: scale(1); }
 
-  .milestone-emoji { font-size: 3rem; line-height: 1; margin-bottom: 0.5rem; }
+  .milestone-emoji {
+    width: 3.2rem;
+    height: 3.2rem;
+    margin: 0 auto 0.5rem;
+    background: radial-gradient(circle at 32% 26%, #fff6d8, var(--star) 55%, #d99a12 100%);
+    border-radius: 50%;
+    box-shadow: 0 4px 0 rgba(107, 78, 0, 0.35), inset 0 0 0 0.24rem rgba(255, 255, 255, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .milestone-emoji::after {
+    content: "";
+    width: 1.3rem;
+    height: 1.3rem;
+    background: #fff8e1;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
 
   .milestone-message {
     font-family: 'Baloo 2', ui-rounded, sans-serif;
@@ -342,13 +359,6 @@
   .hud-stat-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--shadow); }
   .hud-stat-btn:focus-visible { outline: 3px solid var(--sky-accent); outline-offset: 2px; }
 
-  .hud-gear {
-    font-size: 0.85rem;
-    opacity: 0.6;
-    margin-left: 0.1rem;
-  }
-
-  .hud-icon { font-size: 1.15rem; line-height: 1; }
 
   .hud-num {
     font-family: 'Baloo 2', ui-rounded, sans-serif;
@@ -608,6 +618,7 @@
   .listen-btn {
     background: none;
     border: none;
+    color: var(--ink-soft);
     font-size: 1.15rem;
     line-height: 1;
     cursor: pointer;
@@ -1014,11 +1025,10 @@
   .sorter-basket.hue-sky    { background: var(--sky-accent); }
   .sorter-basket.hue-happy  { background: var(--happy); }
 
-  .sorter-basket-emoji { font-size: 1.4rem; line-height: 1; }
   .sorter-basket-label {
     font-family: 'Baloo 2', ui-rounded, sans-serif;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 1.15rem;
   }
   .sorter-basket-count {
     font-family: ui-monospace, 'SF Mono', monospace;
@@ -1107,6 +1117,125 @@
     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   }
   .icon-star-inline { width: 0.8rem; height: 0.8rem; vertical-align: -0.05rem; }
+
+  .icon-mic {
+    position: relative;
+    display: inline-block;
+    width: 0.85rem;
+    height: 1.2rem;
+    vertical-align: -0.25rem;
+  }
+  .icon-mic::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.5rem;
+    height: 0.75rem;
+    background: currentColor;
+    border-radius: 999px;
+  }
+  .icon-mic::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.65rem;
+    height: 0.3rem;
+    border: 0.09rem solid currentColor;
+    border-top: none;
+    border-radius: 0 0 999px 999px;
+  }
+
+  .icon-stop {
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.7rem;
+    background: currentColor;
+    border-radius: 2px;
+    vertical-align: -0.1rem;
+  }
+
+  .icon-speaker {
+    position: relative;
+    display: inline-block;
+    width: 1.1rem;
+    height: 1rem;
+    vertical-align: -0.2rem;
+  }
+  .icon-speaker::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 0.3rem solid transparent;
+    border-bottom: 0.3rem solid transparent;
+    border-right: 0.45rem solid currentColor;
+  }
+  .icon-speaker::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 20%;
+    width: 0.4rem;
+    height: 0.6rem;
+    border: 0.09rem solid currentColor;
+    border-left: none;
+    border-radius: 0 999px 999px 0;
+  }
+
+  .icon-lock {
+    position: relative;
+    display: inline-block;
+    width: 0.7rem;
+    height: 0.68rem;
+    vertical-align: -0.05rem;
+  }
+  .icon-lock::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.46rem;
+    height: 0.38rem;
+    border: 0.08rem solid currentColor;
+    border-bottom: none;
+    border-radius: 0.28rem 0.28rem 0 0;
+  }
+  .icon-lock::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0.42rem;
+    background: currentColor;
+    border-radius: 0.08rem;
+  }
+
+  .icon-flame {
+    display: inline-block;
+    width: 0.95rem;
+    height: 1.15rem;
+    flex: none;
+    background: var(--pop);
+    border-radius: 50% 50% 50% 4%;
+    transform: rotate(-8deg);
+    position: relative;
+  }
+  .icon-flame::before {
+    content: "";
+    position: absolute;
+    inset: 28% 22% 12% 22%;
+    background: var(--star);
+    border-radius: 50% 50% 50% 4%;
+  }
 
   #game-runner.active {
     flex: 1;
@@ -1735,7 +1864,7 @@
 
   <div class="milestone-overlay" id="milestoneOverlay">
     <div class="milestone-card">
-      <div class="milestone-emoji">🎉</div>
+      <div class="milestone-emoji"></div>
       <p class="milestone-message" id="milestoneMessage"></p>
       <button class="btn-fun" id="milestoneClose">Yay!</button>
     </div>
@@ -1744,14 +1873,14 @@
   <div class="settings-overlay" id="streakRewardsOverlay">
     <div class="settings-card">
       <button class="modal-close" id="streakRewardsClose" aria-label="Close">&times;</button>
-      <h2 class="fun settings-title">🔥 Streak Rewards</h2>
+      <h2 class="fun settings-title">Streak Rewards</h2>
       <p class="settings-subtitle">For the teacher: Andy keeps his streak by finishing homework or getting game answers right — at least 2 a day (missing a single day is okay, 2 days in a row breaks it). Each reward below repeats every time his streak is a multiple of that number.</p>
       <p class="streak-progress" id="streakProgressText"></p>
       <div class="reward-rules" id="rewardRulesList"></div>
       <form class="add-row" id="form-reward-rule">
         <input type="number" id="reward-threshold" min="1" value="7" required aria-label="Repeat every how many streak days" style="max-width: 80px;" />
         <select id="reward-type" class="hw-type-select" aria-label="Reward type">
-          <option value="video">🎥 Video</option>
+          <option value="video">Video</option>
         </select>
         <input type="text" id="reward-note" placeholder="Optional note (e.g. dinosaur video)" />
         <button type="submit" class="btn-fun small">+ Add reward</button>
@@ -1763,22 +1892,21 @@
     <h1 class="hud-title">Andy's Learning Zone</h1>
     <div class="hud-stats">
       <div class="hud-stat" id="starStat">
-        <span class="hud-icon">⭐</span>
+        <span class="icon-star" aria-hidden="true"></span>
         <span class="hud-num" id="starCount">0</span>
       </div>
       <button type="button" class="hud-stat hud-stat-btn" id="streakStat">
-        <span class="hud-icon">🔥</span>
+        <span class="icon-flame" aria-hidden="true"></span>
         <span class="hud-num" id="streakCount">0</span>
         <span class="hud-label">streak</span>
-        <span class="hud-gear">⚙️</span>
       </button>
     </div>
   </header>
 
   <nav class="tabs" id="tabs">
-    <button class="tab-btn active" data-tab="homework">📚 Homework</button>
-    <button class="tab-btn" data-tab="games">🎮 Games</button>
-    <button class="tab-btn" data-tab="words">📖 My Words</button>
+    <button class="tab-btn active" data-tab="homework">Homework</button>
+    <button class="tab-btn" data-tab="games">Games</button>
+    <button class="tab-btn" data-tab="words">My Words</button>
   </nav>
 
   <main class="sheet">
@@ -1786,22 +1914,22 @@
       <h2 class="section-title">Homework</h2>
 
       <div class="teacher-area-wrap">
-        <button type="button" class="teacher-toggle" id="teacherToggleBtn">👩‍🏫 Teacher: Give Homework ▾</button>
+        <button type="button" class="teacher-toggle" id="teacherToggleBtn">Teacher: Give Homework ▾</button>
         <div class="teacher-area" id="teacherArea" hidden>
-          <p class="hw-hint">Pick a homework type, then type (or speak with 🎤) what Andy should do.</p>
+          <p class="hw-hint">Pick a homework type, then type (or use the mic) what Andy should do.</p>
           <form class="add-row" id="form-homework">
             <select id="homework-type" class="hw-type-select" aria-label="Homework type">
-              <option value="voice">🎤 Voice Note</option>
-              <option value="draw_story">🎨 Draw &amp; Tell</option>
+              <option value="voice">Voice Note</option>
+              <option value="draw_story">Draw &amp; Tell</option>
             </select>
             <input type="text" id="homework-text" placeholder="e.g. Say: 'The weather is nice today'" required />
-            <button type="button" class="btn-fun blue small mic-btn" id="homeworkDictateBtn" style="display: none;" aria-label="Speak homework instead of typing">🎤</button>
+            <button type="button" class="btn-fun blue small mic-btn" id="homeworkDictateBtn" style="display: none;" aria-label="Speak homework instead of typing"><span class="icon-mic" aria-hidden="true"></span></button>
             <button type="submit" class="btn-fun small">Add</button>
           </form>
         </div>
       </div>
 
-      <h3 class="hw-list-title">📋 Your Homework</h3>
+      <h3 class="hw-list-title">Your Homework</h3>
       <ul class="hw-list" id="list-homework"></ul>
     </section>
 
@@ -1811,7 +1939,7 @@
 
       <div class="game-panel active" id="game-match">
         <div class="game-toolbar">
-          <button class="btn-fun blue small" id="matchNewBtn">🔄 New Game</button>
+          <button class="btn-fun blue small" id="matchNewBtn">New Game</button>
         </div>
         <div id="matchArea"></div>
         <div class="banner" id="matchBanner"></div>
@@ -2069,7 +2197,7 @@
     renderHud();
     floatPlusOne(actualDelta);
     const crossed = MILESTONES.filter(m => prev < m && data.stars >= m).pop();
-    if (crossed) showMilestone(`🌟 ${crossed} stars! You're doing amazing, Andy!`);
+    if (crossed) showMilestone(`${crossed} stars! You're doing amazing, Andy!`);
   }
 
   function todayStr() {
@@ -2084,14 +2212,14 @@
 
   // Reward types available in the streak-rewards picker. Add more here later.
   const STREAK_REWARD_TYPES = {
-    video: { label: '🎥 Video' },
+    video: { label: 'Video' },
   };
 
   // Each rule recurs every N streak-days (e.g. threshold 7 fires at 7, 14, 21...).
   function streakRewardMessage(rule, streak) {
     const rewardLabel = (STREAK_REWARD_TYPES[rule.type] || STREAK_REWARD_TYPES.video).label;
     const noteText = rule.note ? ` — ${rule.note}` : '';
-    return `🔥 ${streak}-day streak! Andy earned a reward: ${rewardLabel}${noteText}. Ask your teacher!`;
+    return `${streak}-day streak! Andy earned a reward: ${rewardLabel}${noteText}. Ask your teacher!`;
   }
 
   function ensureTodayGameCounter() {
@@ -2158,8 +2286,8 @@
     const played = data.gamesQualifiedToday;
     const remaining = Math.max(0, ACTIVITIES_NEEDED_PER_DAY - played);
     const text = remaining === 0
-      ? `✅ ${played}/${ACTIVITIES_NEEDED_PER_DAY} done today — streak secured for today!`
-      : `✅ ${played}/${ACTIVITIES_NEEDED_PER_DAY} done today — finish ${remaining} more homework item or game answer to keep the streak going.`;
+      ? `${played}/${ACTIVITIES_NEEDED_PER_DAY} done today — streak secured for today!`
+      : `${played}/${ACTIVITIES_NEEDED_PER_DAY} done today — finish ${remaining} more homework item or game answer to keep the streak going.`;
     document.getElementById('streakProgressText').textContent = text;
   }
 
@@ -2205,7 +2333,7 @@
   });
 
   function pickEncouragement() {
-    return ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)] + ' ⭐';
+    return ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
   }
 
   function showBanner(id, msg, isWrong) {
@@ -2235,7 +2363,7 @@
   teacherToggleBtn.addEventListener('click', () => {
     teacherModeOpen = !teacherModeOpen;
     teacherArea.hidden = !teacherModeOpen;
-    teacherToggleBtn.textContent = teacherModeOpen ? '👩‍🏫 Teacher Area ▴' : '👩‍🏫 Teacher: Give Homework ▾';
+    teacherToggleBtn.textContent = teacherModeOpen ? 'Teacher Area ▴' : 'Teacher: Give Homework ▾';
     renderHomework();
   });
 
@@ -2244,12 +2372,12 @@
   // Add new entries here as new homework types come along.
   const HOMEWORK_TYPES = {
     voice: {
-      label: '🎤 Voice Note',
+      label: 'Voice Note',
       canCheck: item => !!item.audioDataUrl,
       pendingHint: 'Record your answer first',
     },
     draw_story: {
-      label: '🎨 Draw & Tell',
+      label: 'Draw & Tell',
       canCheck: item => !!item.photoDataUrl && !!item.audioDataUrl,
       pendingHint: 'Add a photo and record your story first',
     },
@@ -2308,18 +2436,18 @@
       return `<button class="btn-fun small stop-btn" data-id="${item.id}">⏹ Stop</button><span class="rec-indicator">● Recording…</span>`;
     }
     if (item.audioDataUrl) {
-      return `<audio controls src="${item.audioDataUrl}"></audio><button class="btn-fun blue small record-btn" data-id="${item.id}">🎤 Re-record</button>`;
+      return `<audio controls src="${item.audioDataUrl}"></audio><button class="btn-fun blue small record-btn" data-id="${item.id}">Re-record</button>`;
     }
     if (supportsRecording()) {
-      return `<button class="btn-fun small record-btn" data-id="${item.id}">🎤 Record your answer</button>`;
+      return `<button class="btn-fun small record-btn" data-id="${item.id}">Record your answer</button>`;
     }
     return `<span class="empty-note">Voice recording isn't supported in this browser.</span>`;
   }
 
   function renderDrawStorySubmitArea(item) {
     const photoHtml = item.photoDataUrl
-      ? `<div class="photo-preview"><img src="${item.photoDataUrl}" alt="Andy's drawing" /><label class="btn-fun blue small photo-btn">🖼️ Retake photo<input type="file" accept="image/*" capture="environment" class="photo-input" data-id="${item.id}" hidden /></label></div>`
-      : `<label class="btn-fun small photo-btn">📷 Add a photo of your drawing<input type="file" accept="image/*" capture="environment" class="photo-input" data-id="${item.id}" hidden /></label>`;
+      ? `<div class="photo-preview"><img src="${item.photoDataUrl}" alt="Andy's drawing" /><label class="btn-fun blue small photo-btn">Retake photo<input type="file" accept="image/*" capture="environment" class="photo-input" data-id="${item.id}" hidden /></label></div>`
+      : `<label class="btn-fun small photo-btn">Add a photo of your drawing<input type="file" accept="image/*" capture="environment" class="photo-input" data-id="${item.id}" hidden /></label>`;
     return `<div class="draw-story-submit"><div class="photo-row">${photoHtml}</div><div class="voice-row">${renderVoiceSubmitArea(item)}</div></div>`;
   }
 
@@ -2341,7 +2469,7 @@
         <div class="hw-item-top">
           <span class="hw-type-badge">${homeworkType(item).label}</span>
           <span class="hw-text">${escapeHtml(item.text)}</span>
-          <button class="listen-btn" data-id="${item.id}" aria-label="Listen">🔊</button>
+          <button class="listen-btn" data-id="${item.id}" aria-label="Listen"><span class="icon-speaker" aria-hidden="true"></span></button>
         </div>
         <div class="hw-submit-row">${renderSubmitArea(item)}</div>
         <div class="hw-check-row">
@@ -2392,7 +2520,7 @@
 
       dictateRecognition.addEventListener('start', () => {
         isDictating = true;
-        dictateBtn.textContent = '⏹';
+        dictateBtn.innerHTML = '<span class="icon-stop" aria-hidden="true"></span>';
         dictateBtn.classList.add('listening');
       });
 
@@ -2410,7 +2538,7 @@
 
       dictateRecognition.addEventListener('end', () => {
         isDictating = false;
-        dictateBtn.textContent = '🎤';
+        dictateBtn.innerHTML = '<span class="icon-mic" aria-hidden="true"></span>';
         dictateBtn.classList.remove('listening');
       });
 
@@ -2555,10 +2683,10 @@
       row.innerHTML = `<button type="button" class="btn-fun small" id="wordStopBtn">⏹ Stop</button><span class="rec-indicator">● Recording…</span>`;
       document.getElementById('wordStopBtn').addEventListener('click', stopWordRecording);
     } else if (wordAudioDataUrl) {
-      row.innerHTML = `<audio controls src="${wordAudioDataUrl}"></audio><button type="button" class="btn-fun blue small" id="wordRerecordBtn">🎤 Re-record</button>`;
+      row.innerHTML = `<audio controls src="${wordAudioDataUrl}"></audio><button type="button" class="btn-fun blue small" id="wordRerecordBtn">Re-record</button>`;
       document.getElementById('wordRerecordBtn').addEventListener('click', startWordRecording);
     } else if (supportsRecording()) {
-      row.innerHTML = `<button type="button" class="btn-fun small" id="wordRecordBtn">🎤 Record the word</button>`;
+      row.innerHTML = `<button type="button" class="btn-fun small" id="wordRecordBtn">Record the word</button>`;
       document.getElementById('wordRecordBtn').addEventListener('click', startWordRecording);
     } else {
       row.innerHTML = `<span class="empty-note">Voice recording isn't supported in this browser — you can still add the word without it.</span>`;
@@ -2642,24 +2770,24 @@
   }
 
   const TOPIC_ITEMS = [
-    { value: 'All', label: '🌈 All Words' },
-    { value: 'Weather', label: '☁️ Weather' },
-    { value: 'Prepositions & Places', label: '📍 Prepositions & Places' },
-    { value: 'Play with me Convo', label: '💬 Play with me Convo' },
-    { value: 'Daily Routine', label: '⏰ Daily Routine' },
-    { value: 'Question Words', label: '❓ Question Words' },
-    { value: 'Past Tense Verbs', label: '⏪ Past Tense Verbs' },
-    { value: 'Verbs & Practice Use', label: '🏃 Verbs & Practice Use' },
-    { value: 'ABCs, Digraphs & Sounding', label: '🔤 ABCs, Digraphs & Sounding' },
-    { value: 'First Class (ABC)', label: '🎈 First Class (ABC)' },
-    { value: 'General', label: '⭐ General' },
+    { value: 'All', label: 'All Words' },
+    { value: 'Weather', label: 'Weather' },
+    { value: 'Prepositions & Places', label: 'Prepositions & Places' },
+    { value: 'Play with me Convo', label: 'Play with me Convo' },
+    { value: 'Daily Routine', label: 'Daily Routine' },
+    { value: 'Question Words', label: 'Question Words' },
+    { value: 'Past Tense Verbs', label: 'Past Tense Verbs' },
+    { value: 'Verbs & Practice Use', label: 'Verbs & Practice Use' },
+    { value: 'ABCs, Digraphs & Sounding', label: 'ABCs, Digraphs & Sounding' },
+    { value: 'First Class (ABC)', label: 'First Class (ABC)' },
+    { value: 'General', label: 'General' },
   ];
   const GAME_ITEMS = {
-    match: { value: 'match', label: '🧩 Word Match' },
-    scramble: { value: 'scramble', label: '🔤 Unscramble' },
-    chef: { value: 'chef', label: '🍲 Verb Chef' },
-    runner: { value: 'runner', label: '🏃 Routine Runner' },
-    sorter: { value: 'sorter', label: '🧺 Clue Sort' },
+    match: { value: 'match', label: 'Word Match' },
+    scramble: { value: 'scramble', label: 'Unscramble' },
+    chef: { value: 'chef', label: 'Verb Chef' },
+    runner: { value: 'runner', label: 'Routine Runner' },
+    sorter: { value: 'sorter', label: 'Clue Sort' },
   };
   // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
   // Runner) instead of the generic Word Match / Unscramble.
@@ -2749,7 +2877,7 @@
     const pool = wordsInCategory(category);
     if (pool.length < 3) {
       const where = category === 'All' ? '' : ` in <strong>${escapeHtml(category)}</strong>`;
-      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to play! 📖</div>`;
+      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to play!</div>`;
       document.getElementById('matchNewBtn').style.visibility = 'hidden';
       return;
     }
@@ -2786,7 +2914,7 @@
       if (matchState.matchedCount === matchState.totalPairs) {
         addStars(3);
         launchConfetti();
-        showBanner('matchBanner', '🎉 You matched them all! +3 bonus stars!');
+        showBanner('matchBanner', 'You matched them all! +3 bonus stars!');
       }
     } else {
       matchState.lock = true;
@@ -2824,7 +2952,7 @@
     const pool = wordsInCategory(category);
     if (pool.length < 3) {
       const where = category === 'All' ? '' : ` in <strong>${escapeHtml(category)}</strong>`;
-      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to play! 📖</div>`;
+      area.innerHTML = `<div class="game-empty">Add at least 3 words${where} in <strong>My Words</strong> first, then come back to play!</div>`;
       return;
     }
     const w = pool[Math.floor(Math.random() * pool.length)];
@@ -2923,7 +3051,7 @@
         <button class="chef-skin-btn${active ? ' active' : ''}${unlocked ? '' : ' locked'}" data-id="${s.id}" ${unlocked ? '' : 'disabled'}>
           <span class="chef-skin-emoji">${s.emoji}</span>
           <span class="chef-skin-label">${escapeHtml(s.label)}</span>
-          ${unlocked ? '' : `<span class="chef-skin-lock">🔒 ${s.threshold}⭐</span>`}
+          ${unlocked ? '' : `<span class="chef-skin-lock"><span class="icon-lock" aria-hidden="true"></span> ${s.threshold}<span class="icon-star-inline" aria-hidden="true"></span></span>`}
         </button>
       `;
     }).join('');
@@ -2961,7 +3089,7 @@
     area.innerHTML = `
       <div class="chef-wrap">
         <div class="chef-shop-row">
-          <button class="link-btn" id="chefShopToggle">🎨 Pot Shop</button>
+          <button class="link-btn" id="chefShopToggle">Pot Shop</button>
         </div>
         <div class="chef-shop" id="chefShop" ${chefState.shopOpen ? '' : 'hidden'}>
           <p class="chef-shop-hint">Earn stars to unlock new pots! Tap one you've unlocked to use it.</p>
@@ -2994,7 +3122,7 @@
         <p class="chef-dish-name">${escapeHtml(dishName)} is ready!</p>
         <p class="chef-dish-sub">${chefState.firstTryCount} out of ${total} got it right first try — +${bonus} bonus star${bonus === 1 ? '' : 's'}!</p>
         <p class="chef-dish-sub">Dishes cooked so far: ${data.dishesCooked}</p>
-        <button class="btn-fun" id="chefAgainBtn">Cook Another Dish 🍳</button>
+        <button class="btn-fun" id="chefAgainBtn">Cook Another Dish</button>
       </div>
     `;
     document.getElementById('chefAgainBtn').addEventListener('click', startChefRound);
@@ -3031,11 +3159,11 @@
   ];
 
   const SORTER_CATEGORIES = [
-    { key: 'who', label: 'Who', emoji: '🧑', hue: 'hue-violet' },
-    { key: 'what', label: 'What', emoji: '🎁', hue: 'hue-pop' },
-    { key: 'when', label: 'When', emoji: '⏰', hue: 'hue-star' },
-    { key: 'where', label: 'Where', emoji: '📍', hue: 'hue-sky' },
-    { key: 'why', label: 'Why', emoji: '❓', hue: 'hue-happy' },
+    { key: 'who', label: 'Who', hue: 'hue-violet' },
+    { key: 'what', label: 'What', hue: 'hue-pop' },
+    { key: 'when', label: 'When', hue: 'hue-star' },
+    { key: 'where', label: 'Where', hue: 'hue-sky' },
+    { key: 'why', label: 'Why', hue: 'hue-happy' },
   ];
 
   const SORTER_ROUND_SIZE = 10;
@@ -3059,7 +3187,6 @@
   function renderSorterBaskets() {
     return SORTER_CATEGORIES.map(c => `
       <button class="sorter-basket ${c.hue}" data-key="${c.key}">
-        <span class="sorter-basket-emoji">${c.emoji}</span>
         <span class="sorter-basket-label">${c.label}</span>
         <span class="sorter-basket-count">${sorterState.counts[c.key] || 0} sorted</span>
       </button>
@@ -3072,7 +3199,7 @@
     area.innerHTML = `
       <div class="sorter-wrap">
         <div class="sorter-toolbar">
-          <button class="btn-fun blue small" id="sorterNewBtn">🔄 New Round</button>
+          <button class="btn-fun blue small" id="sorterNewBtn">New Round</button>
         </div>
         <p class="sorter-progress">Clue ${sorterState.index + 1} of ${sorterState.roundClues.length}</p>
         <div class="sorter-clue-card">
@@ -3091,10 +3218,14 @@
     const bonus = Math.max(1, sorterState.firstTryCount);
     area.innerHTML = `
       <div class="sorter-wrap sorter-complete">
-        <div class="chef-pot">🧺</div>
+        <div class="medal">
+          <div class="medal-ribbon medal-ribbon-l"></div>
+          <div class="medal-ribbon medal-ribbon-r"></div>
+          <div class="medal-disc"><span class="medal-star"></span></div>
+        </div>
         <p class="chef-dish-name">All clues sorted!</p>
         <p class="chef-dish-sub">${sorterState.firstTryCount} out of ${total} got it right first try — +${bonus} bonus star${bonus === 1 ? '' : 's'}!</p>
-        <button class="btn-fun" id="sorterAgainBtn">Sort Another Round 🧺</button>
+        <button class="btn-fun" id="sorterAgainBtn">Sort Another Round</button>
       </div>
     `;
     document.getElementById('sorterAgainBtn').addEventListener('click', startSorterRound);
