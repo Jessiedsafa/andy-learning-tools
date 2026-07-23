@@ -3241,6 +3241,376 @@
   }
   .greet-situation-slot.filled { background: var(--card); border: 2px solid var(--happy); }
   .greet-situation-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
+
+  /* ---------- game: telling time ---------- */
+
+  .tt-panel { display: none; }
+  .tt-panel.active { display: block; }
+  .tt-section-title { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem; color: var(--ink); }
+  .tt-section-hint { color: var(--ink-soft); font-size: 0.85rem; margin: -0.15rem 0 0.8rem; }
+  .tt-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.6rem; }
+  .tt-flip-card { perspective: 900px; cursor: pointer; }
+  .tt-flip-card-inner { position: relative; width: 100%; height: 100px; transition: transform 0.5s; transform-style: preserve-3d; }
+  .tt-flip-card.flipped .tt-flip-card-inner { transform: rotateY(180deg); }
+  .tt-flip-card-front, .tt-flip-card-back {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0.5rem; text-align: center; box-shadow: 0 3px 0 var(--shadow);
+  }
+  .tt-flip-card-front { background: var(--sky-accent); color: var(--sky-accent-ink); }
+  .tt-flip-card-back { background: var(--happy); color: var(--happy-ink); transform: rotateY(180deg); }
+  .tt-flip-card-en { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.88rem; }
+  .tt-flip-card-zh { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .tt-flip-card-hint { font-size: 0.65rem; opacity: 0.85; margin-top: 0.3rem; }
+  .tt-mini-listen-btn {
+    position: absolute; top: 0.3rem; right: 0.35rem;
+    background: rgba(255,255,255,0.3); border: none; border-radius: 8px;
+    cursor: pointer; padding: 0.2rem 0.4rem;
+  }
+  .tt-mini-listen-btn:hover { background: rgba(255,255,255,0.5); }
+  .tt-mini-listen-btn .icon-speaker { width: 0.85rem; height: 0.85rem; }
+  .tt-clock-wrap { display: flex; justify-content: center; margin: 0.4rem 0 1.1rem; }
+  .tt-quiz-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; margin-bottom: 0.7rem; }
+  .tt-quiz-slot {
+    width: 1.7rem; height: 1.7rem; border-radius: 9px; background: var(--sky);
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+  }
+  .tt-quiz-slot.filled { background: var(--card); border: 2px solid var(--happy); }
+  .tt-time-phrase-card { background: var(--sky); border-radius: 16px; padding: 0.9rem 1.3rem; text-align: center; }
+  .tt-time-phrase-text { font-family: 'Baloo 2', ui-rounded, sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+  .tt-quiz-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; margin-top: 0.9rem; }
+  .tt-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+  .tt-clock-choice-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem; margin-top: 0.4rem; }
+  .tt-clock-choice-btn {
+    background: var(--sky); border: 3px solid var(--line); border-radius: 16px; padding: 0.4rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tt-clock-choice-btn.correct-flash { border-color: var(--happy); background: color-mix(in srgb, var(--happy) 18%, var(--sky)); }
+  .tt-clock-choice-btn:disabled { opacity: 0.6; cursor: default; }
+  .tt-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
+
+  /* ---------- game: months of the year ---------- */
+
+  .moy-panel { display: none; }
+  .moy-panel.active { display: block; }
+  .moy-section-title { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem; color: var(--ink); }
+  .moy-section-hint { color: var(--ink-soft); font-size: 0.85rem; margin: -0.15rem 0 0.8rem; }
+  .moy-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 0.6rem; }
+  .moy-flip-card { perspective: 900px; cursor: pointer; }
+  .moy-flip-card-inner { position: relative; width: 100%; height: 116px; transition: transform 0.5s; transform-style: preserve-3d; }
+  .moy-flip-card.flipped .moy-flip-card-inner { transform: rotateY(180deg); }
+  .moy-flip-card-front, .moy-flip-card-back {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0.5rem; text-align: center; box-shadow: 0 3px 0 var(--shadow);
+  }
+  .moy-flip-card-front { background: var(--sky-accent); color: var(--sky-accent-ink); }
+  .moy-flip-card-back { background: var(--happy); color: var(--happy-ink); transform: rotateY(180deg); }
+  .moy-flip-card-en { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.88rem; }
+  .moy-flip-card-zh { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .moy-flip-card-hint { font-size: 0.62rem; opacity: 0.85; margin-top: 0.32rem; }
+  .moy-flip-card-syl { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.9rem; margin-top: 0.28rem; letter-spacing: 0.02em; }
+  .moy-syl-a { color: #ffffff; }
+  .moy-syl-b { color: var(--star); }
+  .moy-syl-dot { color: rgba(255,255,255,0.55); margin: 0 1px; }
+  .moy-mini-listen-btn {
+    position: absolute; top: 0.3rem; right: 0.35rem;
+    background: rgba(255,255,255,0.3); border: none; border-radius: 8px;
+    cursor: pointer; padding: 0.15rem 0.3rem;
+  }
+  .moy-mini-slow-btn {
+    position: absolute; top: 0.3rem; left: 0.35rem;
+    background: rgba(255,255,255,0.3); border: none; border-radius: 8px;
+    cursor: pointer; padding: 0.15rem 0.4rem; font-size: 0.6rem; font-weight: 700;
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+  }
+  .moy-mini-listen-btn:hover, .moy-mini-slow-btn:hover { background: rgba(255,255,255,0.5); }
+  .moy-mini-listen-btn .icon-speaker { width: 0.8rem; height: 0.8rem; }
+  .moy-order-sequence { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem; margin-bottom: 1rem; }
+  .moy-order-slot {
+    min-width: 3.2rem; height: 2.3rem; border-radius: 10px; background: var(--sky);
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center;
+    font-size: 0.62rem; font-weight: 700; padding: 0 0.25rem; text-align: center;
+  }
+  .moy-order-slot.filled { background: var(--card); border: 2px solid var(--happy); color: var(--happy); }
+  .moy-order-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+  .moy-order-tile.used { visibility: hidden; }
+  .moy-order-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
+  .moy-quiz-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; margin-bottom: 0.7rem; }
+  .moy-quiz-slot {
+    width: 1.7rem; height: 1.7rem; border-radius: 9px; background: var(--sky);
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+  }
+  .moy-quiz-slot.filled { background: var(--card); border: 2px solid var(--happy); }
+  .moy-quiz-target { background: var(--sky); border-radius: 16px; padding: 0.9rem 1.3rem; text-align: center; }
+  .moy-quiz-target-text { font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+  .moy-quiz-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; margin-top: 0.9rem; }
+  .moy-quiz-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+  .moy-quiz-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
+
+  /* ---------- game: days of the week ---------- */
+
+  .dow-panel { display: none; }
+  .dow-panel.active { display: block; }
+  .dow-section-title { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0 0 0.5rem; color: var(--ink); }
+  .dow-section-hint { color: var(--ink-soft); font-size: 0.85rem; margin: -0.15rem 0 0.8rem; }
+  .dow-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.6rem; }
+  .dow-flip-card { perspective: 900px; cursor: pointer; }
+  .dow-flip-card-inner { position: relative; width: 100%; height: 116px; transition: transform 0.5s; transform-style: preserve-3d; }
+  .dow-flip-card.flipped .dow-flip-card-inner { transform: rotateY(180deg); }
+  .dow-flip-card-front, .dow-flip-card-back {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0.5rem; text-align: center; box-shadow: 0 3px 0 var(--shadow);
+  }
+  .dow-flip-card-front { background: var(--sky-accent); color: var(--sky-accent-ink); }
+  .dow-flip-card-back { background: var(--happy); color: var(--happy-ink); transform: rotateY(180deg); }
+  .dow-flip-card-en { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.88rem; }
+  .dow-flip-card-zh { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; }
+  .dow-flip-card-hint { font-size: 0.62rem; opacity: 0.85; margin-top: 0.32rem; }
+  .dow-flip-card-syl { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.9rem; margin-top: 0.28rem; letter-spacing: 0.02em; }
+  .dow-syl-a { color: #ffffff; }
+  .dow-syl-b { color: var(--star); }
+  .dow-syl-dot { color: rgba(255,255,255,0.55); margin: 0 1px; }
+  .dow-mini-listen-btn {
+    position: absolute; top: 0.3rem; right: 0.35rem;
+    background: rgba(255,255,255,0.3); border: none; border-radius: 8px;
+    cursor: pointer; padding: 0.15rem 0.3rem;
+  }
+  .dow-mini-slow-btn {
+    position: absolute; top: 0.3rem; left: 0.35rem;
+    background: rgba(255,255,255,0.3); border: none; border-radius: 8px;
+    cursor: pointer; padding: 0.15rem 0.4rem; font-size: 0.6rem; font-weight: 700;
+    font-family: 'Baloo 2', ui-rounded, sans-serif;
+  }
+  .dow-mini-listen-btn:hover, .dow-mini-slow-btn:hover { background: rgba(255,255,255,0.5); }
+  .dow-mini-listen-btn .icon-speaker { width: 0.8rem; height: 0.8rem; }
+  .dow-order-sequence { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; margin-bottom: 1rem; }
+  .dow-order-slot {
+    min-width: 3.4rem; height: 2.4rem; border-radius: 10px; background: var(--sky);
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center;
+    font-size: 0.68rem; font-weight: 700; padding: 0 0.3rem; text-align: center;
+  }
+  .dow-order-slot.filled { background: var(--card); border: 2px solid var(--happy); color: var(--happy); }
+  .dow-order-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+  .dow-order-tile.used { visibility: hidden; }
+  .dow-order-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
+  .dow-quiz-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; margin-bottom: 0.7rem; }
+  .dow-quiz-slot {
+    width: 1.7rem; height: 1.7rem; border-radius: 9px; background: var(--sky);
+    border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+  }
+  .dow-quiz-slot.filled { background: var(--card); border: 2px solid var(--happy); }
+  .dow-quiz-target { background: var(--sky); border-radius: 16px; padding: 0.9rem 1.3rem; text-align: center; }
+  .dow-quiz-target-text { font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+  .dow-quiz-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; margin-top: 0.9rem; }
+  .dow-quiz-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+  .dow-quiz-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0; }
+
+  /* ---------- game: countdown runner ---------- */
+
+  .cdr-title { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; margin: 0 0 0.6rem; color: var(--ink); text-align: center; }
+  .cdr-complete-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0.6rem 0; }
+  .cdr-hud-row { display: flex; justify-content: center; gap: 0.6rem; margin-bottom: 0.8rem; }
+  .cdr-hud-badge {
+    display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+    background: var(--sky); border-radius: 12px; padding: 0.4rem 0.9rem; box-shadow: 0 3px 0 var(--shadow);
+  }
+  .cdr-hud-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; color: var(--ink-faint); }
+  .cdr-hud-value { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--ink); }
+  .cdr-strike-dots { display: flex; gap: 0.25rem; margin-top: 0.1rem; }
+  .cdr-strike-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--line); box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
+  .cdr-strike-dot.used { background: var(--danger); }
+  .cdr-track {
+    position: relative; height: 170px; border-radius: 20px; overflow: hidden;
+    background: linear-gradient(180deg, #8fd8ff 0%, #cdeeff 55%, #eaf6ff 100%);
+    border: 3px solid #274b63;
+    box-shadow: 0 6px 0 var(--shadow), inset 0 -14px 22px rgba(0,0,0,0.08);
+  }
+  .cdr-clouds {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(26px 15px at 12% 22%, #fff 96%, transparent),
+      radial-gradient(18px 11px at 40% 14%, #fff 96%, transparent),
+      radial-gradient(22px 13px at 68% 26%, #fff 96%, transparent),
+      radial-gradient(16px 10px at 90% 12%, #fff 96%, transparent);
+    background-repeat: repeat-x; background-size: 260px 100%;
+    opacity: 0.95;
+    animation: cdr-scroll-slow 16s linear infinite;
+  }
+  .cdr-hills {
+    position: absolute; left: 0; right: 0; bottom: 20%; height: 42%;
+    background-image:
+      radial-gradient(58px 58px at 8% 100%, #a8dab5 97%, transparent),
+      radial-gradient(70px 70px at 38% 100%, #8fcf9f 97%, transparent),
+      radial-gradient(52px 52px at 66% 100%, #a8dab5 97%, transparent),
+      radial-gradient(64px 64px at 92% 100%, #8fcf9f 97%, transparent);
+    background-repeat: repeat-x; background-size: 220px 100%;
+    opacity: 0.85;
+    animation: cdr-scroll-med 7s linear infinite;
+  }
+  .cdr-ground {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 22%;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.45) 0 6px, transparent 6px 46px),
+      linear-gradient(180deg, #6bbf59 0%, #4a9e3c 100%);
+    border-top: 3px solid #3c7f31;
+    animation: cdr-scroll-fast 0.9s linear infinite;
+  }
+  @keyframes cdr-scroll-slow { from { background-position-x: 0; } to { background-position-x: -260px; } }
+  @keyframes cdr-scroll-med  { from { background-position-x: 0; } to { background-position-x: -220px; } }
+  @keyframes cdr-scroll-fast { from { background-position-x: 0; } to { background-position-x: -46px; } }
+  .cdr-char-shadow {
+    position: absolute; left: 13%; bottom: 19%; width: 2.6rem; height: 0.6rem;
+    background: rgba(0,0,0,0.28); border-radius: 50%; filter: blur(1.5px);
+    animation: cdr-shadow-pulse 0.5s ease-in-out infinite alternate;
+  }
+  @keyframes cdr-shadow-pulse { from { transform: scaleX(1); opacity: 0.35; } to { transform: scaleX(0.7); opacity: 0.2; } }
+  .cdr-char {
+    position: absolute; left: 14%; bottom: 22%; font-size: 2.7rem; line-height: 1;
+    animation: cdr-bob 0.5s ease-in-out infinite alternate;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+  }
+  @keyframes cdr-bob { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+  @keyframes cdr-jump {
+    0% { transform: translateY(0) rotate(0deg); }
+    40% { transform: translateY(-38px) rotate(-12deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+  }
+  .cdr-char.jump { animation: cdr-jump 0.5s ease; }
+  @keyframes cdr-stumble {
+    0% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(6px) rotate(22deg); }
+    60% { transform: translateY(0) rotate(-10deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+  }
+  .cdr-char.stumble { animation: cdr-stumble 0.5s ease; }
+  .cdr-obstacle-card { display: flex; flex-direction: column; align-items: center; margin-top: 0.9rem; }
+  .cdr-countdown-track {
+    width: 90%; max-width: 260px; height: 12px; border-radius: 6px; background: #1a2230;
+    overflow: hidden; margin-bottom: 0.9rem; box-shadow: inset 0 2px 3px rgba(0,0,0,0.35);
+  }
+  .cdr-countdown-fill {
+    height: 100%; width: 100%;
+    background: linear-gradient(90deg, #ff5c5c 0%, #ffd23f 55%, #3db670 100%);
+    background-size: 500px 100%;
+    background-position: left top;
+  }
+  .cdr-sign {
+    position: relative; background: #0d1b12; border: 3px solid #1c2f22; border-radius: 12px;
+    padding: 0.55rem 1.7rem; box-shadow: inset 0 0 14px rgba(0,0,0,0.6), 0 4px 0 #05100a;
+  }
+  .cdr-sign::before, .cdr-sign::after {
+    content: ''; position: absolute; bottom: -0.6rem; width: 0.35rem; height: 0.7rem; background: #4a3624; border-radius: 2px;
+  }
+  .cdr-sign::before { left: 22%; }
+  .cdr-sign::after { right: 22%; }
+  .cdr-digital-time {
+    font-family: 'Courier New', ui-monospace, monospace; font-weight: 700; font-size: 2.2rem;
+    letter-spacing: 0.09em; color: #7CFC9E; text-shadow: 0 0 8px rgba(124,252,158,0.85), 0 0 3px rgba(124,252,158,0.9);
+  }
+  .cdr-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.1rem; }
+  .cdr-choice.correct-flash { background: var(--happy); box-shadow: 0 4px 0 color-mix(in srgb, var(--happy) 55%, black); }
+  .cdr-score-row { display: flex; justify-content: center; margin-top: 1rem; }
+  .cdr-score-badge {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: linear-gradient(135deg, var(--pop), var(--sky-accent)); color: #fff; border-radius: 14px;
+    padding: 0.5rem 1.1rem; font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 0.95rem;
+    box-shadow: 0 4px 0 var(--shadow);
+  }
+  .cdr-score-num { font-size: 1.2rem; }
+  .cdr-recap { text-align: center; }
+  @media (prefers-reduced-motion: reduce) {
+    .cdr-clouds, .cdr-hills, .cdr-ground, .cdr-char-shadow, .cdr-char { animation: none; }
+  }
+
+  /* ---------- game: compare & grow garden ---------- */
+
+  #game-garden {
+    --garden-sun: #ffd166; --garden-grass: #7ec850; --garden-grass2: #5aa63a; --garden-soil: #8a5a3b;
+    --garden-coral: #ff6f6f; --garden-gold: #ffce54; --garden-gold-ink: #5c3d00; --garden-mint: #4ecdc4;
+    --garden-blank: #e3e9ea;
+  }
+  @media (prefers-color-scheme: dark) {
+    #game-garden {
+      --garden-sun: #ffcf6b; --garden-grass: #2f6b3a; --garden-grass2: #245229; --garden-soil: #4a3222;
+      --garden-coral: #ff8a8a; --garden-gold: #ffd873; --garden-gold-ink: #402c00; --garden-mint: #5fd9d0;
+      --garden-blank: #2a3a3d;
+    }
+  }
+  :root[data-theme="dark"] #game-garden {
+    --garden-sun: #ffcf6b; --garden-grass: #2f6b3a; --garden-grass2: #245229; --garden-soil: #4a3222;
+    --garden-coral: #ff8a8a; --garden-gold: #ffd873; --garden-gold-ink: #402c00; --garden-mint: #5fd9d0;
+    --garden-blank: #2a3a3d;
+  }
+  :root[data-theme="light"] #game-garden {
+    --garden-sun: #ffd166; --garden-grass: #7ec850; --garden-grass2: #5aa63a; --garden-soil: #8a5a3b;
+    --garden-coral: #ff6f6f; --garden-gold: #ffce54; --garden-gold-ink: #5c3d00; --garden-mint: #4ecdc4;
+    --garden-blank: #e3e9ea;
+  }
+  .garden-hud-row { display: flex; justify-content: center; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; }
+  .garden-readout { background: var(--card); border-radius: 10px; padding: 0.4rem 0.8rem; text-align: center; box-shadow: 0 3px 8px var(--shadow); }
+  .garden-readout .garden-label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; }
+  .garden-readout .garden-value { font: 800 1.1rem/1.1 "SF Mono", ui-monospace, "Courier New", monospace; color: var(--sky-accent); }
+  .garden-readout .garden-value.bump { animation: garden-bump 0.35s ease; }
+  @keyframes garden-bump { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+  .garden-mute-btn {
+    appearance: none; border: none; background: var(--card); font-size: 0.78rem; font-weight: 700;
+    padding: 0.45rem 0.7rem; border-radius: 10px; cursor: pointer; box-shadow: 0 3px 8px var(--shadow); color: var(--ink);
+  }
+  .garden-scene {
+    position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 24px var(--shadow);
+    background: linear-gradient(180deg, transparent 0%, transparent 68%, var(--garden-soil) 68%);
+  }
+  .garden-sun { position: absolute; top: 10px; right: 16px; width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle, var(--garden-sun), transparent 70%); opacity: 0.9; }
+  .garden-grass { position: absolute; left: 0; right: 0; top: 56%; height: 12%; background: linear-gradient(180deg, var(--garden-grass), var(--garden-grass2)); }
+  .garden-bed { position: relative; height: 150px; }
+  .garden-flower { position: absolute; bottom: 0; width: 28px; height: 44px; animation: garden-grow-in 0.3s ease both; }
+  @keyframes garden-grow-in {
+    0% { transform: scale(0.2) translateY(10px); opacity: 0; }
+    70% { transform: scale(1.15) translateY(0); opacity: 1; }
+    100% { transform: scale(1) translateY(0); }
+  }
+  .garden-flower .garden-stem { position: absolute; bottom: 0; left: 50%; width: 3px; height: 26px; background: var(--garden-grass2); transform: translateX(-50%); }
+  .garden-flower .garden-petals { position: absolute; top: 0; left: 50%; width: 22px; height: 22px; transform: translateX(-50%); }
+  .garden-flower .garden-petals i { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--garden-petal, var(--garden-coral)); }
+  .garden-flower .garden-petals i:nth-child(1) { top: 0; left: 6px; }
+  .garden-flower .garden-petals i:nth-child(2) { top: 6px; left: 12px; }
+  .garden-flower .garden-petals i:nth-child(3) { top: 12px; left: 6px; }
+  .garden-flower .garden-petals i:nth-child(4) { top: 6px; left: 0px; }
+  .garden-flower .garden-petals i:nth-child(5) { top: 6px; left: 6px; background: var(--garden-gold) !important; width: 8px; height: 8px; z-index: 2; }
+  .garden-mascot-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
+  .garden-mascot { font-size: 1.9rem; line-height: 1; filter: drop-shadow(0 3px 4px var(--shadow)); animation: garden-idle-bob 2.6s ease-in-out infinite; }
+  .garden-mascot.cheer { animation: garden-cheer-hop 0.5s ease; }
+  .garden-mascot.oops { animation: garden-oops-tilt 0.45s ease; }
+  @keyframes garden-idle-bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-4px) rotate(-4deg); } }
+  @keyframes garden-cheer-hop { 0% { transform: scale(1) rotate(0); } 40% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1) rotate(0); } }
+  @keyframes garden-oops-tilt { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-8deg); } 60% { transform: rotate(6deg); } }
+  .garden-bubble { position: relative; background: var(--card); border-radius: 14px; padding: 0.5rem 0.9rem; font-size: 0.85rem; font-weight: 600; flex: 1; box-shadow: 0 3px 8px var(--shadow); color: var(--ink); }
+  .garden-sentence-card { background: var(--card); border-radius: 16px; padding: 1.1rem 1rem; text-align: center; box-shadow: 0 6px 16px var(--shadow); margin-top: 0.9rem; }
+  .garden-sentence-card .garden-sentence { font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: var(--ink); }
+  .garden-blank {
+    display: inline-block; min-width: 4rem; padding: 0.1rem 0.5rem; border-bottom: 3px solid var(--sky-accent);
+    background: var(--garden-blank); border-radius: 6px; font-weight: 800; color: var(--sky-accent);
+  }
+  .garden-blank.filled { background: transparent; color: var(--garden-mint); border-bottom-color: var(--garden-mint); }
+  .garden-zh { display: block; margin-top: 0.5rem; color: var(--ink-soft); font-size: 0.8rem; min-height: 1rem; }
+  .garden-tiles { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.9rem; }
+  .garden-tile {
+    appearance: none; border: 2px solid var(--sky-accent); background: var(--card); color: var(--ink);
+    font-weight: 800; font-size: 1rem; padding: 0.6rem 1.1rem; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 3px 0 var(--sky-accent); transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
+  }
+  .garden-tile:hover { filter: brightness(1.06); }
+  .garden-tile:active { transform: translateY(3px); box-shadow: 0 0 0 var(--sky-accent); }
+  .garden-tile:focus-visible { outline: 3px solid var(--garden-gold); outline-offset: 2px; }
+  .garden-tile.correct { background: var(--garden-mint); border-color: var(--garden-mint); color: #06342f; box-shadow: 0 3px 0 #2f9a8f; }
+  .garden-footer-note { text-align: center; font-size: 0.75rem; color: var(--ink-soft); margin-top: 0.9rem; }
+  .garden-recap { text-align: center; }
+  .garden-bloom-msg { font-family: 'Baloo 2', ui-rounded, sans-serif; font-weight: 700; font-size: 1.05rem; text-align: center; margin: 0.6rem 0; color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) {
+    .garden-flower, .garden-mascot, .garden-mascot.cheer, .garden-mascot.oops { animation: none; }
+  }
 </style>
 
 <div class="app">
@@ -3376,6 +3746,26 @@
       <div class="game-panel" id="game-greetings">
         <div id="greetingsArea"></div>
       </div>
+
+      <div class="game-panel" id="game-tellingtime">
+        <div id="tellingtimeArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-months">
+        <div id="monthsArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-days">
+        <div id="daysArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-countdown">
+        <div id="countdownArea"></div>
+      </div>
+
+      <div class="game-panel" id="game-garden">
+        <div id="gardenArea"></div>
+      </div>
     </section>
 
     <section class="panel" id="panel-words">
@@ -3485,6 +3875,8 @@
         parsed.catRatWins = typeof parsed.catRatWins === 'number' ? parsed.catRatWins : 0;
         parsed.bossesDefeated = typeof parsed.bossesDefeated === 'number' ? parsed.bossesDefeated : 0;
         parsed.ninjaSliced = typeof parsed.ninjaSliced === 'number' ? parsed.ninjaSliced : 0;
+        parsed.countdownBestScore = typeof parsed.countdownBestScore === 'number' ? parsed.countdownBestScore : 0;
+        parsed.gardensGrown = typeof parsed.gardensGrown === 'number' ? parsed.gardensGrown : 0;
         return parsed;
       }
     } catch (e) {}
@@ -3500,6 +3892,8 @@
       catRatWins: 0,
       bossesDefeated: 0,
       ninjaSliced: 0,
+      countdownBestScore: 0,
+      gardensGrown: 0,
       homework: [],
       words: [],
     };
@@ -3536,6 +3930,30 @@
 
   function prefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  // Shared plain-utterance speaker — used by Telling Time, Months of the
+  // Year, and Days of the Week's "listen" buttons (Say It Back has its own
+  // playWordAudio, which also falls back to speechSynthesis but layers in
+  // recorded-audio playback first, so it stays separate).
+  function speak(text) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
+
+  // Reads each syllable chunk one at a time, slowly — speechSynthesis
+  // naturally queues multiple utterances back-to-back, which gives a clear
+  // beat between chunks without any manual timing code. Shared by Months of
+  // the Year and Days of the Week's "sound it out" buttons.
+  function speakSyllables(syllables) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    syllables.forEach(syl => {
+      const utter = new SpeechSynthesisUtterance(syl);
+      utter.rate = 0.65;
+      window.speechSynthesis.speak(utter);
+    });
   }
 
   /* ---------- confetti ---------- */
@@ -4274,6 +4692,7 @@
     { value: 'Verbs & Practice Use', label: 'Verbs & Practice Use' },
     { value: 'ABCs, Digraphs & Sounding', label: 'ABCs, Digraphs & Sounding' },
     { value: 'First Class (ABC)', label: 'First Class (ABC)' },
+    { value: 'Time & Calendar', label: 'Time & Calendar' },
     { value: 'General', label: 'General' },
   ];
   const GAME_ITEMS = {
@@ -4290,6 +4709,11 @@
     stormboss: { value: 'stormboss', label: 'Storm Boss Battle' },
     ninja: { value: 'ninja', label: 'Verb Ninja' },
     greetings: { value: 'greetings', label: 'Greetings & Polite Words' },
+    tellingtime: { value: 'tellingtime', label: 'Telling Time' },
+    months: { value: 'months', label: 'Months of the Year' },
+    days: { value: 'days', label: 'Days of the Week' },
+    countdown: { value: 'countdown', label: 'Countdown Runner' },
+    garden: { value: 'garden', label: 'Compare & Grow Garden' },
   };
   // Verbs & Practice Use has its own dedicated games (Verb Chef, Routine
   // Runner) instead of the generic Word Match / Unscramble.
@@ -4303,6 +4727,11 @@
   const STORMBOSS_TOPICS = new Set(['Weather']);
   const NINJA_TOPICS = new Set(['Daily Routine']);
   const GREETINGS_TOPICS = new Set(['Play with me Convo']);
+  // Time & Calendar gets 4 extra dedicated games alongside the generic set.
+  const TIMECAL_TOPICS = new Set(['Time & Calendar']);
+  // Compare & Grow Garden is an extra dedicated game alongside the generic
+  // set, available under General.
+  const GARDEN_TOPICS = new Set(['General']);
 
   // Say It Back (speaking practice) works from the shared word list, same as
   // Word Match / Unscramble, so it makes sense under every topic.
@@ -4313,6 +4742,8 @@
     if (STORMBOSS_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'stormboss'];
     if (NINJA_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'ninja'];
     if (GREETINGS_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'greetings'];
+    if (TIMECAL_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'tellingtime', 'months', 'days', 'countdown'];
+    if (GARDEN_TOPICS.has(topic)) return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon', 'garden'];
     return ['match', 'scramble', 'speak', 'blaster', 'rocket', 'balloon'];
   }
 
@@ -4352,6 +4783,11 @@
     else if (game === 'stormboss') startStormbossRound();
     else if (game === 'ninja') startNinja();
     else if (game === 'greetings') startGreetings();
+    else if (game === 'tellingtime') startTellingTime();
+    else if (game === 'months') startMonths();
+    else if (game === 'days') startDays();
+    else if (game === 'countdown') startCountdownRun();
+    else if (game === 'garden') startGarden();
   }
 
   function selectTopic(topic) {
@@ -7959,6 +8395,1319 @@
     greetStartSituationRound();
   }
 
+  /* ---------- game: telling time ---------- */
+
+  const TT_PHRASES = [
+    { en: 'What time is it?', zh: '現在幾點？' },
+    { en: "It's...", zh: '現在是...' },
+    { en: "o'clock", zh: '整點' },
+    { en: 'hour', zh: '小時' },
+    { en: 'minute', zh: '分鐘' },
+    { en: 'clock', zh: '時鐘' },
+  ];
+
+  const TT_HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+  // Whole hours only (no quarter/half past) for now — simpler while Andy is
+  // still learning; easy to extend later if he's ready for it.
+  const TT_MINUTE_TYPES = [0];
+
+  const TT_READ_ROUND_SIZE = 6;
+  const TT_SET_ROUND_SIZE = 6;
+  const ttReadState = { round: [], index: 0, done: false };
+  const ttSetState = { round: [], index: 0, done: false };
+
+  function ttClockFaceSvg(hour, minute, size) {
+    const s = size || 120;
+    const c = s / 2;
+    const hourAngle = (hour % 12) * 30 + minute * 0.5;
+    const minuteAngle = minute * 6;
+    const ticks = Array.from({ length: 12 }, (_, i) => {
+      const angle = i * 30;
+      const rad = (angle - 90) * Math.PI / 180;
+      const r1 = c - 8, r2 = c - 14;
+      const x1 = (c + r1 * Math.cos(rad)).toFixed(1);
+      const y1 = (c + r1 * Math.sin(rad)).toFixed(1);
+      const x2 = (c + r2 * Math.cos(rad)).toFixed(1);
+      const y2 = (c + r2 * Math.sin(rad)).toFixed(1);
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>`;
+    }).join('');
+    const hourRad = (hourAngle - 90) * Math.PI / 180;
+    const minRad = (minuteAngle - 90) * Math.PI / 180;
+    const hx = (c + c * 0.5 * Math.cos(hourRad)).toFixed(1);
+    const hy = (c + c * 0.5 * Math.sin(hourRad)).toFixed(1);
+    const mx = (c + c * 0.72 * Math.cos(minRad)).toFixed(1);
+    const my = (c + c * 0.72 * Math.sin(minRad)).toFixed(1);
+    return `<svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}">
+      <circle cx="${c}" cy="${c}" r="${c - 3}" fill="var(--card)" stroke="var(--ink)" stroke-width="3"/>
+      ${ticks}
+      <line x1="${c}" y1="${c}" x2="${hx}" y2="${hy}" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/>
+      <line x1="${c}" y1="${c}" x2="${mx}" y2="${my}" stroke="var(--pop)" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="${c}" cy="${c}" r="4" fill="var(--ink)"/>
+    </svg>`;
+  }
+
+  function ttTimePhrase(hour, minute) {
+    return `${hour} o'clock`;
+  }
+
+  function ttRandomTime() {
+    const hour = TT_HOURS[Math.floor(Math.random() * TT_HOURS.length)];
+    const minute = TT_MINUTE_TYPES[Math.floor(Math.random() * TT_MINUTE_TYPES.length)];
+    return { hour, minute, phrase: ttTimePhrase(hour, minute) };
+  }
+
+  function ttRandomDistinctTimes(count, excludePhrase) {
+    const result = [];
+    const seen = new Set([excludePhrase]);
+    let guard = 0;
+    while (result.length < count && guard < 300) {
+      guard++;
+      const t = ttRandomTime();
+      if (seen.has(t.phrase)) continue;
+      seen.add(t.phrase);
+      result.push(t);
+    }
+    return result;
+  }
+
+  function ttMarkup() {
+    return `
+      <nav class="game-tabs" id="ttTabs">
+        <button type="button" class="game-tab-btn active" data-tab="learn">Learn</button>
+        <button type="button" class="game-tab-btn" data-tab="read">Read the Clock</button>
+        <button type="button" class="game-tab-btn" data-tab="set">Set the Clock</button>
+      </nav>
+      <section class="tt-panel active" id="tt-panel-learn">
+        <h3 class="tt-section-title">Time Words</h3>
+        <p class="tt-section-hint">Tap a card to flip it, tap the speaker to hear it out loud.</p>
+        <div class="tt-card-grid" id="ttCardGrid"></div>
+      </section>
+      <section class="tt-panel" id="tt-panel-read">
+        <h3 class="tt-section-title">Read the Clock</h3>
+        <p class="tt-section-hint">What time does the clock show?</p>
+        <div class="tt-quiz-slots" id="ttReadSlots"></div>
+        <div class="tt-clock-wrap" id="ttReadClock"></div>
+        <div class="tt-quiz-choices" id="ttReadChoices"></div>
+        <div class="banner neutral" id="ttReadBanner"></div>
+      </section>
+      <section class="tt-panel" id="tt-panel-set">
+        <h3 class="tt-section-title">Set the Clock</h3>
+        <p class="tt-section-hint">Which clock shows the right time?</p>
+        <div class="tt-quiz-slots" id="ttSetSlots"></div>
+        <div class="tt-time-phrase-card" id="ttSetPhrase"></div>
+        <div class="tt-clock-choice-grid" id="ttSetChoices"></div>
+        <div class="banner neutral" id="ttSetBanner"></div>
+      </section>
+    `;
+  }
+
+  function ttRenderFlashcards() {
+    const grid = document.getElementById('ttCardGrid');
+    grid.innerHTML = TT_PHRASES.map((p, i) => `
+      <div class="tt-flip-card" data-idx="${i}">
+        <div class="tt-flip-card-inner">
+          <div class="tt-flip-card-front">
+            <button type="button" class="tt-mini-listen-btn" data-en="${escapeHtml(p.en)}" aria-label="Listen"><span class="icon-speaker" aria-hidden="true"></span></button>
+            <div class="tt-flip-card-en">${escapeHtml(p.en)}</div>
+            <div class="tt-flip-card-hint">tap to flip</div>
+          </div>
+          <div class="tt-flip-card-back">
+            <div class="tt-flip-card-zh">${escapeHtml(p.zh)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function ttStartReadRound() {
+    ttReadState.round = Array.from({ length: TT_READ_ROUND_SIZE }, ttRandomTime);
+    ttReadState.index = 0;
+    ttReadState.done = false;
+    ttRenderReadRound();
+  }
+
+  function ttRenderReadRound() {
+    const filled = ttReadState.index;
+    const current = ttReadState.round[ttReadState.index];
+    const choices = shuffleArray([current, ...ttRandomDistinctTimes(2, current.phrase)]);
+
+    document.getElementById('ttReadSlots').innerHTML = ttReadState.round.map((_, i) =>
+      `<span class="tt-quiz-slot${i < filled ? ' filled' : ''}">${i < filled ? '✅' : ''}</span>`
+    ).join('');
+    document.getElementById('ttReadClock').innerHTML = ttClockFaceSvg(current.hour, current.minute, 150);
+    document.getElementById('ttReadChoices').innerHTML = choices.map(c =>
+      `<button type="button" class="btn-fun tt-choice" data-phrase="${escapeHtml(c.phrase)}">${escapeHtml(c.phrase)}</button>`
+    ).join('');
+  }
+
+  function ttRenderReadComplete() {
+    document.getElementById('ttReadSlots').innerHTML = '';
+    document.getElementById('ttReadClock').innerHTML = `<p class="tt-complete-msg">Great clock reading, Andy!</p>`;
+    document.getElementById('ttReadChoices').innerHTML = `<button type="button" class="btn-fun" id="ttReadAgainBtn">Play Again</button>`;
+    document.getElementById('ttReadAgainBtn').addEventListener('click', ttStartReadRound);
+    addStars(3);
+    launchConfetti();
+  }
+
+  function ttStartSetRound() {
+    ttSetState.round = Array.from({ length: TT_SET_ROUND_SIZE }, ttRandomTime);
+    ttSetState.index = 0;
+    ttSetState.done = false;
+    ttRenderSetRound();
+  }
+
+  function ttRenderSetRound() {
+    const filled = ttSetState.index;
+    const current = ttSetState.round[ttSetState.index];
+    const choices = shuffleArray([current, ...ttRandomDistinctTimes(2, current.phrase)]);
+
+    document.getElementById('ttSetSlots').innerHTML = ttSetState.round.map((_, i) =>
+      `<span class="tt-quiz-slot${i < filled ? ' filled' : ''}">${i < filled ? '✅' : ''}</span>`
+    ).join('');
+    document.getElementById('ttSetPhrase').innerHTML = `<div class="tt-time-phrase-text">${escapeHtml(current.phrase)}</div>`;
+    document.getElementById('ttSetChoices').innerHTML = choices.map(c =>
+      `<button type="button" class="tt-clock-choice-btn" data-phrase="${escapeHtml(c.phrase)}">${ttClockFaceSvg(c.hour, c.minute, 96)}</button>`
+    ).join('');
+  }
+
+  function ttRenderSetComplete() {
+    document.getElementById('ttSetSlots').innerHTML = '';
+    document.getElementById('ttSetPhrase').innerHTML = `<p class="tt-complete-msg">You can set the clock, Andy!</p>`;
+    document.getElementById('ttSetChoices').innerHTML = `<button type="button" class="btn-fun" id="ttSetAgainBtn">Play Again</button>`;
+    document.getElementById('ttSetAgainBtn').addEventListener('click', ttStartSetRound);
+    addStars(3);
+    launchConfetti();
+  }
+
+  function startTellingTime() {
+    const area = document.getElementById('tellingtimeArea');
+    if (!area.dataset.built) {
+      area.innerHTML = ttMarkup();
+      area.dataset.built = '1';
+
+      document.getElementById('ttTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.game-tab-btn');
+        if (!btn) return;
+        document.querySelectorAll('#ttTabs .game-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        const target = btn.dataset.tab;
+        document.querySelectorAll('#tellingtimeArea .tt-panel').forEach(p => p.classList.toggle('active', p.id === 'tt-panel-' + target));
+      });
+
+      document.getElementById('ttCardGrid').addEventListener('click', (e) => {
+        const listenBtn = e.target.closest('.tt-mini-listen-btn');
+        if (listenBtn) {
+          e.stopPropagation();
+          speak(listenBtn.dataset.en);
+          return;
+        }
+        const card = e.target.closest('.tt-flip-card');
+        if (card) card.classList.toggle('flipped');
+      });
+
+      document.getElementById('ttReadChoices').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tt-choice');
+        if (!btn || ttReadState.done) return;
+        const current = ttReadState.round[ttReadState.index];
+        if (btn.dataset.phrase === current.phrase) {
+          document.querySelectorAll('#ttReadChoices .tt-choice').forEach(b => { b.disabled = true; });
+          btn.classList.add('correct-flash');
+          addStars(1);
+          recordQualifyingActivity();
+          showBanner('ttReadBanner', pickEncouragement());
+          ttReadState.index++;
+          setTimeout(() => {
+            if (ttReadState.index >= ttReadState.round.length) {
+              ttReadState.done = true;
+              ttRenderReadComplete();
+            } else {
+              ttRenderReadRound();
+            }
+          }, 500);
+        } else {
+          btn.classList.add('shake');
+          setTimeout(() => btn.classList.remove('shake'), 400);
+          showBanner('ttReadBanner', 'Not quite — try again!', true);
+        }
+      });
+
+      document.getElementById('ttSetChoices').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tt-clock-choice-btn');
+        if (!btn || ttSetState.done || btn.disabled) return;
+        const current = ttSetState.round[ttSetState.index];
+        if (btn.dataset.phrase === current.phrase) {
+          document.querySelectorAll('#ttSetChoices .tt-clock-choice-btn').forEach(b => { b.disabled = true; });
+          btn.classList.add('correct-flash');
+          addStars(1);
+          recordQualifyingActivity();
+          showBanner('ttSetBanner', pickEncouragement());
+          ttSetState.index++;
+          setTimeout(() => {
+            if (ttSetState.index >= ttSetState.round.length) {
+              ttSetState.done = true;
+              ttRenderSetComplete();
+            } else {
+              ttRenderSetRound();
+            }
+          }, 500);
+        } else {
+          btn.classList.add('shake');
+          setTimeout(() => btn.classList.remove('shake'), 400);
+          showBanner('ttSetBanner', 'Not quite — try again!', true);
+        }
+      });
+
+      ttRenderFlashcards();
+    }
+    ttStartReadRound();
+    ttStartSetRound();
+  }
+
+  /* ---------- game: months of the year ---------- */
+  // Syllable breaks follow standard dictionary syllabification, to help
+  // Andy sound each month out loud piece by piece.
+
+  const MOY_MONTHS = [
+    { en: 'January', zh: '一月', syl: ['Jan', 'u', 'ar', 'y'] },
+    { en: 'February', zh: '二月', syl: ['Feb', 'ru', 'ar', 'y'] },
+    { en: 'March', zh: '三月', syl: ['March'] },
+    { en: 'April', zh: '四月', syl: ['A', 'pril'] },
+    { en: 'May', zh: '五月', syl: ['May'] },
+    { en: 'June', zh: '六月', syl: ['June'] },
+    { en: 'July', zh: '七月', syl: ['Ju', 'ly'] },
+    { en: 'August', zh: '八月', syl: ['Au', 'gust'] },
+    { en: 'September', zh: '九月', syl: ['Sep', 'tem', 'ber'] },
+    { en: 'October', zh: '十月', syl: ['Oc', 'to', 'ber'] },
+    { en: 'November', zh: '十一月', syl: ['No', 'vem', 'ber'] },
+    { en: 'December', zh: '十二月', syl: ['De', 'cem', 'ber'] },
+  ];
+
+  const MOY_QUIZ_ROUND_SIZE = 6;
+  const moyOrderState = { nextIndex: 0, poolOrder: [] };
+  const moyQuizState = { round: [], index: 0, done: false };
+
+  function moyRenderSyllables(syl) {
+    return syl.map((s, i) => `<span class="${i % 2 === 0 ? 'moy-syl-a' : 'moy-syl-b'}">${escapeHtml(s)}</span>`).join('<span class="moy-syl-dot">·</span>');
+  }
+
+  function moyMarkup() {
+    return `
+      <nav class="game-tabs" id="moyTabs">
+        <button type="button" class="game-tab-btn active" data-tab="learn">Learn</button>
+        <button type="button" class="game-tab-btn" data-tab="order">Order the Year</button>
+        <button type="button" class="game-tab-btn" data-tab="quiz">Month Quiz</button>
+      </nav>
+      <section class="moy-panel active" id="moy-panel-learn">
+        <h3 class="moy-section-title">Flashcards</h3>
+        <p class="moy-section-hint">Tap a card to flip it. The speaker hears the whole word, "Slow" sounds it out syllable by syllable.</p>
+        <div class="moy-card-grid" id="moyCardGrid"></div>
+      </section>
+      <section class="moy-panel" id="moy-panel-order">
+        <h3 class="moy-section-title">Put the Year in Order</h3>
+        <p class="moy-section-hint">Tap the months starting from January, in order!</p>
+        <div class="moy-order-sequence" id="moyOrderSequence"></div>
+        <div class="moy-order-pool" id="moyOrderPool"></div>
+        <div class="banner neutral" id="moyOrderBanner"></div>
+      </section>
+      <section class="moy-panel" id="moy-panel-quiz">
+        <h3 class="moy-section-title">Month Quiz</h3>
+        <p class="moy-section-hint">What month comes before or after?</p>
+        <div class="moy-quiz-slots" id="moyQuizSlots"></div>
+        <div class="moy-quiz-target" id="moyQuizTarget"></div>
+        <div class="moy-quiz-choices" id="moyQuizChoices"></div>
+        <div class="banner neutral" id="moyQuizBanner"></div>
+      </section>
+    `;
+  }
+
+  function moyRenderFlashcards() {
+    const grid = document.getElementById('moyCardGrid');
+    grid.innerHTML = MOY_MONTHS.map((p, i) => `
+      <div class="moy-flip-card" data-idx="${i}">
+        <div class="moy-flip-card-inner">
+          <div class="moy-flip-card-front">
+            <button type="button" class="moy-mini-slow-btn" data-idx="${i}" aria-label="Sound it out">Slow</button>
+            <button type="button" class="moy-mini-listen-btn" data-en="${escapeHtml(p.en)}" aria-label="Listen"><span class="icon-speaker" aria-hidden="true"></span></button>
+            <div class="moy-flip-card-en">${escapeHtml(p.en)}</div>
+            <div class="moy-flip-card-syl">${moyRenderSyllables(p.syl)}</div>
+            <div class="moy-flip-card-hint">tap to flip</div>
+          </div>
+          <div class="moy-flip-card-back">
+            <div class="moy-flip-card-zh">${escapeHtml(p.zh)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function moyStartOrderRound() {
+    moyOrderState.nextIndex = 0;
+    moyOrderState.poolOrder = shuffleArray(MOY_MONTHS.map((m, i) => i));
+    moyRenderOrderSequence();
+    moyRenderOrderPool();
+  }
+
+  function moyRenderOrderSequence() {
+    document.getElementById('moyOrderSequence').innerHTML = MOY_MONTHS.map((m, i) => `
+      <span class="moy-order-slot${i < moyOrderState.nextIndex ? ' filled' : ''}">${i < moyOrderState.nextIndex ? escapeHtml(m.en) : '?'}</span>
+    `).join('');
+  }
+
+  function moyRenderOrderPool() {
+    document.getElementById('moyOrderPool').innerHTML = moyOrderState.poolOrder.map(i => `
+      <button type="button" class="btn-fun blue moy-order-tile${i < moyOrderState.nextIndex ? ' used' : ''}" data-idx="${i}" ${i < moyOrderState.nextIndex ? 'disabled' : ''}>${escapeHtml(MOY_MONTHS[i].en)}</button>
+    `).join('');
+  }
+
+  function moyRenderOrderComplete() {
+    document.getElementById('moyOrderSequence').innerHTML = MOY_MONTHS.map(m => `<span class="moy-order-slot filled">${escapeHtml(m.en)}</span>`).join('');
+    document.getElementById('moyOrderPool').innerHTML = `<p class="moy-order-complete-msg">You put the whole year in order!</p>
+      <button type="button" class="btn-fun" id="moyOrderAgainBtn" style="display:block;margin:0.8rem auto 0;">Play Again</button>`;
+    document.getElementById('moyOrderAgainBtn').addEventListener('click', moyStartOrderRound);
+    addStars(5);
+    launchConfetti();
+  }
+
+  function moyMonthAfter(idx) { return MOY_MONTHS[(idx + 1) % MOY_MONTHS.length]; }
+  function moyMonthBefore(idx) { return MOY_MONTHS[(idx + MOY_MONTHS.length - 1) % MOY_MONTHS.length]; }
+
+  function moyBuildQuizRound() {
+    const items = [];
+    for (let i = 0; i < MOY_QUIZ_ROUND_SIZE; i++) {
+      const monthIdx = Math.floor(Math.random() * MOY_MONTHS.length);
+      const isAfter = Math.random() < 0.5;
+      const answer = isAfter ? moyMonthAfter(monthIdx) : moyMonthBefore(monthIdx);
+      items.push({
+        text: `What month comes ${isAfter ? 'AFTER' : 'BEFORE'} ${MOY_MONTHS[monthIdx].en}?`,
+        answer: answer.en,
+      });
+    }
+    return items;
+  }
+
+  function moyBuildQuizChoices(correctEn) {
+    const others = shuffleArray(MOY_MONTHS.filter(m => m.en !== correctEn)).slice(0, 2).map(m => m.en);
+    return shuffleArray([correctEn, ...others]);
+  }
+
+  function moyStartQuizRound() {
+    moyQuizState.round = moyBuildQuizRound();
+    moyQuizState.index = 0;
+    moyQuizState.done = false;
+    moyRenderQuizRound();
+  }
+
+  function moyRenderQuizRound() {
+    const filled = moyQuizState.index;
+    const current = moyQuizState.round[moyQuizState.index];
+    const choices = moyBuildQuizChoices(current.answer);
+
+    document.getElementById('moyQuizSlots').innerHTML = moyQuizState.round.map((_, i) => `
+      <span class="moy-quiz-slot${i < filled ? ' filled' : ''}">${i < filled ? '✅' : ''}</span>
+    `).join('');
+    document.getElementById('moyQuizTarget').innerHTML = `<div class="moy-quiz-target-text">${escapeHtml(current.text)}</div>`;
+    document.getElementById('moyQuizChoices').innerHTML = choices.map(c => `
+      <button type="button" class="btn-fun moy-quiz-choice" data-answer="${escapeHtml(c)}">${escapeHtml(c)}</button>
+    `).join('');
+  }
+
+  function moyRenderQuizComplete() {
+    document.getElementById('moyQuizSlots').innerHTML = '';
+    document.getElementById('moyQuizTarget').innerHTML = `<p class="moy-quiz-complete-msg">All done! You know your months!</p>`;
+    document.getElementById('moyQuizChoices').innerHTML = `<button type="button" class="btn-fun" id="moyQuizAgainBtn">Play Again</button>`;
+    document.getElementById('moyQuizAgainBtn').addEventListener('click', moyStartQuizRound);
+    addStars(3);
+    launchConfetti();
+  }
+
+  function startMonths() {
+    const area = document.getElementById('monthsArea');
+    if (!area.dataset.built) {
+      area.innerHTML = moyMarkup();
+      area.dataset.built = '1';
+
+      document.getElementById('moyTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.game-tab-btn');
+        if (!btn) return;
+        document.querySelectorAll('#moyTabs .game-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        const target = btn.dataset.tab;
+        document.querySelectorAll('#monthsArea .moy-panel').forEach(p => p.classList.toggle('active', p.id === 'moy-panel-' + target));
+      });
+
+      document.getElementById('moyCardGrid').addEventListener('click', (e) => {
+        const slowBtn = e.target.closest('.moy-mini-slow-btn');
+        if (slowBtn) {
+          e.stopPropagation();
+          speakSyllables(MOY_MONTHS[Number(slowBtn.dataset.idx)].syl);
+          return;
+        }
+        const listenBtn = e.target.closest('.moy-mini-listen-btn');
+        if (listenBtn) {
+          e.stopPropagation();
+          speak(listenBtn.dataset.en);
+          return;
+        }
+        const card = e.target.closest('.moy-flip-card');
+        if (card) card.classList.toggle('flipped');
+      });
+
+      document.getElementById('moyOrderPool').addEventListener('click', (e) => {
+        const btn = e.target.closest('.moy-order-tile');
+        if (!btn || btn.disabled) return;
+        const idx = Number(btn.dataset.idx);
+        if (idx === moyOrderState.nextIndex) {
+          moyOrderState.nextIndex++;
+          moyRenderOrderSequence();
+          moyRenderOrderPool();
+          addStars(1);
+          recordQualifyingActivity();
+          showBanner('moyOrderBanner', pickEncouragement());
+          if (moyOrderState.nextIndex >= MOY_MONTHS.length) {
+            setTimeout(moyRenderOrderComplete, 400);
+          }
+        } else {
+          btn.classList.add('shake');
+          setTimeout(() => btn.classList.remove('shake'), 400);
+          showBanner('moyOrderBanner', 'Not that one yet — try again!', true);
+        }
+      });
+
+      document.getElementById('moyQuizChoices').addEventListener('click', (e) => {
+        const btn = e.target.closest('.moy-quiz-choice');
+        if (!btn || moyQuizState.done) return;
+        const current = moyQuizState.round[moyQuizState.index];
+        if (btn.dataset.answer === current.answer) {
+          document.querySelectorAll('#moyQuizChoices .moy-quiz-choice').forEach(b => { b.disabled = true; });
+          btn.classList.add('correct-flash');
+          addStars(1);
+          recordQualifyingActivity();
+          showBanner('moyQuizBanner', pickEncouragement());
+          moyQuizState.index++;
+          setTimeout(() => {
+            if (moyQuizState.index >= moyQuizState.round.length) {
+              moyQuizState.done = true;
+              moyRenderQuizComplete();
+            } else {
+              moyRenderQuizRound();
+            }
+          }, 500);
+        } else {
+          btn.classList.add('shake');
+          setTimeout(() => btn.classList.remove('shake'), 400);
+          showBanner('moyQuizBanner', 'Not quite — try again!', true);
+        }
+      });
+
+      moyRenderFlashcards();
+    }
+    moyStartOrderRound();
+    moyStartQuizRound();
+  }
+
+  /* ---------- game: days of the week ---------- */
+  // Syllable breaks follow standard dictionary syllabification, to help
+  // Andy sound each word out loud piece by piece.
+
+  const DOW_DAYS = [
+    { en: 'Monday', zh: '星期一', syl: ['Mon', 'day'] },
+    { en: 'Tuesday', zh: '星期二', syl: ['Tues', 'day'] },
+    { en: 'Wednesday', zh: '星期三', syl: ['Wednes', 'day'] },
+    { en: 'Thursday', zh: '星期四', syl: ['Thurs', 'day'] },
+    { en: 'Friday', zh: '星期五', syl: ['Fri', 'day'] },
+    { en: 'Saturday', zh: '星期六', syl: ['Sat', 'ur', 'day'] },
+    { en: 'Sunday', zh: '星期日', syl: ['Sun', 'day'] },
+  ];
+
+  const DOW_EXTRA_WORDS = [
+    { en: 'Today', zh: '今天', syl: ['To', 'day'] },
+    { en: 'Yesterday', zh: '昨天', syl: ['Yes', 'ter', 'day'] },
+    { en: 'Tomorrow', zh: '明天', syl: ['To', 'mor', 'row'] },
+  ];
+
+  const DOW_FLASHCARDS = [...DOW_DAYS, ...DOW_EXTRA_WORDS];
+  const DOW_QUIZ_ROUND_SIZE = 6;
+  const dowOrderState = { nextIndex: 0, poolOrder: [] };
+  const dowQuizState = { round: [], index: 0, done: false };
+
+  function dowRenderSyllables(syl) {
+    return syl.map((s, i) => `<span class="${i % 2 === 0 ? 'dow-syl-a' : 'dow-syl-b'}">${escapeHtml(s)}</span>`).join('<span class="dow-syl-dot">·</span>');
+  }
+
+  function dowMarkup() {
+    return `
+      <nav class="game-tabs" id="dowTabs">
+        <button type="button" class="game-tab-btn active" data-tab="learn">Learn</button>
+        <button type="button" class="game-tab-btn" data-tab="order">Order the Week</button>
+        <button type="button" class="game-tab-btn" data-tab="quiz">Day Quiz</button>
+      </nav>
+      <section class="dow-panel active" id="dow-panel-learn">
+        <h3 class="dow-section-title">Flashcards</h3>
+        <p class="dow-section-hint">Tap a card to flip it. The speaker hears the whole word, "Slow" sounds it out syllable by syllable.</p>
+        <div class="dow-card-grid" id="dowCardGrid"></div>
+      </section>
+      <section class="dow-panel" id="dow-panel-order">
+        <h3 class="dow-section-title">Put the Week in Order</h3>
+        <p class="dow-section-hint">Tap the days starting from Monday, in order!</p>
+        <div class="dow-order-sequence" id="dowOrderSequence"></div>
+        <div class="dow-order-pool" id="dowOrderPool"></div>
+        <div class="banner neutral" id="dowOrderBanner"></div>
+      </section>
+      <section class="dow-panel" id="dow-panel-quiz">
+        <h3 class="dow-section-title">Day Quiz</h3>
+        <p class="dow-section-hint">What day comes before or after?</p>
+        <div class="dow-quiz-slots" id="dowQuizSlots"></div>
+        <div class="dow-quiz-target" id="dowQuizTarget"></div>
+        <div class="dow-quiz-choices" id="dowQuizChoices"></div>
+        <div class="banner neutral" id="dowQuizBanner"></div>
+      </section>
+    `;
+  }
+
+  function dowRenderFlashcards() {
+    const grid = document.getElementById('dowCardGrid');
+    grid.innerHTML = DOW_FLASHCARDS.map((p, i) => `
+      <div class="dow-flip-card" data-idx="${i}">
+        <div class="dow-flip-card-inner">
+          <div class="dow-flip-card-front">
+            <button type="button" class="dow-mini-slow-btn" data-idx="${i}" aria-label="Sound it out">Slow</button>
+            <button type="button" class="dow-mini-listen-btn" data-en="${escapeHtml(p.en)}" aria-label="Listen"><span class="icon-speaker" aria-hidden="true"></span></button>
+            <div class="dow-flip-card-en">${escapeHtml(p.en)}</div>
+            <div class="dow-flip-card-syl">${dowRenderSyllables(p.syl)}</div>
+            <div class="dow-flip-card-hint">tap to flip</div>
+          </div>
+          <div class="dow-flip-card-back">
+            <div class="dow-flip-card-zh">${escapeHtml(p.zh)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function dowStartOrderRound() {
+    dowOrderState.nextIndex = 0;
+    dowOrderState.poolOrder = shuffleArray(DOW_DAYS.map((d, i) => i));
+    dowRenderOrderSequence();
+    dowRenderOrderPool();
+  }
+
+  function dowRenderOrderSequence() {
+    document.getElementById('dowOrderSequence').innerHTML = DOW_DAYS.map((d, i) => `
+      <span class="dow-order-slot${i < dowOrderState.nextIndex ? ' filled' : ''}">${i < dowOrderState.nextIndex ? escapeHtml(d.en) : '?'}</span>
+    `).join('');
+  }
+
+  function dowRenderOrderPool() {
+    document.getElementById('dowOrderPool').innerHTML = dowOrderState.poolOrder.map(i => `
+      <button type="button" class="btn-fun blue dow-order-tile${i < dowOrderState.nextIndex ? ' used' : ''}" data-idx="${i}" ${i < dowOrderState.nextIndex ? 'disabled' : ''}>${escapeHtml(DOW_DAYS[i].en)}</button>
+    `).join('');
+  }
+
+  function dowRenderOrderComplete() {
+    document.getElementById('dowOrderSequence').innerHTML = DOW_DAYS.map(d => `<span class="dow-order-slot filled">${escapeHtml(d.en)}</span>`).join('');
+    document.getElementById('dowOrderPool').innerHTML = `<p class="dow-order-complete-msg">You put the whole week in order!</p>
+      <button type="button" class="btn-fun" id="dowOrderAgainBtn" style="display:block;margin:0.8rem auto 0;">Play Again</button>`;
+    document.getElementById('dowOrderAgainBtn').addEventListener('click', dowStartOrderRound);
+    addStars(3);
+    launchConfetti();
+  }
+
+  function dowDayAfter(idx) { return DOW_DAYS[(idx + 1) % DOW_DAYS.length]; }
+  function dowDayBefore(idx) { return DOW_DAYS[(idx + 6) % DOW_DAYS.length]; }
+
+  function dowBuildQuizRound() {
+    const items = [];
+    for (let i = 0; i < DOW_QUIZ_ROUND_SIZE; i++) {
+      const dayIdx = Math.floor(Math.random() * DOW_DAYS.length);
+      const isAfter = Math.random() < 0.5;
+      const answer = isAfter ? dowDayAfter(dayIdx) : dowDayBefore(dayIdx);
+      items.push({
+        text: `What day comes ${isAfter ? 'AFTER' : 'BEFORE'} ${DOW_DAYS[dayIdx].en}?`,
+        answer: answer.en,
+      });
+    }
+    return items;
+  }
+
+  function dowBuildQuizChoices(correctEn) {
+    const others = shuffleArray(DOW_DAYS.filter(d => d.en !== correctEn)).slice(0, 2).map(d => d.en);
+    return shuffleArray([correctEn, ...others]);
+  }
+
+  function dowStartQuizRound() {
+    dowQuizState.round = dowBuildQuizRound();
+    dowQuizState.index = 0;
+    dowQuizState.done = false;
+    dowRenderQuizRound();
+  }
+
+  function dowRenderQuizRound() {
+    const filled = dowQuizState.index;
+    const current = dowQuizState.round[dowQuizState.index];
+    const choices = dowBuildQuizChoices(current.answer);
+
+    document.getElementById('dowQuizSlots').innerHTML = dowQuizState.round.map((_, i) => `
+      <span class="dow-quiz-slot${i < filled ? ' filled' : ''}">${i < filled ? '✅' : ''}</span>
+    `).join('');
+    document.getElementById('dowQuizTarget').innerHTML = `<div class="dow-quiz-target-text">${escapeHtml(current.text)}</div>`;
+    document.getElementById('dowQuizChoices').innerHTML = choices.map(c => `
+      <button type="button" class="btn-fun dow-quiz-choice" data-answer="${escapeHtml(c)}">${escapeHtml(c)}</button>
+    `).join('');
+  }
+
+  function dowRenderQuizComplete() {
+    document.getElementById('dowQuizSlots').innerHTML = '';
+    document.getElementById('dowQuizTarget').innerHTML = `<p class="dow-quiz-complete-msg">All done! You know your days!</p>`;
+    document.getElementById('dowQuizChoices').innerHTML = `<button type="button" class="btn-fun" id="dowQuizAgainBtn">Play Again</button>`;
+    document.getElementById('dowQuizAgainBtn').addEventListener('click', dowStartQuizRound);
+    addStars(3);
+    launchConfetti();
+  }
+
+  function startDays() {
+    const area = document.getElementById('daysArea');
+    if (!area.dataset.built) {
+      area.innerHTML = dowMarkup();
+      area.dataset.built = '1';
+
+      document.getElementById('dowTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.game-tab-btn');
+        if (!btn) return;
+        document.querySelectorAll('#dowTabs .game-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        const target = btn.dataset.tab;
+        document.querySelectorAll('#daysArea .dow-panel').forEach(p => p.classList.toggle('active', p.id === 'dow-panel-' + target));
+      });
+
+      document.getElementById('dowCardGrid').addEventListener('click', (e) => {
+        const slowBtn = e.target.closest('.dow-mini-slow-btn');
+        if (slowBtn) {
+          e.stopPropagation();
+          speakSyllables(DOW_FLASHCARDS[Number(slowBtn.dataset.idx)].syl);
+          return;
+        }
+        const listenBtn = e.target.closest('.dow-mini-listen-btn');
+        if (listenBtn) {
+          e.stopPropagation();
+          speak(listenBtn.dataset.en);
+          return;
+        }
+        const card = e.target.closest('.dow-flip-card');
+        if (card) card.classList.toggle('flipped');
+      });
+
+      document.getElementById('dowOrderPool').addEventListener('click', (e) => {
+        const btn = e.target.closest('.dow-order-tile');
+        if (!btn || btn.disabled) return;
+        const idx = Number(btn.dataset.idx);
+        if (idx === dowOrderState.nextIndex) {
+          dowOrderState.nextIndex++;
+          dowRenderOrderSequence();
+          dowRenderOrderPool();
+          addStars(1);
+          recordQualifyingActivity();
+          showBanner('dowOrderBanner', pickEncouragement());
+          if (dowOrderState.nextIndex >= DOW_DAYS.length) {
+            setTimeout(dowRenderOrderComplete, 400);
+          }
+        } else {
+          btn.classList.add('shake');
+          setTimeout(() => btn.classList.remove('shake'), 400);
+          showBanner('dowOrderBanner', 'Not that one yet — try again!', true);
+        }
+      });
+
+      document.getElementById('dowQuizChoices').addEventListener('click', (e) => {
+        const btn = e.target.closest('.dow-quiz-choice');
+        if (!btn || dowQuizState.done) return;
+        const current = dowQuizState.round[dowQuizState.index];
+        if (btn.dataset.answer === current.answer) {
+          document.querySelectorAll('#dowQuizChoices .dow-quiz-choice').forEach(b => { b.disabled = true; });
+          btn.classList.add('correct-flash');
+          addStars(1);
+          recordQualifyingActivity();
+          showBanner('dowQuizBanner', pickEncouragement());
+          dowQuizState.index++;
+          setTimeout(() => {
+            if (dowQuizState.index >= dowQuizState.round.length) {
+              dowQuizState.done = true;
+              dowRenderQuizComplete();
+            } else {
+              dowRenderQuizRound();
+            }
+          }, 500);
+        } else {
+          btn.classList.add('shake');
+          setTimeout(() => btn.classList.remove('shake'), 400);
+          showBanner('dowQuizBanner', 'Not quite — try again!', true);
+        }
+      });
+
+      dowRenderFlashcards();
+    }
+    dowStartOrderRound();
+    dowStartQuizRound();
+  }
+
+  /* ---------- game: countdown runner ---------- */
+  // A runner keeps going as long as he picks the right time before the
+  // countdown bar empties. Correct = jump the obstacle, speeds up every 4
+  // in a row. Wrong or too slow = a stumble (a strike); 3 strikes ends the
+  // run — but ending is just a friendly recap card with a "Run Again"
+  // button, never a hard fail state.
+  //
+  // Timer-safety note (lesson learned from Cat & Rat Chase's real-time loop
+  // silently running in the background after switching tabs): every
+  // scheduled callback here re-checks countdownPanelActive() and its
+  // runToken before doing anything, so switching to a different game mid-
+  // countdown can never silently award stars, count a strike, or spawn the
+  // next obstacle from an unwatched run.
+
+  const COUNTDOWN_HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+  function countdownRandomHour() { return COUNTDOWN_HOURS[Math.floor(Math.random() * COUNTDOWN_HOURS.length)]; }
+  function countdownTimePhrase(hour) { return `${hour} o'clock`; }
+  function countdownDigitalTime(hour) { return `${hour}:00`; }
+
+  const COUNTDOWN_LEVELS = [4.5, 4.0, 3.5, 3.0, 2.5, 2.0];
+  const COUNTDOWN_CORRECT_PER_LEVEL = 4;
+  const COUNTDOWN_MAX_STRIKES = 3;
+
+  const countdownState = {
+    level: 0, correctStreak: 0, strikes: 0, score: 0, over: false,
+    current: null, timeoutId: null, runToken: 0,
+  };
+
+  /* ---------- synthesized sound effects (no audio files) ---------- */
+
+  let countdownAudioCtx = null;
+  function countdownGetAudioCtx() {
+    try {
+      if (!countdownAudioCtx) countdownAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (countdownAudioCtx.state === 'suspended') countdownAudioCtx.resume();
+      return countdownAudioCtx;
+    } catch (e) { return null; }
+  }
+
+  function countdownPlayJumpSound() {
+    const ctx = countdownGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(760, now + 0.14);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.22, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.22);
+  }
+
+  function countdownPlayStumbleSound() {
+    const ctx = countdownGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    // A soft, low, non-alarming "womp" — deliberately gentle, not a buzzer.
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(280, now);
+    osc.frequency.exponentialRampToValueAtTime(110, now + 0.28);
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.32);
+  }
+
+  function countdownPlayLevelUpSound() {
+    const ctx = countdownGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    [520, 780].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + i * 0.09);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, now + i * 0.09);
+      gain.gain.linearRampToValueAtTime(0.2, now + i * 0.09 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.22);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.09);
+      osc.stop(now + i * 0.09 + 0.24);
+    });
+  }
+
+  function countdownPlayRunEndSound() {
+    const ctx = countdownGetAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    [523, 659, 784].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.11);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, now + i * 0.11);
+      gain.gain.linearRampToValueAtTime(0.18, now + i * 0.11 + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.11 + 0.35);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.11);
+      osc.stop(now + i * 0.11 + 0.36);
+    });
+  }
+
+  function countdownPanelActive() {
+    const panel = document.getElementById('game-countdown');
+    return !!panel && panel.classList.contains('active');
+  }
+
+  function countdownPickChoices(correctHour) {
+    const decoys = [];
+    let guard = 0;
+    while (decoys.length < 2 && guard < 50) {
+      guard++;
+      const h = countdownRandomHour();
+      if (h !== correctHour && !decoys.includes(h)) decoys.push(h);
+    }
+    return shuffleArray([correctHour, ...decoys]);
+  }
+
+  function countdownUpdateStatsRow() {
+    document.getElementById('cdrBest').textContent = data.countdownBestScore || 0;
+    document.getElementById('cdrStrikeDots').innerHTML = Array.from({ length: COUNTDOWN_MAX_STRIKES }, (_, i) =>
+      `<span class="cdr-strike-dot${i < countdownState.strikes ? ' used' : ''}"></span>`
+    ).join('');
+  }
+
+  function cdrMarkup() {
+    return `
+      <h3 class="cdr-title">Pick the time before the bar runs out!</h3>
+      <div class="cdr-hud-row">
+        <div class="cdr-hud-badge">
+          <span class="cdr-hud-label">BEST</span>
+          <span class="cdr-hud-value" id="cdrBest">0</span>
+        </div>
+        <div class="cdr-hud-badge">
+          <span class="cdr-hud-label">STRIKES</span>
+          <span class="cdr-strike-dots" id="cdrStrikeDots"></span>
+        </div>
+      </div>
+      <div class="cdr-track" id="cdrTrack">
+        <div class="cdr-clouds"></div>
+        <div class="cdr-hills"></div>
+        <div class="cdr-ground"></div>
+        <div class="cdr-char-shadow"></div>
+        <div class="cdr-char" id="cdrChar">🏃</div>
+      </div>
+      <div class="cdr-obstacle-card">
+        <div class="cdr-countdown-track"><div class="cdr-countdown-fill" id="cdrCountdownFill"></div></div>
+        <div class="cdr-sign"><div class="cdr-digital-time" id="cdrClock"></div></div>
+      </div>
+      <div class="cdr-choices" id="cdrChoices"></div>
+      <div class="cdr-score-row">
+        <div class="cdr-score-badge">Obstacles cleared <span class="cdr-score-num" id="cdrScore">0</span></div>
+      </div>
+      <div class="banner neutral" id="cdrBanner"></div>
+    `;
+  }
+
+  function countdownSpawnObstacle(token) {
+    if (token !== countdownState.runToken || !countdownPanelActive()) return;
+    clearTimeout(countdownState.timeoutId);
+    const hour = countdownRandomHour();
+    countdownState.current = hour;
+    const choices = countdownPickChoices(hour);
+    document.getElementById('cdrClock').innerHTML = countdownDigitalTime(hour);
+    document.getElementById('cdrChoices').innerHTML = choices.map(h =>
+      `<button type="button" class="btn-fun cdr-choice" data-hour="${h}">${escapeHtml(countdownTimePhrase(h))}</button>`
+    ).join('');
+
+    const duration = COUNTDOWN_LEVELS[countdownState.level];
+    const fill = document.getElementById('cdrCountdownFill');
+    fill.style.transition = 'none';
+    fill.style.width = '100%';
+    void fill.offsetWidth;
+    fill.style.transition = `width ${duration}s linear`;
+    fill.style.width = '0%';
+
+    countdownState.timeoutId = setTimeout(() => countdownHandleMiss(token), duration * 1000);
+  }
+
+  function countdownHandleHit(token) {
+    if (token !== countdownState.runToken) return;
+    clearTimeout(countdownState.timeoutId);
+    const char = document.getElementById('cdrChar');
+    char.classList.remove('stumble', 'jump');
+    void char.offsetWidth;
+    char.classList.add('jump');
+    countdownPlayJumpSound();
+    countdownState.score++;
+    countdownState.correctStreak++;
+    document.getElementById('cdrScore').textContent = countdownState.score;
+    addStars(1);
+    recordQualifyingActivity();
+    showBanner('cdrBanner', pickEncouragement());
+    if (countdownState.correctStreak >= COUNTDOWN_CORRECT_PER_LEVEL && countdownState.level < COUNTDOWN_LEVELS.length - 1) {
+      countdownState.level++;
+      countdownState.correctStreak = 0;
+      showBanner('cdrBanner', 'Speeding up!');
+      setTimeout(countdownPlayLevelUpSound, 120);
+    }
+    setTimeout(() => countdownSpawnObstacle(token), 450);
+  }
+
+  function countdownHandleMiss(token) {
+    if (token !== countdownState.runToken || countdownState.over || !countdownPanelActive()) return;
+    clearTimeout(countdownState.timeoutId);
+    document.querySelectorAll('#countdownArea .cdr-choice').forEach(b => { b.disabled = true; });
+    const char = document.getElementById('cdrChar');
+    char.classList.remove('jump', 'stumble');
+    void char.offsetWidth;
+    char.classList.add('stumble');
+    countdownPlayStumbleSound();
+    countdownState.strikes++;
+    countdownUpdateStatsRow();
+    if (countdownState.strikes >= COUNTDOWN_MAX_STRIKES) {
+      countdownEndRun(token);
+    } else {
+      showBanner('cdrBanner', 'Oops — try the next one!');
+      setTimeout(() => countdownSpawnObstacle(token), 500);
+    }
+  }
+
+  function countdownEndRun(token) {
+    countdownState.over = true;
+    clearTimeout(countdownState.timeoutId);
+    const isNewBest = countdownState.score > (data.countdownBestScore || 0);
+    if (isNewBest) {
+      data.countdownBestScore = countdownState.score;
+      saveData();
+    }
+    const bonus = Math.max(1, Math.floor(countdownState.score / 2));
+    addStars(bonus);
+    countdownPlayRunEndSound();
+    const area = document.getElementById('countdownArea');
+    const recapMsg = isNewBest
+      ? `New best! You cleared ${countdownState.score} obstacle${countdownState.score === 1 ? '' : 's'}!`
+      : `Nice run! You cleared ${countdownState.score} obstacle${countdownState.score === 1 ? '' : 's'}. Best: ${data.countdownBestScore || 0}`;
+    area.innerHTML = `
+      <div class="cdr-recap">
+        <div class="medal">
+          <div class="medal-ribbon medal-ribbon-l"></div>
+          <div class="medal-ribbon medal-ribbon-r"></div>
+          <div class="medal-disc"><span class="medal-star"></span></div>
+        </div>
+        <p class="cdr-complete-msg">${escapeHtml(recapMsg)}</p>
+        <button type="button" class="btn-fun" id="cdrRunAgainBtn">Run Again</button>
+      </div>
+    `;
+    launchConfetti();
+  }
+
+  function startCountdownRun() {
+    const area = document.getElementById('countdownArea');
+    area.innerHTML = cdrMarkup();
+    if (!area.dataset.built) {
+      area.dataset.built = '1';
+      area.addEventListener('click', (e) => {
+        const againBtn = e.target.closest('#cdrRunAgainBtn');
+        if (againBtn) { startCountdownRun(); return; }
+        const choiceBtn = e.target.closest('.cdr-choice');
+        if (!choiceBtn || countdownState.over || choiceBtn.disabled) return;
+        document.querySelectorAll('#countdownArea .cdr-choice').forEach(b => { b.disabled = true; });
+        const hour = Number(choiceBtn.dataset.hour);
+        const token = countdownState.runToken;
+        if (hour === countdownState.current) {
+          choiceBtn.classList.add('correct-flash');
+          countdownHandleHit(token);
+        } else {
+          choiceBtn.classList.add('shake');
+          countdownHandleMiss(token);
+        }
+      });
+    }
+    countdownState.level = 0;
+    countdownState.correctStreak = 0;
+    countdownState.strikes = 0;
+    countdownState.score = 0;
+    countdownState.over = false;
+    countdownState.runToken++;
+    const token = countdownState.runToken;
+    countdownUpdateStatsRow();
+    countdownSpawnObstacle(token);
+  }
+
+  /* ---------- game: compare & grow garden ---------- */
+
+  const GARDEN_ITEMS = [
+    { adj: 'big', comp: 'bigger', sup: 'biggest',
+      compS: 'An elephant is ___ than a mouse.', compZh: '大象比老鼠大。',
+      supS: 'The blue whale is the ___ animal in the world.', supZh: '蓝鲸是世界上最大的动物。' },
+    { adj: 'small', comp: 'smaller', sup: 'smallest',
+      compS: 'A mouse is ___ than a cat.', compZh: '老鼠比猫小。',
+      supS: 'The ant is the ___ animal here.', supZh: '蚂蚁是这里最小的动物。' },
+    { adj: 'tall', comp: 'taller', sup: 'tallest',
+      compS: 'A giraffe is ___ than a horse.', compZh: '长颈鹿比马高。',
+      supS: 'The giraffe is the ___ animal in the zoo.', supZh: '长颈鹿是动物园里最高的动物。' },
+    { adj: 'short', comp: 'shorter', sup: 'shortest',
+      compS: 'A rabbit is ___ than a dog.', compZh: '兔子比狗矮。',
+      supS: 'The mouse is the ___ animal here.', supZh: '老鼠是这里最矮的动物。' },
+    { adj: 'fast', comp: 'faster', sup: 'fastest',
+      compS: 'A cheetah is ___ than a lion.', compZh: '猎豹比狮子快。',
+      supS: 'The cheetah is the ___ animal on land.', supZh: '猎豹是陆地上最快的动物。' },
+    { adj: 'slow', comp: 'slower', sup: 'slowest',
+      compS: 'A turtle is ___ than a rabbit.', compZh: '乌龟比兔子慢。',
+      supS: 'The snail is the ___ animal here.', supZh: '蜗牛是这里最慢的动物。' },
+    { adj: 'long', comp: 'longer', sup: 'longest',
+      compS: 'A snake is ___ than a worm.', compZh: '蛇比虫子长。',
+      supS: 'This river is the ___ one in the country.', supZh: '这条河是这个国家最长的。' },
+    { adj: 'hot', comp: 'hotter', sup: 'hottest',
+      compS: 'Summer is ___ than spring.', compZh: '夏天比春天热。',
+      supS: 'July is the ___ month of the year.', supZh: '七月是一年中最热的月份。' },
+    { adj: 'cold', comp: 'colder', sup: 'coldest',
+      compS: 'Winter is ___ than fall.', compZh: '冬天比秋天冷。',
+      supS: 'January is the ___ month of the year.', supZh: '一月是一年中最冷的月份。' },
+    { adj: 'old', comp: 'older', sup: 'oldest',
+      compS: 'My grandpa is ___ than my dad.', compZh: '我爷爷比我爸爸年纪大。',
+      supS: 'My grandpa is the ___ person in my family.', supZh: '我爷爷是我家里年纪最大的人。' },
+    { adj: 'young', comp: 'younger', sup: 'youngest',
+      compS: 'My sister is ___ than me.', compZh: '我妹妹比我小。',
+      supS: 'My sister is the ___ person in my family.', supZh: '我妹妹是我家里年纪最小的人。' },
+    { adj: 'strong', comp: 'stronger', sup: 'strongest',
+      compS: 'An elephant is ___ than a dog.', compZh: '大象比狗强壮。',
+      supS: 'The elephant is the ___ animal in the zoo.', supZh: '大象是动物园里最强壮的动物。' },
+    { adj: 'happy', comp: 'happier', sup: 'happiest',
+      compS: 'I am ___ today than yesterday.', compZh: '我今天比昨天开心。',
+      supS: 'This is the ___ day of my week.', supZh: '这是我这周最开心的一天。' },
+    { adj: 'good', comp: 'better', sup: 'best',
+      compS: 'This cake is ___ than that one.', compZh: '这个蛋糕比那个好。',
+      supS: 'This is the ___ cake I have ever eaten.', supZh: '这是我吃过最好吃的蛋糕。' },
+    { adj: 'bad', comp: 'worse', sup: 'worst',
+      compS: 'Rainy days are ___ than sunny days.', compZh: '雨天比晴天更糟。',
+      supS: 'This is the ___ storm this year.', supZh: '这是今年最糟糕的暴风雨。' },
+  ];
+
+  const GARDEN_IDLE_LINES = ["Let's grow some words!", 'Pick the right one!', 'I bet you can do this!', 'Water the garden with a correct answer!'];
+  const GARDEN_GOOD_LINES = ["Yes! It's growing!", 'Perfect!', 'Great job!', 'Blooming lovely!'];
+  const GARDEN_RETRY_LINES = ['Hmm, try another one.', 'Not quite — look again!', 'So close, try again!'];
+  const GARDEN_PETAL_VARS = ['--garden-coral', '--violet', '--garden-gold', '--sky-accent'];
+  const GARDEN_WIN_TARGET = 10;
+
+  let gardenDeck = [];
+  let gardenCurrent = null;
+  let gardenFlowerCount = 0;
+  let gardenBusy = false;
+  let gardenMuted = false;
+  let gardenAudioCtx = null;
+
+  function gardenPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function gardenBuildDeck() {
+    const rounds = [];
+    GARDEN_ITEMS.forEach(item => {
+      rounds.push({ item, sentence: item.compS, zh: item.compZh, answer: item.comp });
+      rounds.push({ item, sentence: item.supS, zh: item.supZh, answer: item.sup });
+    });
+    gardenDeck = shuffleArray(rounds);
+  }
+
+  function gardenGetAudioCtx() {
+    if (gardenMuted) return null;
+    try {
+      if (!gardenAudioCtx) gardenAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (gardenAudioCtx.state === 'suspended') gardenAudioCtx.resume();
+      return gardenAudioCtx;
+    } catch (e) { return null; }
+  }
+
+  function gardenTone(freq, start, dur, type, peak) {
+    const ctx = gardenGetAudioCtx();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    const t0 = ctx.currentTime + start;
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(peak || 0.15, t0 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.02);
+  }
+  function gardenSfxCorrect() { gardenTone(523, 0, 0.14, 'triangle', 0.14); gardenTone(659, 0.1, 0.14, 'triangle', 0.14); gardenTone(784, 0.2, 0.22, 'triangle', 0.16); }
+  function gardenSfxRetry() { gardenTone(330, 0, 0.14, 'sine', 0.09); gardenTone(280, 0.1, 0.16, 'sine', 0.09); }
+  function gardenSfxBloom() { gardenTone(523, 0, 0.14, 'sine', 0.16); gardenTone(659, 0.1, 0.14, 'sine', 0.16); gardenTone(784, 0.2, 0.14, 'sine', 0.16); gardenTone(1046, 0.3, 0.3, 'sine', 0.2); }
+
+  function gardenSay(text) {
+    const el = document.getElementById('gardenBubble');
+    if (el) el.textContent = text;
+  }
+
+  function gardenUpdateHud() {
+    const el = document.getElementById('gardenFlowerVal');
+    if (el) el.textContent = gardenFlowerCount + '/' + GARDEN_WIN_TARGET;
+  }
+
+  function gardenBump(el) {
+    if (!el) return;
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
+  function gardenAddFlower() {
+    const bed = document.getElementById('gardenBed');
+    if (!bed) return;
+    const bedRect = bed.getBoundingClientRect();
+    const bedWidth = bedRect.width || 300;
+    const slot = (gardenFlowerCount - 1) % GARDEN_WIN_TARGET;
+    const spacing = bedWidth / GARDEN_WIN_TARGET;
+    const x = spacing * slot + spacing / 2 - 14 + (Math.random() * 10 - 5);
+    const f = document.createElement('div');
+    f.className = 'garden-flower';
+    f.style.left = Math.max(4, Math.min(bedWidth - 32, x)) + 'px';
+    f.style.setProperty('--garden-petal', 'var(' + gardenPick(GARDEN_PETAL_VARS) + ')');
+    f.innerHTML = '<div class="garden-stem"></div><div class="garden-petals"><i></i><i></i><i></i><i></i><i></i></div>';
+    bed.appendChild(f);
+  }
+
+  function gardenMarkup() {
+    return `
+      <div class="garden-hud-row">
+        <div class="garden-readout">
+          <div class="garden-label">Flowers</div>
+          <div class="garden-value" id="gardenFlowerVal">0/10</div>
+        </div>
+        <button type="button" class="garden-mute-btn" id="gardenMuteBtn">Sound: On</button>
+      </div>
+      <div class="garden-scene">
+        <div class="garden-sun"></div>
+        <div class="garden-grass"></div>
+        <div class="garden-bed" id="gardenBed"></div>
+      </div>
+      <div class="garden-mascot-row">
+        <div class="garden-mascot" id="gardenMascot">🐞</div>
+        <div class="garden-bubble" id="gardenBubble">Let's grow some words!</div>
+      </div>
+      <div class="garden-sentence-card">
+        <p class="garden-sentence" id="gardenSentence"></p>
+        <span class="garden-zh" id="gardenZh"></span>
+      </div>
+      <div class="garden-tiles" id="gardenTiles"></div>
+      <div class="banner neutral" id="gardenBanner"></div>
+      <p class="garden-footer-note">Tap the word that finishes the sentence correctly. A wrong tap just shakes a little — try again, no penalty!</p>
+    `;
+  }
+
+  function gardenNewRound() {
+    if (gardenDeck.length === 0) gardenBuildDeck();
+    gardenCurrent = gardenDeck.pop();
+    const options = shuffleArray([gardenCurrent.item.adj, gardenCurrent.item.comp, gardenCurrent.item.sup]);
+    document.getElementById('gardenSentence').innerHTML = escapeHtml(gardenCurrent.sentence).replace('___', '<span class="garden-blank" id="gardenBlankSpan">___</span>');
+    document.getElementById('gardenZh').textContent = '';
+    gardenSay(gardenPick(GARDEN_IDLE_LINES));
+    document.getElementById('gardenTiles').innerHTML = options.map(word =>
+      `<button type="button" class="btn-fun garden-tile">${escapeHtml(word)}</button>`
+    ).join('');
+  }
+
+  function gardenAttempt(word, tileEl) {
+    if (word === gardenCurrent.answer) {
+      gardenBusy = true;
+      tileEl.classList.add('correct');
+      const blankSpan = document.getElementById('gardenBlankSpan');
+      if (blankSpan) {
+        blankSpan.textContent = word;
+        blankSpan.classList.add('filled');
+      }
+      document.getElementById('gardenZh').textContent = gardenCurrent.zh;
+      gardenSay(gardenPick(GARDEN_GOOD_LINES));
+      const mascot = document.getElementById('gardenMascot');
+      mascot.classList.remove('oops');
+      void mascot.offsetWidth;
+      mascot.classList.add('cheer');
+      gardenSfxCorrect();
+      addStars(1);
+      recordQualifyingActivity();
+      showBanner('gardenBanner', pickEncouragement());
+      gardenFlowerCount++;
+      gardenUpdateHud();
+      gardenBump(document.getElementById('gardenFlowerVal'));
+      gardenAddFlower();
+      setTimeout(() => {
+        mascot.classList.remove('cheer');
+        if (gardenFlowerCount > 0 && gardenFlowerCount % GARDEN_WIN_TARGET === 0) {
+          gardenShowBloom();
+        } else {
+          gardenBusy = false;
+          gardenNewRound();
+        }
+      }, 850);
+    } else {
+      tileEl.classList.add('shake');
+      gardenSfxRetry();
+      const mascot = document.getElementById('gardenMascot');
+      mascot.classList.remove('cheer');
+      void mascot.offsetWidth;
+      mascot.classList.add('oops');
+      gardenSay(gardenPick(GARDEN_RETRY_LINES));
+      showBanner('gardenBanner', 'Not quite — try again!', true);
+      setTimeout(() => {
+        tileEl.classList.remove('shake');
+        mascot.classList.remove('oops');
+      }, 420);
+    }
+  }
+
+  function gardenShowBloom() {
+    data.gardensGrown++;
+    saveData();
+    gardenSfxBloom();
+    addStars(5);
+    launchConfetti();
+    const area = document.getElementById('gardenArea');
+    area.innerHTML = `
+      <div class="garden-recap">
+        <div class="medal">
+          <div class="medal-ribbon medal-ribbon-l"></div>
+          <div class="medal-ribbon medal-ribbon-r"></div>
+          <div class="medal-disc"><span class="medal-star"></span></div>
+        </div>
+        <p class="garden-bloom-msg">Full bloom! You finished a whole garden of comparatives! Gardens grown so far: ${data.gardensGrown}.</p>
+        <button type="button" class="btn-fun" id="gardenNewBtn">Plant a New Garden</button>
+      </div>
+    `;
+  }
+
+  function gardenStartFresh() {
+    const area = document.getElementById('gardenArea');
+    area.innerHTML = gardenMarkup();
+    gardenFlowerCount = 0;
+    gardenBusy = false;
+    gardenUpdateHud();
+    const muteBtn = document.getElementById('gardenMuteBtn');
+    if (muteBtn) muteBtn.textContent = gardenMuted ? 'Sound: Off' : 'Sound: On';
+    gardenNewRound();
+  }
+
+  function startGarden() {
+    const area = document.getElementById('gardenArea');
+    if (area.dataset.built) return; // already mounted — preserve in-progress state across tab switches
+    area.dataset.built = '1';
+    gardenBuildDeck();
+    area.addEventListener('click', (e) => {
+      const muteBtn = e.target.closest('#gardenMuteBtn');
+      if (muteBtn) {
+        gardenMuted = !gardenMuted;
+        muteBtn.textContent = gardenMuted ? 'Sound: Off' : 'Sound: On';
+        return;
+      }
+      const newBtn = e.target.closest('#gardenNewBtn');
+      if (newBtn) { gardenStartFresh(); return; }
+      const tile = e.target.closest('.garden-tile');
+      if (tile && !gardenBusy) gardenAttempt(tile.textContent, tile);
+    });
+    gardenStartFresh();
+  }
 
   /* ---------- init ---------- */
 
