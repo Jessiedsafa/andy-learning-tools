@@ -634,6 +634,18 @@
     max-width: 220px;
   }
 
+  .word-voice-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .word-voice-row audio {
+    height: 34px;
+    max-width: 220px;
+  }
+
   .draw-story-submit {
     display: flex;
     flex-direction: column;
@@ -1738,6 +1750,10 @@
           <label for="word-example">Example sentence (optional)</label>
           <input type="text" id="word-example" placeholder="e.g. I am happy today." />
         </div>
+        <div class="full">
+          <label>Say the word</label>
+          <div class="word-voice-row" id="wordVoiceRow"></div>
+        </div>
         <div class="word-form-actions">
           <button type="submit" class="btn-fun small">+ Add word</button>
         </div>
@@ -1808,6 +1824,7 @@
         parsed.words.forEach(w => {
           if (!w.category) w.category = 'General';
           w.category = OLD_CATEGORY_MIGRATION[w.category] || w.category;
+          if (w.audioDataUrl === undefined) w.audioDataUrl = null;
         });
         parsed.stars = typeof parsed.stars === 'number' ? parsed.stars : 0;
         parsed.streak = typeof parsed.streak === 'number' ? parsed.streak : 0;
@@ -2415,10 +2432,79 @@
           <span class="word-category-badge">${escapeHtml(w.category || 'General')}</span>
         </div>
         ${w.example ? `<div class="word-example">"${escapeHtml(w.example)}"</div>` : ''}
+        ${w.audioDataUrl ? `<audio controls src="${w.audioDataUrl}" style="margin-top: 0.4rem; height: 34px;"></audio>` : ''}
         <button class="mini-delete" data-id="${w.id}" aria-label="Delete word">&times;</button>
       </li>
     `).join('');
   }
+
+  /* ---------- record voice for a new word ---------- */
+
+  let wordMediaRecorder = null;
+  let wordActiveStream = null;
+  let wordRecordChunks = [];
+  let wordIsRecording = false;
+  let wordAudioDataUrl = null;
+  let wordRecordTimeout = null;
+
+  function renderWordVoiceRow() {
+    const row = document.getElementById('wordVoiceRow');
+    if (wordIsRecording) {
+      row.innerHTML = `<button type="button" class="btn-fun small" id="wordStopBtn">⏹ Stop</button><span class="rec-indicator">● Recording…</span>`;
+      document.getElementById('wordStopBtn').addEventListener('click', stopWordRecording);
+    } else if (wordAudioDataUrl) {
+      row.innerHTML = `<audio controls src="${wordAudioDataUrl}"></audio><button type="button" class="btn-fun blue small" id="wordRerecordBtn">🎤 Re-record</button>`;
+      document.getElementById('wordRerecordBtn').addEventListener('click', startWordRecording);
+    } else if (supportsRecording()) {
+      row.innerHTML = `<button type="button" class="btn-fun small" id="wordRecordBtn">🎤 Record the word</button>`;
+      document.getElementById('wordRecordBtn').addEventListener('click', startWordRecording);
+    } else {
+      row.innerHTML = `<span class="empty-note">Voice recording isn't supported in this browser — you can still add the word without it.</span>`;
+    }
+  }
+
+  async function startWordRecording() {
+    if (!supportsRecording()) return;
+    if (wordMediaRecorder && wordMediaRecorder.state === 'recording') return;
+    try {
+      wordActiveStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      alert('Allow microphone access to record the word.');
+      return;
+    }
+    wordRecordChunks = [];
+    wordMediaRecorder = new MediaRecorder(wordActiveStream);
+    wordMediaRecorder.addEventListener('dataavailable', e => { if (e.data.size > 0) wordRecordChunks.push(e.data); });
+    wordMediaRecorder.addEventListener('stop', () => {
+      const blob = new Blob(wordRecordChunks, { type: wordMediaRecorder.mimeType || 'audio/webm' });
+      const reader = new FileReader();
+      reader.onload = () => {
+        wordAudioDataUrl = reader.result;
+        wordIsRecording = false;
+        renderWordVoiceRow();
+      };
+      reader.readAsDataURL(blob);
+      wordActiveStream.getTracks().forEach(t => t.stop());
+      wordActiveStream = null;
+    });
+    wordIsRecording = true;
+    renderWordVoiceRow();
+    wordMediaRecorder.start();
+    wordRecordTimeout = setTimeout(stopWordRecording, 60000);
+  }
+
+  function stopWordRecording() {
+    clearTimeout(wordRecordTimeout);
+    if (wordMediaRecorder && wordMediaRecorder.state === 'recording') wordMediaRecorder.stop();
+  }
+
+  function resetWordVoiceRow() {
+    wordAudioDataUrl = null;
+    wordIsRecording = false;
+    renderWordVoiceRow();
+  }
+
+  renderWordVoiceRow();
 
   document.getElementById('form-word').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -2427,9 +2513,14 @@
     const category = document.getElementById('word-category').value;
     const example = document.getElementById('word-example').value.trim();
     if (!word || !meaning) return;
-    data.words.unshift({ id: uid(), word, meaning, category, example, added: new Date().toISOString() });
+    if (supportsRecording() && !wordAudioDataUrl) {
+      alert('Record yourself saying the word first, then add it!');
+      return;
+    }
+    data.words.unshift({ id: uid(), word, meaning, category, example, audioDataUrl: wordAudioDataUrl, added: new Date().toISOString() });
     saveData();
     e.target.reset();
+    resetWordVoiceRow();
     renderWords();
   });
 
